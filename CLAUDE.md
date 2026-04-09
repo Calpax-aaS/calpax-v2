@@ -1,0 +1,157 @@
+# Calpax — Contexte projet pour Claude Code
+
+## Ce qu'est Calpax
+
+SaaS 100% dédié à la gestion et planification de vols en montgolfière commerciaux.
+Cible : exploitants déclarés FR.DEC (environ 150 en France, 450 en Europe).
+
+Cycle couvert : réservations clients → paiements → organisation jour J (passagers/pilotes/équipiers) → documents réglementaires obligatoires (PVE, devis de masse) → météo opérationnelle → tracking GPS → conformité aéronautique.
+
+**Origine** : une v1 PHP/MySQL développée il y a 20 ans tourne encore en production chez Cameron Balloons France (Olivier Cuenot, Dole — FR.DEC.059, 5+ ballons). La v2 est construite d'abord pour lui, validée avec lui, puis ouverte aux autres exploitants.
+
+---
+
+## Stack technique
+
+| Couche | Choix |
+|--------|-------|
+| Front | Next.js (React) — SSR/CSR, SEO pages réservation publiques |
+| Back / API | Node.js + Prisma |
+| Base de données | PostgreSQL (Supabase) |
+| Auth | NextAuth.js — multi-tenant natif |
+| Paiements | Mollie (EU, abonnements SaaS + paiements passagers) |
+| Hébergement | Vercel + Supabase |
+| Cartes / GPS | Leaflet.js + OpenStreetMap (open source, 0€) |
+| Météo vent | Open-Meteo API (gratuit, open source) |
+| Météo METAR/TAF | AVWX ou CheckWX API |
+| i18n | next-intl (FR + EN dès le départ) |
+
+---
+
+## Architecture multi-tenant
+
+Chaque exploitant a son propre espace de données isolé.
+Utiliser une colonne `tenant_id` sur toutes les tables (schéma PostgreSQL distinct si le volume le justifie plus tard).
+Un bug chez un exploitant ne doit jamais affecter les données d'un autre.
+
+---
+
+## Schéma de données — entités core
+
+À construire dans cet ordre :
+
+```
+Exploitant        → tenant racine (N° FR.DEC, SIRET, N° CAMO)
+  └── Ballon      → immatriculation, volume, capacité homologuée, expiration CAMO
+  └── Pilote      → licence BFCL, qualification vol commercial, expiration
+  └── Vol         → date, créneau (matin/soir), ballon, pilote, statut, lieu décollage
+        └── Passager    → nom, email, téléphone, poids (chiffré), consentement RGPD
+        └── Réservation → vol + passager + statut paiement + token Mollie
+```
+
+---
+
+## Contraintes réglementaires non négociables (MVP)
+
+Règlement EU 2018/395 (Part-BOP) + DGAC :
+
+- **PVE** (Procès-Verbal d'Envol) : obligatoire après chaque vol commercial. Auto-généré depuis les données du vol, export PDF, archivage.
+- **Devis de masse** : calcul automatique poids passagers + équipage + carburant. Obligatoire avant tout décollage.
+- **Journal de bord ballon** : carnet de route numérique par vol.
+- **Fiche ballon** : immatriculation, certificat navigabilité Part-21, organisme CAMO. Alerte 60j et 30j avant expiration.
+- **Profil pilote BFCL** : licence + qualification vol commercial passagers. Alerte 90j et 30j avant expiration. Blocage d'affectation si licence invalide.
+- **N° FR.DEC exploitant** : affiché sur tous les documents générés.
+
+---
+
+## Contraintes RGPD (MVP)
+
+- Consentement explicite avant collecte (case non pré-cochée)
+- Poids passager = donnée sensible → chiffrement en base, accès restreint pilote + exploitant
+- Conservation données : 5 ans maximum, suppression automatique
+- Interface droits RGPD (accès, rectification, effacement, portabilité)
+- DPA (Data Processing Agreement) signé avec chaque exploitant client — Calpax est sous-traitant RGPD art. 28
+- Directive PNR : probablement hors champ pour les montgolfières (vols locaux, sans route ni numéro de vol IATA) — à confirmer avec le client zéro
+
+---
+
+## Contraintes paiements (MVP)
+
+- 3DS v2 obligatoire (DSP2) pour tout paiement > 30€ — géré nativement par Mollie
+- Zéro stockage données carte côté Calpax (PCI-DSS) — uniquement token de transaction PSP
+- Facture automatique conforme (N° SIRET, TVA, montant HT/TTC)
+
+---
+
+## Périmètre MVP — ce qui est dedans
+
+### Réglementaire (non négociable)
+- PVE auto-généré + archivage PDF
+- Devis de masse automatique
+- Journal de bord ballon
+- Fiche ballon + alertes maintenance CAMO
+- Profil pilote + alertes licence BFCL
+- N° FR.DEC sur tous les documents
+- RGPD complet (consentement, droits, DPA, chiffrement)
+- Paiements conformes (3DS v2, zéro stockage carte, facturation)
+
+### Fonctionnel (valeur produit)
+- Planning des vols hebdo/mensuel
+- Création vol (ballon + pilote + date + capacité)
+- Gestion réservations et affectation passagers
+- Page réservation publique + paiement Mollie intégré
+- Dashboard jour J (passagers + devis de masse)
+- Billet numérique PDF + QR code + email de confirmation
+- Vue pilote mobile (vols assignés + liste passagers)
+- Validation vol par pilote → déclenchement PVE automatique
+- Gestion remboursements (annulation météo)
+- Multi-tenant (1 espace isolé par exploitant)
+- Météo : vent sol + basse altitude heure par heure (Open-Meteo)
+- Météo : METAR et TAF aéroports proches décodés (AVWX/CheckWX)
+- Météo : radar pluie/orages temps réel
+- Tableau go/no-go météo par vol planifié
+- Tracking GPS temps réel — carte pilote (HTML5 Geolocation + WebSocket + Leaflet)
+- Vue équipiers sol — suivi ballon en live
+- Lien de suivi live partageable aux proches des passagers (page publique, sans inscription)
+
+## Ce qui n'est PAS dans le MVP
+- Portail passager autonome (V2)
+- Bons cadeaux (V2)
+- Notifications SMS (V2)
+- Alertes météo automatiques (V2)
+- Checklist pré-vol digitale (V2)
+- Carnet de vol pilote (V2)
+- Replay parcours GPS (V2)
+- Export GPX/KML (Expert / V2)
+- API publique (Plus tard)
+- Statistiques / reporting (Plus tard)
+- Tracker GPS hardware nacelle (Plus tard)
+
+---
+
+## Pricing (pour référence)
+
+| Formule | Prix | Cible |
+|---------|------|-------|
+| Starter | 79€/mois | 1 ballon, exploitant indépendant |
+| Pro | 149€/mois | 1-3 ballons, saison active |
+| Expert | 249€/mois | 4+ ballons, structure professionnelle |
+
+Le client zéro (Cameron Balloons France, 5+ ballons) est en segment **Expert**.
+
+---
+
+## Conventions de code
+
+- TypeScript strict partout
+- Prisma pour toutes les requêtes BDD — pas de SQL brut sauf cas exceptionnel justifié
+- Variables d'environnement pour toutes les clés API (Mollie, AVWX, Open-Meteo)
+- Toujours valider le `tenant_id` avant toute lecture/écriture en base
+- Les données sensibles (poids passagers, coordonnées) sont chiffrées en base — utiliser la lib de chiffrement définie dans `/lib/crypto.ts`
+- Les PDF (PVE, billets, factures) sont générés côté serveur uniquement
+
+---
+
+## Backlog complet
+
+Voir `BACKLOG.md` pour la liste exhaustive des features avec priorités.
