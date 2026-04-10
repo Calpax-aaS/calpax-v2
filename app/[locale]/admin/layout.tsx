@@ -1,0 +1,33 @@
+import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
+
+type Props = {
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
+}
+
+/**
+ * Admin layout: requires ADMIN_CALPAX role.
+ * Redirects unauthenticated users to sign-in.
+ * Returns 403-style message for authenticated non-admin users.
+ */
+export default async function AdminLayout({ children, params }: Props) {
+  const { locale } = await params
+  const session = await auth()
+
+  if (!session?.user) {
+    redirect(`/${locale}/auth/signin`)
+  }
+
+  if (session.user.role !== 'ADMIN_CALPAX') {
+    const t = await getTranslations('admin')
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-red-600">{t('unauthorized')}</p>
+      </main>
+    )
+  }
+
+  return <>{children}</>
+}
