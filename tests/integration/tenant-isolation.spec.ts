@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/lib/db'
 import { basePrisma } from '@/lib/db/base'
+import { impersonate } from '@/lib/admin/impersonate'
 import { resetDb, seedTenant, asUser } from './helpers'
 
 /**
@@ -73,5 +74,32 @@ describe('tenant isolation', () => {
       db.user.findUnique({ where: { id: B.userId } }),
     )
     expect(result).toBeNull()
+  })
+})
+
+describe('impersonate helper', () => {
+  beforeEach(async () => {
+    await resetDb()
+  })
+
+  it('runs fn inside target tenant context', async () => {
+    const admin = await seedTenant('ADMIN')
+    const tenant = await seedTenant('T')
+    const result = await asUser(admin, 'ADMIN_CALPAX', async () => {
+      return impersonate(tenant.exploitantId, async () => db.user.findMany())
+    })
+    const emails = result.map((u) => u.email)
+    expect(emails).toContain('user-T@test.local')
+    expect(emails).not.toContain('user-ADMIN@test.local')
+  })
+
+  it('refuses to impersonate if caller is not ADMIN_CALPAX', async () => {
+    const caller = await seedTenant('CALLER')
+    const tenant = await seedTenant('T')
+    await expect(
+      asUser(caller, 'GERANT', async () =>
+        impersonate(tenant.exploitantId, async () => db.user.findMany()),
+      ),
+    ).rejects.toThrow(/ADMIN_CALPAX/)
   })
 })
