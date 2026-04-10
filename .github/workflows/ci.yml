@@ -1,0 +1,152 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-flight runs for the same branch when a new push arrives
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PNPM_VERSION: '10'
+  NODE_VERSION: '22'
+
+jobs:
+  # -------------------------------------------------------------------------
+  # Job 1: Lint + Type-check + Unit tests
+  # Fast — no database required.
+  # -------------------------------------------------------------------------
+  lint-type-unit:
+    name: Lint / Typecheck / Unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+        env:
+          DATABASE_URL: postgresql://fake:fake@127.0.0.1:5432/fake
+          ENCRYPTION_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+  # -------------------------------------------------------------------------
+  # Job 2: Integration tests
+  # Spins up a local Supabase instance, applies migrations, and runs Vitest
+  # integration tests against it.
+  # -------------------------------------------------------------------------
+  integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase local stack
+        run: supabase start
+
+      - name: Apply Prisma migrations
+        run: pnpm exec prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+
+      - name: Integration tests
+        run: pnpm test:integration
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+          ENCRYPTION_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+  # -------------------------------------------------------------------------
+  # Job 3: Next.js build verification
+  # Confirms the app builds cleanly with dummy env vars.
+  # -------------------------------------------------------------------------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+        env:
+          DATABASE_URL: postgresql://fake:fake@127.0.0.1:5432/fake
+
+      - name: Build Next.js app
+        run: pnpm build
+        env:
+          DATABASE_URL: postgresql://fake:fake@127.0.0.1:5432/fake
+          AUTH_SECRET: build-time-secret-not-real
+          AUTH_URL: http://localhost:3000
+          ENCRYPTION_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          SENTRY_DSN: ''
+          SENTRY_AUTH_TOKEN: ''
+
+  # -------------------------------------------------------------------------
+  # Job 4: E2E tests against staging (placeholder)
+  # Only runs on push to main after the other jobs complete.
+  # Will be fleshed out when staging is provisioned (Task 29).
+  # -------------------------------------------------------------------------
+  e2e-staging:
+    name: E2E (staging)
+    runs-on: ubuntu-latest
+    needs: [lint-type-unit, integration, build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Placeholder - staging not yet provisioned
+        run: |
+          echo "Staging E2E will run here once E2E_BASE_URL is set (Task 29)."
+          echo "Add E2E_BASE_URL and AUTH_SECRET to GitHub Actions secrets,"
+          echo "then replace this step with: pnpm test:e2e"
