@@ -1,19 +1,7 @@
-import type { Metadata } from "next";
-import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "Calpax",
-  description: "Gestion et planification de vols en montgolfière commerciaux",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="fr">
-      <body>{children}</body>
-    </html>
-  );
+/**
+ * Root layout: minimal shell with no html/body.
+ * The [locale] layout handles html, body, and NextIntlClientProvider.
+ */
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return children
 }
