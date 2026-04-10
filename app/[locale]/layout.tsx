@@ -20,11 +20,5 @@ export default async function LocaleLayout({ children, params }: Props) {
   // Fetch messages for the current locale (server-side only)
   const messages = await getMessages()
 
-  return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
-      </body>
-    </html>
-  )
+  return <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
 }

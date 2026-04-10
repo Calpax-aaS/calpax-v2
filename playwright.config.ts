@@ -1,4 +1,9 @@
 import { defineConfig, devices } from '@playwright/test'
+import { config } from 'dotenv'
+
+// Load .env so that AUTH_SECRET and DATABASE_URL are available to the test
+// process without having to pass them manually on the command line.
+config({ path: '.env' })
 
 const PORT = Number(process.env.PORT ?? 3000)
 const BASE_URL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`
@@ -25,8 +30,9 @@ export default defineConfig({
     ? undefined
     : {
         command: 'pnpm dev',
-        url: BASE_URL,
+        // Use the sign-in page (public, no auth required) as the health check URL
+        url: `${BASE_URL}/fr/auth/signin`,
         reuseExistingServer: !process.env.CI,
-        timeout: 60_000,
+        timeout: 120_000,
       },
 })
