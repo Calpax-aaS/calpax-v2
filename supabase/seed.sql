@@ -1,0 +1,2 @@
+-- Seed data for local development
+-- Populated by prisma/seed.ts via `pnpm db:seed`
