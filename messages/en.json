@@ -1,0 +1,21 @@
+{
+  "home": {
+    "signedInAs": "Signed in as {name} — Operator {exploitant}",
+    "signOut": "Sign out"
+  },
+  "signin": {
+    "title": "Sign in to Calpax",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "submit": "Email me a sign-in link",
+    "verifySent": "Check your inbox. A sign-in link has been sent.",
+    "verifyTitle": "Link sent"
+  },
+  "admin": {
+    "title": "Calpax — Administration",
+    "unauthorized": "Access restricted"
+  },
+  "errors": {
+    "unauthorized": "You must be signed in to access this page."
+  }
+}

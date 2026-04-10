@@ -1,0 +1,21 @@
+{
+  "home": {
+    "signedInAs": "Connecté en tant que {name} — Exploitant {exploitant}",
+    "signOut": "Se déconnecter"
+  },
+  "signin": {
+    "title": "Connexion à Calpax",
+    "emailLabel": "Adresse email",
+    "emailPlaceholder": "vous@exemple.com",
+    "submit": "Recevoir un lien de connexion",
+    "verifySent": "Vérifiez votre boîte email. Un lien de connexion vous a été envoyé.",
+    "verifyTitle": "Lien envoyé"
+  },
+  "admin": {
+    "title": "Calpax — Administration",
+    "unauthorized": "Accès réservé"
+  },
+  "errors": {
+    "unauthorized": "Vous devez être connecté pour accéder à cette page."
+  }
+}
