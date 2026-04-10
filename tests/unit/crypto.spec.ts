@@ -41,7 +41,8 @@ describe('lib/crypto', () => {
     const { encrypt, decrypt } = await import('@/lib/crypto')
     const ct = encrypt('hello')
     const buf = Buffer.from(ct, 'base64')
-    buf[buf.length - 1] ^= 0xff
+     
+    buf[buf.length - 1]! ^= 0xff
     expect(() => decrypt(buf.toString('base64'))).toThrow()
   })
 
