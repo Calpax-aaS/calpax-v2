@@ -10,6 +10,7 @@ export const TENANT_FILTER: Record<string, string> = {
   Billet: 'exploitantId',
   Passager: 'exploitantId',
   Paiement: 'exploitantId',
+  Vol: 'exploitantId',
 }
 
 export const UNTENANTED = new Set<string>([
