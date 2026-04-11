@@ -120,16 +120,29 @@
       "poids": "Poids (kg)",
       "licenceBfcl": "Numéro de licence BFCL",
       "qualificationCommerciale": "Qualification vol commercial",
+      "qualificationNuit": "Qualification vol de nuit",
+      "qualificationInstructeur": "Qualification instructeur",
+      "qualificationCaptif": "Qualification ballon captif",
       "dateExpirationLicence": "Date d'expiration de la licence",
-      "classesBallon": "Classes de ballon",
+      "classesBfcl": "Classes BFCL.200",
+      "groupesA": "Groupes classe A",
       "heuresDeVol": "Heures de vol",
       "poidsNote": "Données chiffrées — accès restreint"
+    },
+    "sections": {
+      "classesBfcl": "Classes & Groupes BFCL"
     },
     "classes": {
       "A": "Classe A",
       "B": "Classe B",
       "C": "Classe C",
       "D": "Classe D"
+    },
+    "groupes": {
+      "A1": "Groupe A1 (≤ 3 400 m³)",
+      "A2": "Groupe A2 (3 401–6 000 m³)",
+      "A3": "Groupe A3 (6 001–10 500 m³)",
+      "A4": "Groupe A4 (> 10 500 m³)"
     }
   }
 }

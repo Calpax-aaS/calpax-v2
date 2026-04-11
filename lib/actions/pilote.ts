@@ -15,10 +15,23 @@ function extractPiloteData(formData: FormData) {
     telephone: formData.get('telephone') || undefined,
     poids: formData.get('poids') || undefined,
     licenceBfcl: formData.get('licenceBfcl'),
-    qualificationCommerciale: formData.get('qualificationCommerciale') === 'true',
     dateExpirationLicence: formData.get('dateExpirationLicence'),
-    classesBallon: formData.getAll('classesBallon').map(String),
     heuresDeVol: formData.get('heuresDeVol') || undefined,
+    // BFCL.200 classes — checkbox fields send 'on' when checked, absent when unchecked
+    classeA: formData.get('classeA'),
+    classeB: formData.get('classeB'),
+    classeC: formData.get('classeC'),
+    classeD: formData.get('classeD'),
+    // BFCL.200 groupes (classe A)
+    groupeA1: formData.get('groupeA1'),
+    groupeA2: formData.get('groupeA2'),
+    groupeA3: formData.get('groupeA3'),
+    groupeA4: formData.get('groupeA4'),
+    // Qualifications
+    qualificationCommerciale: formData.get('qualificationCommerciale'),
+    qualificationNuit: formData.get('qualificationNuit'),
+    qualificationInstructeur: formData.get('qualificationInstructeur'),
+    qualificationCaptif: formData.get('qualificationCaptif'),
   }
 }
 

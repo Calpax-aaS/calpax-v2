@@ -53,17 +53,21 @@ const validPilote = {
   actif: true,
   dateExpirationLicence: daysFromToday(60),
   qualificationCommerciale: true,
-  classesBallon: ['A', 'B'],
+  classeA: true,
+  groupeA1: true,
+  groupeA2: true,
+  groupeA3: false,
+  groupeA4: false,
 }
 
 describe('isPiloteAssignable', () => {
-  it('returns valid when all conditions are met (no class required)', () => {
+  it('returns valid when all conditions are met (no group required)', () => {
     const result = isPiloteAssignable(validPilote, undefined, TODAY)
     expect(result.valid).toBe(true)
   })
 
-  it('returns valid when required balloon class is in pilote classes', () => {
-    const result = isPiloteAssignable(validPilote, 'A', TODAY)
+  it('returns valid when required balloon group is held by pilote', () => {
+    const result = isPiloteAssignable(validPilote, 1, TODAY)
     expect(result.valid).toBe(true)
   })
 
@@ -103,16 +107,29 @@ describe('isPiloteAssignable', () => {
     if (!result.valid) expect(result.reason).toMatch(/qualification/i)
   })
 
-  it('returns invalid when required class is not in pilote classes', () => {
-    const result = isPiloteAssignable(validPilote, 'C', TODAY)
+  it('returns invalid when classeA is false', () => {
+    const result = isPiloteAssignable({ ...validPilote, classeA: false }, undefined, TODAY)
     expect(result.valid).toBe(false)
     if (!result.valid) expect(result.reason).toMatch(/classe/i)
   })
 
-  it('returns invalid when classesBallon is empty and class is required', () => {
-    const result = isPiloteAssignable({ ...validPilote, classesBallon: [] }, 'A', TODAY)
+  it('returns invalid when required group is not held by pilote', () => {
+    const result = isPiloteAssignable(validPilote, 3, TODAY)
     expect(result.valid).toBe(false)
-    if (!result.valid) expect(result.reason).toMatch(/classe/i)
+    if (!result.valid) expect(result.reason).toMatch(/groupe/i)
+  })
+
+  it('returns invalid when pilote has no group qualifications and group is required', () => {
+    const piloteNoGroups = {
+      ...validPilote,
+      groupeA1: false,
+      groupeA2: false,
+      groupeA3: false,
+      groupeA4: false,
+    }
+    const result = isPiloteAssignable(piloteNoGroups, 1, TODAY)
+    expect(result.valid).toBe(false)
+    if (!result.valid) expect(result.reason).toMatch(/groupe/i)
   })
 
   it('returns valid when licence expires tomorrow', () => {
@@ -130,9 +147,13 @@ describe('isPiloteAssignable', () => {
         actif: false,
         dateExpirationLicence: daysFromToday(-10),
         qualificationCommerciale: false,
-        classesBallon: [],
+        classeA: false,
+        groupeA1: false,
+        groupeA2: false,
+        groupeA3: false,
+        groupeA4: false,
       },
-      'Z',
+      4,
       TODAY,
     )
     expect(result.valid).toBe(false)

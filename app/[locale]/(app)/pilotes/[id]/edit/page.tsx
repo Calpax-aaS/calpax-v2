@@ -16,8 +16,6 @@ type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-const BALLOON_CLASSES = ['A', 'B', 'C', 'D']
-
 export default async function PiloteEditPage({ params }: Props) {
   const { locale, id } = await params
   return requireAuth(async () => {
@@ -128,13 +126,44 @@ export default async function PiloteEditPage({ params }: Props) {
                   id="qualificationCommerciale"
                   name="qualificationCommerciale"
                   type="checkbox"
-                  value="true"
                   defaultChecked={pilote.qualificationCommerciale}
                   className="h-4 w-4 rounded border-input"
                 />
                 <Label htmlFor="qualificationCommerciale">
                   {t('fields.qualificationCommerciale')}
                 </Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  id="qualificationNuit"
+                  name="qualificationNuit"
+                  type="checkbox"
+                  defaultChecked={pilote.qualificationNuit}
+                  className="h-4 w-4 rounded border-input"
+                />
+                <Label htmlFor="qualificationNuit">{t('fields.qualificationNuit')}</Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  id="qualificationInstructeur"
+                  name="qualificationInstructeur"
+                  type="checkbox"
+                  defaultChecked={pilote.qualificationInstructeur}
+                  className="h-4 w-4 rounded border-input"
+                />
+                <Label htmlFor="qualificationInstructeur">
+                  {t('fields.qualificationInstructeur')}
+                </Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  id="qualificationCaptif"
+                  name="qualificationCaptif"
+                  type="checkbox"
+                  defaultChecked={pilote.qualificationCaptif}
+                  className="h-4 w-4 rounded border-input"
+                />
+                <Label htmlFor="qualificationCaptif">{t('fields.qualificationCaptif')}</Label>
               </div>
             </CardContent>
           </Card>
@@ -143,23 +172,39 @@ export default async function PiloteEditPage({ params }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Qualifications</CardTitle>
+              <CardTitle className="text-base">{t('sections.classesBfcl')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>{t('fields.classesBallon')} *</Label>
+                <Label>{t('fields.classesBfcl')}</Label>
                 <div className="flex gap-4">
-                  {BALLOON_CLASSES.map((cls) => (
+                  {(['A', 'B', 'C', 'D'] as const).map((cls) => (
                     <div key={cls} className="flex items-center gap-2">
                       <input
-                        id={`class_${cls}`}
-                        name="classesBallon"
+                        id={`classe${cls}`}
+                        name={`classe${cls}`}
                         type="checkbox"
-                        value={cls}
-                        defaultChecked={pilote.classesBallon.includes(cls)}
+                        defaultChecked={pilote[`classe${cls}` as 'classeA']}
                         className="h-4 w-4 rounded border-input"
                       />
-                      <Label htmlFor={`class_${cls}`}>{t(`classes.${cls}` as `classes.A`)}</Label>
+                      <Label htmlFor={`classe${cls}`}>{t(`classes.${cls}`)}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>{t('fields.groupesA')}</Label>
+                <div className="flex gap-4">
+                  {([1, 2, 3, 4] as const).map((g) => (
+                    <div key={g} className="flex items-center gap-2">
+                      <input
+                        id={`groupeA${g}`}
+                        name={`groupeA${g}`}
+                        type="checkbox"
+                        defaultChecked={pilote[`groupeA${g}` as 'groupeA1']}
+                        className="h-4 w-4 rounded border-input"
+                      />
+                      <Label htmlFor={`groupeA${g}`}>{t(`groupes.A${g}`)}</Label>
                     </div>
                   ))}
                 </div>

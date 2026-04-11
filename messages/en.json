@@ -120,16 +120,29 @@
       "poids": "Weight (kg)",
       "licenceBfcl": "BFCL licence number",
       "qualificationCommerciale": "Commercial flight qualification",
+      "qualificationNuit": "Night flight qualification",
+      "qualificationInstructeur": "Instructor qualification",
+      "qualificationCaptif": "Captive balloon qualification",
       "dateExpirationLicence": "Licence expiry date",
-      "classesBallon": "Balloon classes",
+      "classesBfcl": "BFCL.200 classes",
+      "groupesA": "Class A groups",
       "heuresDeVol": "Flight hours",
       "poidsNote": "Encrypted data — restricted access"
+    },
+    "sections": {
+      "classesBfcl": "BFCL Classes & Groups"
     },
     "classes": {
       "A": "Class A",
       "B": "Class B",
       "C": "Class C",
       "D": "Class D"
+    },
+    "groupes": {
+      "A1": "Group A1 (≤ 3,400 m³)",
+      "A2": "Group A2 (3,401–6,000 m³)",
+      "A3": "Group A3 (6,001–10,500 m³)",
+      "A4": "Group A4 (> 10,500 m³)"
     }
   }
 }

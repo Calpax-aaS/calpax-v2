@@ -12,7 +12,8 @@ async function seedPilote(exploitantId: string, licenceBfcl: string, nom: string
       licenceBfcl,
       qualificationCommerciale: true,
       dateExpirationLicence: new Date('2027-01-01'),
-      classesBallon: ['A'],
+      classeA: true,
+      groupeA1: true,
     },
   })
 }

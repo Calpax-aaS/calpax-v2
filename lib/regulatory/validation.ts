@@ -9,7 +9,11 @@ type PiloteAssignInput = {
   actif: boolean
   dateExpirationLicence: Date
   qualificationCommerciale: boolean
-  classesBallon: string[]
+  classeA: boolean
+  groupeA1?: boolean
+  groupeA2?: boolean
+  groupeA3?: boolean
+  groupeA4?: boolean
 }
 
 /**
@@ -47,6 +51,16 @@ export function isBallonFlightReady(
   return { valid: true }
 }
 
+function groupeField(groupe: number): keyof PiloteAssignInput {
+  const map: Record<number, keyof PiloteAssignInput> = {
+    1: 'groupeA1',
+    2: 'groupeA2',
+    3: 'groupeA3',
+    4: 'groupeA4',
+  }
+  return map[groupe] ?? 'groupeA1'
+}
+
 /**
  * Check whether a pilote can be assigned to a flight.
  *
@@ -54,11 +68,12 @@ export function isBallonFlightReady(
  * - pilote must be actif
  * - licence BFCL must not be expired (strictly after today)
  * - must hold qualification commerciale
- * - if a balloon class is required, pilote must hold it
+ * - must hold classe A (Calpax is hot-air balloon only)
+ * - if a balloon group (1–4) is required, pilote must hold the corresponding groupeA{N} boolean
  */
 export function isPiloteAssignable(
   pilote: PiloteAssignInput,
-  requiredBallonClass: string | undefined = undefined,
+  requiredGroupe?: number,
   today: Date = new Date(),
 ): ValidationResult {
   if (!pilote.actif) {
@@ -73,10 +88,17 @@ export function isPiloteAssignable(
     return { valid: false, reason: 'Qualification commerciale manquante' }
   }
 
-  if (requiredBallonClass !== undefined && !pilote.classesBallon.includes(requiredBallonClass)) {
-    return {
-      valid: false,
-      reason: `Pilote non qualifié pour la classe de ballon ${requiredBallonClass}`,
+  if (!pilote.classeA) {
+    return { valid: false, reason: 'Pilote non qualifié classe A' }
+  }
+
+  if (requiredGroupe !== undefined) {
+    const field = groupeField(requiredGroupe)
+    if (!pilote[field]) {
+      return {
+        valid: false,
+        reason: `Pilote non qualifié pour le groupe A${requiredGroupe}`,
+      }
     }
   }
 

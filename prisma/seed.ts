@@ -452,7 +452,10 @@ async function main() {
       email: 'olivier.cuenot@cameronfrance.com',
       licenceBfcl: 'BFCL-CBF-001',
       qualificationCommerciale: true,
-      classesBallon: ['A'],
+      classeA: true,
+      groupeA1: true,
+      groupeA2: true,
+      groupeA3: true, // flies F-HACK 6400m3 (groupe 3: 6001–10500 m3)
       heuresDeVol: 2500,
       dateExpirationLicence: new Date('2027-03-15'), // far
     },
@@ -464,7 +467,9 @@ async function main() {
       email: null,
       licenceBfcl: 'BFCL-CBF-002',
       qualificationCommerciale: true,
-      classesBallon: ['A'],
+      classeA: true,
+      groupeA1: true,
+      groupeA2: true,
       heuresDeVol: 800,
       dateExpirationLicence: new Date('2026-05-15'), // WARNING ~34 days
     },
@@ -476,7 +481,8 @@ async function main() {
       email: null,
       licenceBfcl: 'BFCL-CBF-003',
       qualificationCommerciale: true,
-      classesBallon: ['A'],
+      classeA: true,
+      groupeA1: true,
       heuresDeVol: 400,
       dateExpirationLicence: new Date('2026-04-25'), // CRITICAL ~14 days
     },
@@ -488,7 +494,10 @@ async function main() {
       email: null,
       licenceBfcl: 'BFCL-CBF-004',
       qualificationCommerciale: true,
-      classesBallon: ['A', 'B'],
+      classeA: true,
+      classeB: true,
+      groupeA1: true,
+      groupeA2: true,
       heuresDeVol: 1200,
       dateExpirationLicence: new Date('2027-09-01'), // far
     },

@@ -22,7 +22,8 @@ describe('pilote poids encryption', () => {
         licenceBfcl: 'BFCL-CRYPTO-001',
         qualificationCommerciale: true,
         dateExpirationLicence: new Date('2027-06-01'),
-        classesBallon: ['A'],
+        classeA: true,
+        groupeA1: true,
         poidsEncrypted,
       },
     })
