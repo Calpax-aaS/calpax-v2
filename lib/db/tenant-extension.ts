@@ -5,6 +5,8 @@ export const TENANT_FILTER: Record<string, string> = {
   Exploitant: 'id',
   User: 'exploitantId',
   AuditLog: 'exploitantId',
+  Ballon: 'exploitantId',
+  Pilote: 'exploitantId',
 }
 
 export const UNTENANTED = new Set<string>(['Account', 'Session', 'VerificationToken'])
