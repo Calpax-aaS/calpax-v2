@@ -86,7 +86,7 @@
       "camoOrganisme": "Organisme CAMO",
       "camoExpiryDate": "Date expiration CAMO",
       "certificatNavigabilite": "Certificat de navigabilité",
-      "performanceChart": "Abaque de performances (durée de vol en heures par température)"
+      "performanceChart": "Devis de chargement — charge utile maximale (kg) par temperature"
     }
   },
   "pilotes": {

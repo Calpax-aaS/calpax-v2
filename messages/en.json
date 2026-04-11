@@ -86,7 +86,7 @@
       "camoOrganisme": "CAMO organization",
       "camoExpiryDate": "CAMO expiry date",
       "certificatNavigabilite": "Certificate of airworthiness",
-      "performanceChart": "Performance chart (flight time in hours by temperature)"
+      "performanceChart": "Loading chart — max payload (kg) by temperature"
     }
   },
   "pilotes": {
