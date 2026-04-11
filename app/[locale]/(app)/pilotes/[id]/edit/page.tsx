@@ -26,7 +26,14 @@ export default async function PiloteEditPage({ params }: Props) {
     const pilote = await db.pilote.findUnique({ where: { id } })
     if (!pilote) notFound()
 
-    const poids = pilote.poidsEncrypted ? Number(decrypt(pilote.poidsEncrypted)) : null
+    let poids: number | null = null
+    if (pilote.poidsEncrypted) {
+      try {
+        poids = Number(decrypt(pilote.poidsEncrypted))
+      } catch {
+        poids = null
+      }
+    }
 
     async function handleUpdate(formData: FormData) {
       'use server'

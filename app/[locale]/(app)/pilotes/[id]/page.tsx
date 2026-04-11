@@ -23,7 +23,15 @@ export default async function PiloteDetailPage({ params }: Props) {
     const pilote = await db.pilote.findUnique({ where: { id } })
     if (!pilote) notFound()
 
-    const poids = pilote.poidsEncrypted ? Number(decrypt(pilote.poidsEncrypted)) : null
+    let poids: number | null = null
+    if (pilote.poidsEncrypted) {
+      try {
+        poids = Number(decrypt(pilote.poidsEncrypted))
+      } catch {
+        // Encrypted with a different key (e.g., seed ran with local key, prod has different key)
+        poids = null
+      }
+    }
 
     return (
       <main className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
