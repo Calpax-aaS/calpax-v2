@@ -13,3 +13,16 @@ export const volCreateSchema = z.object({
 })
 
 export type VolCreateFormData = z.infer<typeof volCreateSchema>
+
+export const volPostFlightSchema = z.object({
+  decoLieu: z.string().min(1, 'Lieu de decollage requis'),
+  decoHeure: z.coerce.date(),
+  atterLieu: z.string().min(1, "Lieu d'atterrissage requis"),
+  atterHeure: z.coerce.date(),
+  gasConso: z.coerce.number().int().nonnegative().optional(),
+  distance: z.coerce.number().int().nonnegative().optional(),
+  anomalies: z.string().optional().or(z.literal('')),
+  noteDansCarnet: z.coerce.boolean().default(true),
+})
+
+export type VolPostFlightFormData = z.infer<typeof volPostFlightSchema>
