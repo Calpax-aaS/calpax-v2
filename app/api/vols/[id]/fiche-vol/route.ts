@@ -1,0 +1,80 @@
+import { NextResponse } from 'next/server'
+import { requireAuth } from '@/lib/auth/requireAuth'
+import { db } from '@/lib/db'
+import { decrypt } from '@/lib/crypto'
+import { generateFicheVolBuffer } from '@/lib/pdf/generate'
+
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  return requireAuth(async () => {
+    const { id } = await params
+
+    const vol = await db.vol.findUniqueOrThrow({
+      where: { id },
+      include: {
+        exploitant: { select: { name: true, frDecNumber: true, logoUrl: true } },
+        ballon: true,
+        pilote: true,
+        passagers: { include: { billet: { select: { reference: true } } } },
+      },
+    })
+
+    const pilotePoids = vol.pilote.poidsEncrypted
+      ? parseInt(decrypt(vol.pilote.poidsEncrypted))
+      : 80
+
+    const passagers = vol.passagers.map((p) => ({
+      prenom: p.prenom,
+      nom: p.nom,
+      age: p.age,
+      poids: p.poidsEncrypted ? parseInt(decrypt(p.poidsEncrypted)) : 0,
+      pmr: p.pmr,
+      billetReference: p.billet.reference,
+    }))
+
+    const buffer = await generateFicheVolBuffer({
+      exploitant: vol.exploitant,
+      vol: {
+        date: vol.date,
+        creneau: vol.creneau,
+        lieuDecollage: vol.lieuDecollage,
+        equipier: vol.equipier,
+        vehicule: vol.vehicule,
+        configGaz: vol.configGaz,
+        qteGaz: vol.qteGaz,
+        decoLieu: vol.decoLieu,
+        decoHeure: vol.decoHeure,
+        atterLieu: vol.atterLieu,
+        atterHeure: vol.atterHeure,
+        gasConso: vol.gasConso,
+        anomalies: vol.anomalies,
+      },
+      ballon: {
+        nom: vol.ballon.nom,
+        immatriculation: vol.ballon.immatriculation,
+        volumeM3: vol.ballon.volumeM3,
+        peseeAVide: vol.ballon.peseeAVide,
+        performanceChart: vol.ballon.performanceChart as Record<string, number>,
+        configGaz: vol.ballon.configGaz,
+      },
+      pilote: {
+        prenom: vol.pilote.prenom,
+        nom: vol.pilote.nom,
+        licenceBfcl: vol.pilote.licenceBfcl,
+        poids: pilotePoids,
+      },
+      passagers,
+      temperatureCelsius: 20,
+      isPve: false,
+      archivedAt: null,
+    })
+
+    const filename = `fiche-vol-${vol.ballon.immatriculation}-${vol.date.toISOString().slice(0, 10)}.pdf`
+
+    return new NextResponse(buffer, {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+      },
+    })
+  })
+}
