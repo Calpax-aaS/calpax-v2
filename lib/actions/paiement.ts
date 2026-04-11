@@ -33,7 +33,7 @@ export async function addPaiement(
 
     const raw = {
       modePaiement: formData.get('modePaiement'),
-      montantTtc: formData.get('montantTtc'),
+      montantTtc: Math.round(Number(formData.get('montantTtc') ?? 0) * 100),
       datePaiement: formData.get('datePaiement'),
       dateEncaissement: formData.get('dateEncaissement') || undefined,
       commentaire: formData.get('commentaire') || undefined,
