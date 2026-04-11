@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { Home, Wind, User2, Settings } from 'lucide-react'
+import { Home, Wind, User2, Settings, Ticket, Shield } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -37,9 +37,19 @@ export function AppSidebar({ alertCount = 0 }: { alertCount?: number }) {
       icon: User2,
     },
     {
+      key: 'billets' as const,
+      href: `/${locale}/billets`,
+      icon: Ticket,
+    },
+    {
       key: 'settings' as const,
       href: `/${locale}/settings`,
       icon: Settings,
+    },
+    {
+      key: 'rgpd' as const,
+      href: `/${locale}/rgpd`,
+      icon: Shield,
     },
   ]
 
