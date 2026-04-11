@@ -39,7 +39,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         lieuDecollage: vol.lieuDecollage,
         equipier: vol.equipier,
         vehicule: vol.vehicule,
-        configGaz: vol.configGaz,
+        configGaz: vol.configGaz ?? vol.ballon.configGaz,
         qteGaz: vol.qteGaz,
         decoLieu: vol.decoLieu,
         decoHeure: vol.decoHeure,
@@ -70,7 +70,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
     const filename = `fiche-vol-${vol.ballon.immatriculation}-${vol.date.toISOString().slice(0, 10)}.pdf`
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,

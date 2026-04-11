@@ -57,9 +57,12 @@ export function VolActions({ volId, locale, statut }: Props) {
         </a>
       )}
       {statut === 'CONFIRME' && (
-        <Button size="sm" variant="outline" asChild>
-          <Link href={`/${locale}/vols/${volId}/post-vol`}>{t('postVolLink')}</Link>
-        </Button>
+        <Link
+          href={`/${locale}/vols/${volId}/post-vol`}
+          className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+        >
+          {t('postVolLink')}
+        </Link>
       )}
       {statut === 'PLANIFIE' && (
         <Button size="sm" onClick={handleConfirmer}>

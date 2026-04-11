@@ -9,7 +9,7 @@ import { calculerDevisMasse } from '@/lib/vol/devis-masse'
 export type FicheVolPassager = {
   prenom: string
   nom: string
-  age: number
+  age: number | null
   poids: number
   pmr: boolean
   billetReference: string
@@ -27,7 +27,7 @@ export type FicheVolData = {
     lieuDecollage: string | null
     equipier: string | null
     vehicule: string | null
-    configGaz: string
+    configGaz: string | null
     qteGaz: number | null
     decoLieu: string | null
     decoHeure: Date | null
@@ -353,7 +353,7 @@ function Page1({ data }: { data: FicheVolData }) {
 
       {/* Passagers */}
       <View style={styles.section}>
-        <SectionTitle>PASSAGERS ({passagers.length})</SectionTitle>
+        <SectionTitle>{`PASSAGERS (${passagers.length})`}</SectionTitle>
         {passagers.length === 0 ? (
           <Text style={{ color: '#888', fontSize: 8 }}>Aucun passager enregistre</Text>
         ) : (
@@ -385,7 +385,7 @@ function Page1({ data }: { data: FicheVolData }) {
 
       {/* Devis de masse */}
       <View style={styles.section}>
-        <SectionTitle>DEVIS DE MASSE — Temp. ref. {devis.temperatureUtilisee}°C</SectionTitle>
+        <SectionTitle>{`DEVIS DE MASSE — Temp. ref. ${devis.temperatureUtilisee}\u00B0C`}</SectionTitle>
         <View style={styles.devisTable}>
           <View style={styles.devisRow}>
             <Text style={styles.devisLabel}>Pesee a vide ballon</Text>
