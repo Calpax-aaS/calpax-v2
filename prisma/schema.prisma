@@ -11,11 +11,73 @@ model Exploitant {
   id          String   @id @default(cuid())
   name        String
   frDecNumber String   @unique
+  siret       String?
+  numCamo     String?
+  adresse     String?
+  codePostal  String?
+  ville       String?
+  pays        String   @default("France")
+  telephone   String?
+  email       String?
+  website     String?
+  contactName String?
+  logoUrl     String?
   users       User[]
+  ballons     Ballon[]
+  pilotes     Pilote[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("exploitant")
+}
+
+model Ballon {
+  id                     String     @id @default(cuid())
+  exploitantId           String
+  exploitant             Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  nom                    String
+  immatriculation        String
+  volume                 String
+  nbPassagerMax          Int
+  peseeAVide             Int
+  configGaz              String
+  manexAnnexRef          String
+  mtom                   Int?
+  mlm                    Int?
+  performanceChart       Json
+  camoOrganisme          String?
+  camoExpiryDate         DateTime?
+  certificatNavigabilite String?
+  actif                  Boolean    @default(true)
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+
+  @@unique([exploitantId, immatriculation])
+  @@index([exploitantId])
+  @@map("ballon")
+}
+
+model Pilote {
+  id                       String     @id @default(cuid())
+  exploitantId             String
+  exploitant               Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  userId                   String?    @unique
+  prenom                   String
+  nom                      String
+  email                    String?
+  telephone                String?
+  poidsEncrypted           String?
+  licenceBfcl              String
+  qualificationCommerciale Boolean    @default(false)
+  dateExpirationLicence    DateTime
+  classesBallon            String[]
+  heuresDeVol              Int?
+  actif                    Boolean    @default(true)
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
+
+  @@index([exploitantId])
+  @@map("pilote")
 }
 
 enum UserRole {
