@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+
       - name: Lint
         run: pnpm lint
 
@@ -82,8 +85,8 @@ jobs:
       - name: Start Supabase local stack
         run: supabase start
 
-      - name: Apply Prisma migrations
-        run: pnpm exec prisma migrate deploy
+      - name: Generate Prisma client + apply migrations
+        run: pnpm exec prisma generate && pnpm exec prisma migrate deploy
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
 
