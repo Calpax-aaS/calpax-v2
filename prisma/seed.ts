@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { basePrisma as prisma } from '../lib/db/base'
 
 async function main() {
-  const adminEmail = process.env.ADMIN_EMAIL ?? 'damien@calpax.fr'
+  const adminEmail = process.env.ADMIN_EMAIL ?? 'dcuenot@calpax.fr'
   const ownerEmail = process.env.SEED_EXPLOITANT_OWNER_EMAIL ?? 'olivier@cameronfrance.com'
 
   const calpaxSas = await prisma.exploitant.upsert({
