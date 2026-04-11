@@ -25,6 +25,9 @@ model Exploitant {
   users       User[]
   ballons     Ballon[]
   pilotes     Pilote[]
+  billets     Billet[]
+  passagers   Passager[]
+  paiements   Paiement[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -174,6 +177,40 @@ enum AuditAction {
   DELETE
 }
 
+enum TypePlannif {
+  MATIN
+  SOIR
+  TOUTE_LA_JOURNEE
+  AU_PLUS_VITE
+  AUTRE
+  INDETERMINE
+}
+
+enum StatutBillet {
+  EN_ATTENTE
+  PLANIFIE
+  VOLE
+  ANNULE
+  REMBOURSE
+  EXPIRE
+}
+
+enum StatutPaiement {
+  EN_ATTENTE
+  PARTIEL
+  SOLDE
+  REMBOURSE
+}
+
+enum ModePaiement {
+  ESPECES
+  CHEQUE
+  CB
+  VIREMENT
+  CHEQUE_VACANCES
+  AVOIR
+}
+
 model AuditLog {
   id             BigInt      @id @default(autoincrement())
   exploitantId   String?
@@ -191,4 +228,104 @@ model AuditLog {
   @@index([impersonatedBy])
   @@index([createdAt])
   @@map("audit_log")
+}
+
+model BilletSequence {
+  exploitantId String
+  year         Int
+  lastSeq      Int    @default(0)
+
+  @@id([exploitantId, year])
+  @@map("billet_sequence")
+}
+
+model Billet {
+  id              String         @id @default(cuid())
+  exploitantId    String
+  exploitant      Exploitant     @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+
+  reference       String
+  checksum        String
+
+  typePlannif     TypePlannif    @default(INDETERMINE)
+  dateVolDeb      DateTime?
+  dateVolFin      DateTime?
+  dateValidite    DateTime?
+
+  payeurCiv       String?
+  payeurPrenom    String
+  payeurNom       String
+  payeurEmail     String?
+  payeurTelephone String?
+  payeurAdresse   String?
+  payeurCp        String?
+  payeurVille     String?
+
+  statut          StatutBillet   @default(EN_ATTENTE)
+  statutPaiement  StatutPaiement @default(EN_ATTENTE)
+  montantTtc      Int
+  enAttente       Boolean        @default(false)
+
+  categorie       String?
+  provenance      String?
+  lieuDecollage   String?
+  survol          String?
+  commentaire     String?
+  dateRappel      DateTime?
+
+  passagers       Passager[]
+  paiements       Paiement[]
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([exploitantId, reference])
+  @@index([exploitantId])
+  @@index([exploitantId, statut])
+  @@index([exploitantId, dateRappel])
+  @@map("billet")
+}
+
+model Passager {
+  id              String     @id @default(cuid())
+  exploitantId    String
+  exploitant      Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  billetId        String
+  billet          Billet     @relation(fields: [billetId], references: [id], onDelete: Cascade)
+
+  prenom          String
+  nom             String
+  email           String?
+  telephone       String?
+  age             Int?
+  poidsEncrypted  String?
+  pmr             Boolean    @default(false)
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([exploitantId])
+  @@index([billetId])
+  @@map("passager")
+}
+
+model Paiement {
+  id               String       @id @default(cuid())
+  exploitantId     String
+  exploitant       Exploitant   @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  billetId         String
+  billet           Billet       @relation(fields: [billetId], references: [id], onDelete: Cascade)
+
+  modePaiement     ModePaiement
+  montantTtc       Int
+  datePaiement     DateTime
+  dateEncaissement DateTime?
+  commentaire      String?
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([exploitantId])
+  @@index([billetId])
+  @@map("paiement")
 }
