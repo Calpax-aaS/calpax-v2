@@ -1,7 +1,9 @@
+import { Pool } from 'pg'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 declare global {
+   
   var __prismaBase: PrismaClient | undefined
 }
 
@@ -12,12 +14,11 @@ function createClient(): PrismaClient {
   }
   const isRemote =
     !connectionString.includes('127.0.0.1') && !connectionString.includes('localhost')
-  const adapter = new PrismaPg({
+  const pool = new Pool({
     connectionString,
-    pool: {
-      ssl: isRemote ? { rejectUnauthorized: false } : false,
-    },
+    ssl: isRemote ? { rejectUnauthorized: false } : false,
   })
+  const adapter = new PrismaPg(pool)
   return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
