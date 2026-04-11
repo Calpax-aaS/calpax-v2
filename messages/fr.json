@@ -24,6 +24,7 @@
     "pilotes": "Pilotes",
     "settings": "Paramètres",
     "billets": "Billets",
+    "vols": "Vols",
     "rgpd": "RGPD"
   },
   "settings": {
@@ -208,6 +209,66 @@
       "PARTIEL": "Partiel",
       "SOLDE": "Solde",
       "REMBOURSE": "Rembourse"
+    }
+  },
+  "vols": {
+    "title": "Planning des vols",
+    "new": "Nouveau vol",
+    "backToList": "Retour au planning",
+    "detail": "Detail du vol",
+    "cancel": "Annuler le vol",
+    "confirmCancel": "Annuler ce vol ? Les passagers seront desaffectes.",
+    "organiser": "Organiser",
+    "confirmer": "Confirmer le vol",
+    "noVols": "Aucun vol sur cette semaine",
+    "week": "Semaine",
+    "today": "Aujourd'hui",
+    "fields": {
+      "date": "Date",
+      "creneau": "Creneau",
+      "ballon": "Ballon",
+      "pilote": "Pilote",
+      "equipier": "Equipier",
+      "vehicule": "Vehicule",
+      "lieuDecollage": "Lieu de decollage",
+      "configGaz": "Configuration gaz",
+      "qteGaz": "Quantite gaz (kg)",
+      "statut": "Statut"
+    },
+    "creneau": {
+      "MATIN": "Matin",
+      "SOIR": "Soir"
+    },
+    "statut": {
+      "PLANIFIE": "Planifie",
+      "CONFIRME": "Confirme",
+      "TERMINE": "Termine",
+      "ARCHIVE": "Archive",
+      "ANNULE": "Annule"
+    },
+    "devis": {
+      "title": "Devis de masse",
+      "temperature": "Temperature (C)",
+      "poidsAVide": "Pesee a vide",
+      "poidsGaz": "Gaz embarque",
+      "poidsPilote": "Pilote",
+      "poidsPassagers": "Passagers",
+      "poidsEquipement": "Equipement",
+      "poidsTotal": "Poids total",
+      "chargeUtileMax": "Charge utile max",
+      "margeRestante": "Marge restante",
+      "conforme": "CONFORME",
+      "surcharge": "SURCHARGE"
+    },
+    "organisation": {
+      "title": "Organisation du vol",
+      "billetsDisponibles": "Billets disponibles",
+      "noBillets": "Aucun billet compatible",
+      "affecter": "Affecter",
+      "desaffecter": "Retirer",
+      "passagersAffectes": "Passagers affectes",
+      "noPassagers": "Aucun passager affecte",
+      "capacite": "Capacite"
     }
   },
   "passagers": {

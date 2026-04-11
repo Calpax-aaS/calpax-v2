@@ -24,6 +24,7 @@
     "pilotes": "Pilots",
     "settings": "Settings",
     "billets": "Tickets",
+    "vols": "Flights",
     "rgpd": "GDPR"
   },
   "settings": {
@@ -208,6 +209,66 @@
       "PARTIEL": "Partial",
       "SOLDE": "Paid",
       "REMBOURSE": "Refunded"
+    }
+  },
+  "vols": {
+    "title": "Flight planning",
+    "new": "New flight",
+    "backToList": "Back to planning",
+    "detail": "Flight detail",
+    "cancel": "Cancel flight",
+    "confirmCancel": "Cancel this flight? Passengers will be unassigned.",
+    "organiser": "Organise",
+    "confirmer": "Confirm flight",
+    "noVols": "No flights this week",
+    "week": "Week",
+    "today": "Today",
+    "fields": {
+      "date": "Date",
+      "creneau": "Slot",
+      "ballon": "Balloon",
+      "pilote": "Pilot",
+      "equipier": "Crew",
+      "vehicule": "Vehicle",
+      "lieuDecollage": "Takeoff location",
+      "configGaz": "Gas config",
+      "qteGaz": "Gas quantity (kg)",
+      "statut": "Status"
+    },
+    "creneau": {
+      "MATIN": "Morning",
+      "SOIR": "Evening"
+    },
+    "statut": {
+      "PLANIFIE": "Planned",
+      "CONFIRME": "Confirmed",
+      "TERMINE": "Completed",
+      "ARCHIVE": "Archived",
+      "ANNULE": "Cancelled"
+    },
+    "devis": {
+      "title": "Load sheet",
+      "temperature": "Temperature (C)",
+      "poidsAVide": "Empty weight",
+      "poidsGaz": "Gas loaded",
+      "poidsPilote": "Pilot",
+      "poidsPassagers": "Passengers",
+      "poidsEquipement": "Equipment",
+      "poidsTotal": "Total weight",
+      "chargeUtileMax": "Max payload",
+      "margeRestante": "Remaining margin",
+      "conforme": "COMPLIANT",
+      "surcharge": "OVERLOADED"
+    },
+    "organisation": {
+      "title": "Flight organisation",
+      "billetsDisponibles": "Available tickets",
+      "noBillets": "No matching tickets",
+      "affecter": "Assign",
+      "desaffecter": "Remove",
+      "passagersAffectes": "Assigned passengers",
+      "noPassagers": "No passengers assigned",
+      "capacite": "Capacity"
     }
   },
   "passagers": {
