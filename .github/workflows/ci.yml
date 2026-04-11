@@ -54,6 +54,12 @@ jobs:
           DATABASE_URL: postgresql://fake:fake@127.0.0.1:5432/fake
           ENCRYPTION_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
+      - name: Notify Vercel — lint
+        if: always()
+        uses: 'vercel/repository-dispatch/actions/status@v1'
+        with:
+          name: 'Vercel - calpax-v2: lint'
+
   # -------------------------------------------------------------------------
   # Job 2: Integration tests
   # Spins up a local Supabase instance, applies migrations, and runs Vitest
@@ -96,6 +102,12 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
           ENCRYPTION_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
+      - name: Notify Vercel — integration
+        if: always()
+        uses: 'vercel/repository-dispatch/actions/status@v1'
+        with:
+          name: 'Vercel - calpax-v2: integration'
+
   # -------------------------------------------------------------------------
   # Job 3: Next.js build verification
   # Confirms the app builds cleanly with dummy env vars.
@@ -134,10 +146,17 @@ jobs:
           SENTRY_DSN: ''
           SENTRY_AUTH_TOKEN: ''
 
+      - name: Notify Vercel — build
+        if: always()
+        uses: 'vercel/repository-dispatch/actions/status@v1'
+        with:
+          name: 'Vercel - calpax-v2: build'
+
   # -------------------------------------------------------------------------
   # Job 4: Migrate production database
   # Runs prisma migrate deploy against the production Supabase database.
   # Only on push to main after all checks pass.
+  # Vercel waits for this check before promoting to production.
   # -------------------------------------------------------------------------
   migrate-production:
     name: Migrate production DB
@@ -170,39 +189,8 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-  # -------------------------------------------------------------------------
-  # Job 5: Wait for Vercel deployment + health check
-  # Vercel auto-deploys on push via GitHub integration. This job waits for
-  # that deployment to reach "success", then pings the app to verify it's up.
-  # -------------------------------------------------------------------------
-  verify-deployment:
-    name: Verify Vercel deployment
-    runs-on: ubuntu-latest
-    needs: [migrate-production]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: Wait for Vercel deployment
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
-        id: vercel
+      - name: Notify Vercel — migrate
+        if: always()
+        uses: 'vercel/repository-dispatch/actions/status@v1'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 300
-          environment: Production
-
-      - name: Health check
-        env:
-          DEPLOY_URL: ${{ steps.vercel.outputs.url }}
-        run: |
-          echo "Vercel deployment URL: $DEPLOY_URL"
-          for i in 1 2 3 4 5; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL/fr" || true)
-            echo "Attempt $i: HTTP $STATUS"
-            if [ "$STATUS" = "200" ]; then
-              echo "Health check passed"
-              exit 0
-            fi
-            sleep 10
-          done
-          echo "Health check failed after 5 attempts"
-          exit 1
+          name: 'Vercel - calpax-v2: migrate'
