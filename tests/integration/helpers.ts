@@ -2,6 +2,10 @@ import { basePrisma } from '@/lib/db/base'
 import { runWithContext, type RequestContext, type UserRole } from '@/lib/context'
 
 export async function resetDb() {
+  await basePrisma.paiement.deleteMany({})
+  await basePrisma.passager.deleteMany({})
+  await basePrisma.billet.deleteMany({})
+  await basePrisma.billetSequence.deleteMany({})
   await basePrisma.auditLog.deleteMany({})
   await basePrisma.session.deleteMany({})
   await basePrisma.account.deleteMany({})

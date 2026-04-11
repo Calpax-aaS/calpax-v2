@@ -7,9 +7,17 @@ export const TENANT_FILTER: Record<string, string> = {
   AuditLog: 'exploitantId',
   Ballon: 'exploitantId',
   Pilote: 'exploitantId',
+  Billet: 'exploitantId',
+  Passager: 'exploitantId',
+  Paiement: 'exploitantId',
 }
 
-export const UNTENANTED = new Set<string>(['Account', 'Session', 'VerificationToken'])
+export const UNTENANTED = new Set<string>([
+  'Account',
+  'Session',
+  'VerificationToken',
+  'BilletSequence',
+])
 
 const COMPOSABLE_READ_OPS = new Set([
   'findFirst',
