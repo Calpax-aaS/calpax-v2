@@ -189,6 +189,12 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+      - name: Seed production database
+        run: pnpm exec tsx prisma/seed.ts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+
       - name: Notify Vercel — migrate
         if: always()
         uses: 'vercel/repository-dispatch/actions/status@v1'
