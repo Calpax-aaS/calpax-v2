@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "billet" ALTER COLUMN "montantTtc" SET DATA TYPE DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "paiement" ALTER COLUMN "montantTtc" SET DATA TYPE DOUBLE PRECISION;

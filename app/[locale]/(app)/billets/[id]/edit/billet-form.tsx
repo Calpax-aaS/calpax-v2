@@ -194,7 +194,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
               min="0"
               step="0.01"
               defaultValue={
-                defaultValues?.montantTtc != null ? (defaultValues.montantTtc / 100).toFixed(2) : ''
+                defaultValues?.montantTtc != null ? String(defaultValues.montantTtc) : ''
               }
               required
             />

@@ -46,7 +46,7 @@ function extractBilletData(formData: FormData) {
     payeurAdresse: formData.get('payeurAdresse') || undefined,
     payeurCp: formData.get('payeurCp') || undefined,
     payeurVille: formData.get('payeurVille') || undefined,
-    montantTtc: Math.round(Number(formData.get('montantTtc') ?? 0) * 100),
+    montantTtc: formData.get('montantTtc'),
     categorie: formData.get('categorie') || undefined,
     provenance: formData.get('provenance') || undefined,
     lieuDecollage: formData.get('lieuDecollage') || undefined,

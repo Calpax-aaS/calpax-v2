@@ -23,8 +23,8 @@ type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-function formatCentimes(centimes: number): string {
-  return (centimes / 100).toFixed(2) + ' EUR'
+function formatEuros(euros: number): string {
+  return euros.toFixed(2) + ' EUR'
 }
 
 function formatDate(date: Date | null | undefined): string {
@@ -172,7 +172,7 @@ export default async function BilletDetailPage({ params }: Props) {
             </div>
             <div>
               <p className="text-muted-foreground">{tBillets('fields.montantTtc')}</p>
-              <p className="font-medium">{formatCentimes(billet.montantTtc)}</p>
+              <p className="font-medium">{formatEuros(billet.montantTtc)}</p>
             </div>
             {billet.dateVolDeb && (
               <div>
@@ -287,7 +287,7 @@ export default async function BilletDetailPage({ params }: Props) {
                       <TableCell>{formatDate(paiement.datePaiement)}</TableCell>
                       <TableCell>{tPaiements(`modes.${paiement.modePaiement}`)}</TableCell>
                       <TableCell className="font-medium">
-                        {formatCentimes(paiement.montantTtc)}
+                        {formatEuros(paiement.montantTtc)}
                       </TableCell>
                       <TableCell className="text-muted-foreground">
                         {paiement.commentaire ?? '—'}
@@ -301,7 +301,7 @@ export default async function BilletDetailPage({ params }: Props) {
             <div className="flex items-center justify-between pt-2 border-t text-sm">
               <span className="text-muted-foreground">{tPaiements('solde')}</span>
               <span className={cn('font-semibold', soldeRestant > 0 ? 'text-destructive' : '')}>
-                {formatCentimes(soldeRestant)}
+                {formatEuros(soldeRestant)}
               </span>
             </div>
 

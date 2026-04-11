@@ -20,8 +20,8 @@ type Props = {
   params: Promise<{ locale: string }>
 }
 
-function formatCentimes(centimes: number): string {
-  return (centimes / 100).toFixed(2) + ' EUR'
+function formatEuros(euros: number): string {
+  return euros.toFixed(2) + ' EUR'
 }
 
 function statutVariant(statut: StatutBillet): 'outline' | 'default' | 'secondary' | 'destructive' {
@@ -109,7 +109,7 @@ export default async function BilletsPage({ params }: Props) {
                     {billet.payeurPrenom} {billet.payeurNom}
                   </TableCell>
                   <TableCell>{billet._count.passagers}</TableCell>
-                  <TableCell>{formatCentimes(billet.montantTtc)}</TableCell>
+                  <TableCell>{formatEuros(billet.montantTtc)}</TableCell>
                   <TableCell>
                     <Badge variant={statutVariant(billet.statut)}>
                       {t(`statut.${billet.statut}`)}

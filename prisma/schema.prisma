@@ -263,7 +263,7 @@ model Billet {
 
   statut          StatutBillet   @default(EN_ATTENTE)
   statutPaiement  StatutPaiement @default(EN_ATTENTE)
-  montantTtc      Int
+  montantTtc      Float
   enAttente       Boolean        @default(false)
 
   categorie       String?
@@ -317,7 +317,7 @@ model Paiement {
   billet           Billet       @relation(fields: [billetId], references: [id], onDelete: Cascade)
 
   modePaiement     ModePaiement
-  montantTtc       Int
+  montantTtc       Float
   datePaiement     DateTime
   dateEncaissement DateTime?
   commentaire      String?

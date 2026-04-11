@@ -23,7 +23,7 @@ export const billetCreateSchema = z.object({
   payeurCp: z.string().optional().or(z.literal('')),
   payeurVille: z.string().optional().or(z.literal('')),
 
-  montantTtc: z.coerce.number().int().nonnegative('Montant invalide'),
+  montantTtc: z.coerce.number().nonnegative('Montant invalide'),
   categorie: z.string().optional().or(z.literal('')),
   provenance: z.string().optional().or(z.literal('')),
   lieuDecollage: z.string().optional().or(z.literal('')),
