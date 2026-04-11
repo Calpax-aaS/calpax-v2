@@ -25,7 +25,8 @@
     "settings": "Settings",
     "billets": "Tickets",
     "vols": "Flights",
-    "rgpd": "GDPR"
+    "rgpd": "GDPR",
+    "audit": "Audit"
   },
   "settings": {
     "title": "Operator Settings",
@@ -269,7 +270,24 @@
       "passagersAffectes": "Assigned passengers",
       "noPassagers": "No passengers assigned",
       "capacite": "Capacity"
-    }
+    },
+    "postVol": {
+      "title": "Post-flight report",
+      "decoLieu": "Takeoff location",
+      "decoHeure": "Takeoff time",
+      "atterLieu": "Landing location",
+      "atterHeure": "Landing time",
+      "gasConso": "Gas consumption (kg)",
+      "distance": "Distance (km)",
+      "anomalies": "Anomalies / Observations",
+      "noteDansCarnet": "Log in flight journal",
+      "save": "Save and complete flight"
+    },
+    "downloadFiche": "Download flight sheet",
+    "downloadPve": "Download PVE",
+    "archivePve": "Archive as PVE",
+    "confirmArchive": "Generate final PVE and archive this flight?",
+    "postVolLink": "Post-flight entry"
   },
   "passagers": {
     "fields": {
@@ -303,6 +321,37 @@
       "VIREMENT": "Wire transfer",
       "CHEQUE_VACANCES": "Holiday voucher",
       "AVOIR": "Credit"
+    }
+  },
+  "journal": {
+    "title": "Flight journal",
+    "noVols": "No flights recorded",
+    "stats": {
+      "totalVols": "Total flights",
+      "totalGaz": "Gas consumed (kg)",
+      "volsArchives": "Archived PVEs"
+    },
+    "viewJournal": "View flight journal"
+  },
+  "audit": {
+    "title": "Change log",
+    "noEntries": "No changes recorded",
+    "filters": {
+      "entityType": "Entity type",
+      "entityId": "Entity ID",
+      "action": "Action",
+      "dateFrom": "Start date",
+      "dateTo": "End date",
+      "all": "All"
+    },
+    "fields": {
+      "date": "Date",
+      "user": "User",
+      "entity": "Entity",
+      "action": "Action",
+      "field": "Field",
+      "before": "Before",
+      "after": "After"
     }
   },
   "rgpd": {

@@ -25,7 +25,8 @@
     "settings": "Paramètres",
     "billets": "Billets",
     "vols": "Vols",
-    "rgpd": "RGPD"
+    "rgpd": "RGPD",
+    "audit": "Audit"
   },
   "settings": {
     "title": "Paramètres de l'exploitant",
@@ -269,7 +270,24 @@
       "passagersAffectes": "Passagers affectes",
       "noPassagers": "Aucun passager affecte",
       "capacite": "Capacite"
-    }
+    },
+    "postVol": {
+      "title": "Compte-rendu post-vol",
+      "decoLieu": "Lieu de decollage",
+      "decoHeure": "Heure de decollage",
+      "atterLieu": "Lieu d'atterrissage",
+      "atterHeure": "Heure d'atterrissage",
+      "gasConso": "Consommation gaz (kg)",
+      "distance": "Distance parcourue (km)",
+      "anomalies": "Anomalies / Observations",
+      "noteDansCarnet": "Note dans le carnet de bord",
+      "save": "Enregistrer et terminer le vol"
+    },
+    "downloadFiche": "Telecharger fiche de vol",
+    "downloadPve": "Telecharger PVE",
+    "archivePve": "Archiver comme PVE",
+    "confirmArchive": "Generer le PVE final et archiver ce vol ?",
+    "postVolLink": "Saisie post-vol"
   },
   "passagers": {
     "fields": {
@@ -303,6 +321,37 @@
       "VIREMENT": "Virement",
       "CHEQUE_VACANCES": "Cheque-vacances",
       "AVOIR": "Avoir"
+    }
+  },
+  "journal": {
+    "title": "Journal de bord",
+    "noVols": "Aucun vol enregistre",
+    "stats": {
+      "totalVols": "Vols total",
+      "totalGaz": "Gaz consomme (kg)",
+      "volsArchives": "PVE archives"
+    },
+    "viewJournal": "Voir le journal de bord"
+  },
+  "audit": {
+    "title": "Journal des modifications",
+    "noEntries": "Aucune modification enregistree",
+    "filters": {
+      "entityType": "Type d'entite",
+      "entityId": "ID entite",
+      "action": "Action",
+      "dateFrom": "Date debut",
+      "dateTo": "Date fin",
+      "all": "Tous"
+    },
+    "fields": {
+      "date": "Date",
+      "user": "Utilisateur",
+      "entity": "Entite",
+      "action": "Action",
+      "field": "Champ",
+      "before": "Avant",
+      "after": "Apres"
     }
   },
   "rgpd": {
