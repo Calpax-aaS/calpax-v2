@@ -13,18 +13,18 @@ Cycle couvert : réservations clients → paiements → organisation jour J (pas
 
 ## Stack technique
 
-| Couche | Choix |
-|--------|-------|
-| Front | Next.js (React) — SSR/CSR, SEO pages réservation publiques |
-| Back / API | Node.js + Prisma |
-| Base de données | PostgreSQL (Supabase) |
-| Auth | NextAuth.js — multi-tenant natif |
-| Paiements | Mollie (EU, abonnements SaaS + paiements passagers) |
-| Hébergement | Vercel + Supabase |
-| Cartes / GPS | Leaflet.js + OpenStreetMap (open source, 0€) |
-| Météo vent | Open-Meteo API (gratuit, open source) |
-| Météo METAR/TAF | AVWX ou CheckWX API |
-| i18n | next-intl (FR + EN dès le départ) |
+| Couche          | Choix                                                      |
+| --------------- | ---------------------------------------------------------- |
+| Front           | Next.js (React) — SSR/CSR, SEO pages réservation publiques |
+| Back / API      | Node.js + Prisma                                           |
+| Base de données | PostgreSQL (Supabase)                                      |
+| Auth            | NextAuth.js — multi-tenant natif                           |
+| Paiements       | Mollie (EU, abonnements SaaS + paiements passagers)        |
+| Hébergement     | Vercel + Supabase                                          |
+| Cartes / GPS    | Leaflet.js + OpenStreetMap (open source, 0€)               |
+| Météo vent      | Open-Meteo API (gratuit, open source)                      |
+| Météo METAR/TAF | AVWX ou CheckWX API                                        |
+| i18n            | next-intl (FR + EN dès le départ)                          |
 
 ---
 
@@ -38,15 +38,16 @@ Un bug chez un exploitant ne doit jamais affecter les données d'un autre.
 
 ## Schéma de données — entités core
 
-À construire dans cet ordre :
-
 ```
-Exploitant        → tenant racine (N° FR.DEC, SIRET, N° CAMO)
-  └── Ballon      → immatriculation, volume, capacité homologuée, expiration CAMO
-  └── Pilote      → licence BFCL, qualification vol commercial, expiration
-  └── Vol         → date, créneau (matin/soir), ballon, pilote, statut, lieu décollage
-        └── Passager    → nom, email, téléphone, poids (chiffré), consentement RGPD
-        └── Réservation → vol + passager + statut paiement + token Mollie
+Exploitant                    → tenant racine (N° FR.DEC, SIRET, N° CAMO)
+  ├── Ballon                  → immatriculation, volumeM3, groupe, capacité homologuée, expiration CAMO
+  ├── Pilote                  → licence BFCL (classes A/B/C/D), qualifications, groupes, expirations
+  ├── Billet                  → référence (ex: CBF-2026-0001), fenêtre dates, payeur, statut, paiements
+  │     ├── Passager          → nom, poids chiffré (RGPD), PMR, affectation vol
+  │     └── Paiement          → mode (espèces/CB/virement/chèque), montant EUR, dates
+  ├── Vol                     → date, créneau (matin/soir), ballon, pilote, statut, devis de masse
+  │     └── Passager          → affectés depuis billets confirmés
+  └── BilletSequence          → compteur atomique de références par exploitant
 ```
 
 ---
@@ -86,6 +87,7 @@ Règlement EU 2018/395 (Part-BOP) + DGAC :
 ## Périmètre MVP — ce qui est dedans
 
 ### Réglementaire (non négociable)
+
 - PVE auto-généré + archivage PDF
 - Devis de masse automatique
 - Journal de bord ballon
@@ -96,6 +98,7 @@ Règlement EU 2018/395 (Part-BOP) + DGAC :
 - Paiements conformes (3DS v2, zéro stockage carte, facturation)
 
 ### Fonctionnel (valeur produit)
+
 - Planning des vols hebdo/mensuel
 - Création vol (ballon + pilote + date + capacité)
 - Gestion réservations et affectation passagers
@@ -115,6 +118,7 @@ Règlement EU 2018/395 (Part-BOP) + DGAC :
 - Lien de suivi live partageable aux proches des passagers (page publique, sans inscription)
 
 ## Ce qui n'est PAS dans le MVP
+
 - Portail passager autonome (V2)
 - Bons cadeaux (V2)
 - Notifications SMS (V2)
@@ -131,11 +135,11 @@ Règlement EU 2018/395 (Part-BOP) + DGAC :
 
 ## Pricing (pour référence)
 
-| Formule | Prix | Cible |
-|---------|------|-------|
-| Starter | 79€/mois | 1 ballon, exploitant indépendant |
-| Pro | 149€/mois | 1-3 ballons, saison active |
-| Expert | 249€/mois | 4+ ballons, structure professionnelle |
+| Formule | Prix      | Cible                                 |
+| ------- | --------- | ------------------------------------- |
+| Starter | 79€/mois  | 1 ballon, exploitant indépendant      |
+| Pro     | 149€/mois | 1-3 ballons, saison active            |
+| Expert  | 249€/mois | 4+ ballons, structure professionnelle |
 
 Le client zéro (Cameron Balloons France, 5+ ballons) est en segment **Expert**.
 
