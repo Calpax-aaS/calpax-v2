@@ -67,8 +67,15 @@ export default async function BallonEditPage({ params }: Props) {
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="volume">{t('fields.volume')} *</Label>
-                <Input id="volume" name="volume" defaultValue={ballon.volume} required />
+                <Label htmlFor="volumeM3">{t('fields.volumeM3')} *</Label>
+                <Input
+                  id="volumeM3"
+                  name="volumeM3"
+                  type="number"
+                  min="1"
+                  defaultValue={ballon.volumeM3}
+                  required
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">

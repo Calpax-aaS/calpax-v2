@@ -21,7 +21,7 @@ function extractBallonData(formData: FormData) {
   return {
     nom: formData.get('nom'),
     immatriculation: formData.get('immatriculation'),
-    volume: formData.get('volume'),
+    volumeM3: formData.get('volumeM3'),
     nbPassagerMax: formData.get('nbPassagerMax'),
     peseeAVide: formData.get('peseeAVide'),
     configGaz: formData.get('configGaz'),

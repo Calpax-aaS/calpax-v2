@@ -63,8 +63,8 @@ async function main() {
   const ballonsData = [
     {
       immatriculation: 'F-HFCC',
-      nom: 'F-HFCC',
-      volume: 'Z-105 (3000 m3)',
+      nom: 'F-HFCC (Z-105)',
+      volumeM3: 3000,
       peseeAVide: 376,
       configGaz: '4xCB2990 : 4x23 kg',
       manexAnnexRef: 'Manex - Annexe 5.4',
@@ -102,8 +102,8 @@ async function main() {
     },
     {
       immatriculation: 'F-HTLT',
-      nom: 'F-HTLT',
-      volume: 'Z-133 (3700 m3)',
+      nom: 'F-HTLT (Z-133)',
+      volumeM3: 3700,
       peseeAVide: 485,
       mtom: 1206,
       mlm: 603,
@@ -141,8 +141,8 @@ async function main() {
     },
     {
       immatriculation: 'F-HMJD',
-      nom: 'F-HMJD',
-      volume: 'Z-133 (3700 m3)',
+      nom: 'F-HMJD (Z-133)',
+      volumeM3: 3700,
       peseeAVide: 492,
       mtom: 1206,
       mlm: 603,
@@ -180,8 +180,8 @@ async function main() {
     },
     {
       immatriculation: 'F-HCPJ',
-      nom: 'F-HCPJ',
-      volume: 'Z-90 (2600 m3)',
+      nom: 'F-HCPJ (Z-90)',
+      volumeM3: 2600,
       peseeAVide: 343,
       mtom: 816,
       mlm: 0,
@@ -219,8 +219,8 @@ async function main() {
     },
     {
       immatriculation: 'F-HCBF',
-      nom: 'F-HCBF',
-      volume: 'Z-77 (2200 m3)',
+      nom: 'F-HCBF (Z-77)',
+      volumeM3: 2200,
       peseeAVide: 342,
       mtom: 703,
       mlm: 0,
@@ -258,8 +258,8 @@ async function main() {
     },
     {
       immatriculation: 'F-HCDS',
-      nom: 'F-HCDS',
-      volume: 'Z-77 (2200 m3)',
+      nom: 'F-HCDS (Z-77)',
+      volumeM3: 2200,
       peseeAVide: 344,
       mtom: 703,
       mlm: 0,
@@ -297,8 +297,8 @@ async function main() {
     },
     {
       immatriculation: 'F-GVGD',
-      nom: 'F-GVGD',
-      volume: 'Z-120 (3400 m3)',
+      nom: 'F-GVGD (Z-120)',
+      volumeM3: 3400,
       peseeAVide: 467,
       mtom: 1088,
       mlm: 544,
@@ -336,8 +336,8 @@ async function main() {
     },
     {
       immatriculation: 'F-HACK',
-      nom: 'F-HACK',
-      volume: 'Z-225 (6400 m3)',
+      nom: 'F-HACK (Z-225)',
+      volumeM3: 6400,
       peseeAVide: 746,
       mtom: 2041,
       mlm: 1021,
@@ -375,8 +375,8 @@ async function main() {
     },
     {
       immatriculation: 'F-HPLM',
-      nom: 'F-HPLM',
-      volume: 'Z-105 (3000 m3)',
+      nom: 'F-HPLM (Z-105)',
+      volumeM3: 3000,
       peseeAVide: 378,
       mtom: 952,
       mlm: 476,

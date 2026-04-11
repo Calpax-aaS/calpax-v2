@@ -37,7 +37,7 @@ model Ballon {
   exploitant             Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
   nom                    String
   immatriculation        String
-  volume                 String
+  volumeM3               Int
   nbPassagerMax          Int
   peseeAVide             Int
   configGaz              String
@@ -67,11 +67,32 @@ model Pilote {
   email                    String?
   telephone                String?
   poidsEncrypted           String?
+  // BFCL licence
   licenceBfcl              String
-  qualificationCommerciale Boolean    @default(false)
   dateExpirationLicence    DateTime
-  classesBallon            String[]
   heuresDeVol              Int?
+
+  // BFCL.200 — classe de ballon (A = air chaud, B = gaz, C = dirigeable air chaud, D = dirigeable gaz)
+  classeA                  Boolean    @default(true)
+  classeB                  Boolean    @default(false)
+  classeC                  Boolean    @default(false)
+  classeD                  Boolean    @default(false)
+
+  // BFCL.200 — groupe dans la classe A (taille enveloppe)
+  // 1: <= 3400 m3, 2: 3401-6000 m3, 3: 6001-10500 m3, 4: > 10500 m3
+  groupeA1                 Boolean    @default(false)
+  groupeA2                 Boolean    @default(false)
+  groupeA3                 Boolean    @default(false)
+  groupeA4                 Boolean    @default(false)
+
+  // BFCL.215 — vol commercial passagers
+  qualificationCommerciale Boolean    @default(false)
+  // BFCL.210 — vol de nuit
+  qualificationNuit        Boolean    @default(false)
+  // BFCL.300 — instructeur (BFI)
+  qualificationInstructeur Boolean    @default(false)
+  // Vol captif (tethered)
+  qualificationCaptif      Boolean    @default(false)
   actif                    Boolean    @default(true)
   createdAt                DateTime   @default(now())
   updatedAt                DateTime   @updatedAt

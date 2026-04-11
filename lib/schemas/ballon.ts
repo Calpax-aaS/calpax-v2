@@ -7,7 +7,7 @@ import { z } from 'zod'
 export const ballonSchema = z.object({
   nom: z.string().min(1, 'Nom requis'),
   immatriculation: z.string().min(1, 'Immatriculation requise'),
-  volume: z.string().min(1, 'Volume requis'),
+  volumeM3: z.coerce.number().int().positive('Volume requis'),
   nbPassagerMax: z.coerce.number().int().positive('Nombre de passagers invalide'),
   peseeAVide: z.coerce.number().int().positive('Pesée à vide invalide'),
   configGaz: z.string().min(1, 'Configuration gaz requise'),

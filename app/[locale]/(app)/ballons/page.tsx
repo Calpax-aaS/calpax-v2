@@ -60,7 +60,7 @@ export default async function BallonsPage({ params }: Props) {
                 <TableRow key={ballon.id}>
                   <TableCell className="font-medium">{ballon.nom}</TableCell>
                   <TableCell>{ballon.immatriculation}</TableCell>
-                  <TableCell>{ballon.volume}</TableCell>
+                  <TableCell>{ballon.volumeM3} m³</TableCell>
                   <TableCell>{ballon.nbPassagerMax}</TableCell>
                   <TableCell>
                     {ballon.camoExpiryDate ? (

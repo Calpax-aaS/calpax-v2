@@ -11,7 +11,7 @@ async function seedBallon(exploitantId: string, immatriculation: string) {
       exploitantId,
       nom: `Ballon ${immatriculation}`,
       immatriculation,
-      volume: 'Z-105 (3000 m3)',
+      volumeM3: 3000,
       nbPassagerMax: 4,
       peseeAVide: 376,
       configGaz: '4xCB2990 : 4x23 kg',
@@ -59,7 +59,7 @@ describe('ballon tenant isolation', () => {
         data: {
           nom: 'Test Ballon',
           immatriculation: 'F-HTEST',
-          volume: 'Z-105 (3000 m3)',
+          volumeM3: 3000,
           nbPassagerMax: 4,
           peseeAVide: 376,
           configGaz: '4xCB2990 : 4x23 kg',

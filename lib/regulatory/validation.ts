@@ -1,5 +1,16 @@
 export type ValidationResult = { valid: true } | { valid: false; reason: string }
 
+/**
+ * BFCL.200 group thresholds for class A balloons.
+ * Group is determined by envelope volume in cubic meters.
+ */
+export function getBallonGroupe(volumeM3: number): number {
+  if (volumeM3 <= 3400) return 1
+  if (volumeM3 <= 6000) return 2
+  if (volumeM3 <= 10500) return 3
+  return 4
+}
+
 type BallonFlightInput = {
   actif: boolean
   camoExpiryDate: Date | null

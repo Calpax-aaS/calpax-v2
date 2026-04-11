@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ExpiryBadge } from '@/components/expiry-badge'
 import { PerformanceChartDisplay } from '@/components/performance-chart-display'
+import { getBallonGroupe } from '@/lib/regulatory/validation'
 import { cn } from '@/lib/utils'
 
 type Props = {
@@ -24,6 +25,7 @@ export default async function BallonDetailPage({ params }: Props) {
     if (!ballon) notFound()
 
     const chart = (ballon.performanceChart ?? {}) as Record<string, number>
+    const groupe = getBallonGroupe(ballon.volumeM3)
 
     return (
       <main className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
@@ -59,8 +61,10 @@ export default async function BallonDetailPage({ params }: Props) {
               <p className="font-medium">{ballon.immatriculation}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">{t('fields.volume')}</p>
-              <p className="font-medium">{ballon.volume}</p>
+              <p className="text-muted-foreground">{t('fields.volumeM3')}</p>
+              <p className="font-medium">
+                {ballon.volumeM3} m³ — Groupe A{groupe}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">{t('fields.nbPassagerMax')}</p>

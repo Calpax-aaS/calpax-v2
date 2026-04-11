@@ -51,8 +51,8 @@ export default async function BallonNewPage({ params }: Props) {
                 <Input id="immatriculation" name="immatriculation" required />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="volume">{t('fields.volume')} *</Label>
-                <Input id="volume" name="volume" placeholder="ex: 3400m³" required />
+                <Label htmlFor="volumeM3">{t('fields.volumeM3')} *</Label>
+                <Input id="volumeM3" name="volumeM3" type="number" min="1" required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
