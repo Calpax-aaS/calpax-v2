@@ -34,7 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // local development where DATABASE_URL is all that matters.
     Resend({
       apiKey: resendApiKey ?? 'resend-key-not-configured',
-      from: process.env.RESEND_FROM_EMAIL ?? 'noreply@calpax.app',
+      from: process.env.EMAIL_FROM ?? 'no-reply@calpax.fr',
     }),
   ],
 
