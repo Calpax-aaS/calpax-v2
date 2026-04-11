@@ -17,5 +17,119 @@
   },
   "errors": {
     "unauthorized": "Vous devez être connecté pour accéder à cette page."
+  },
+  "nav": {
+    "home": "Accueil",
+    "ballons": "Ballons",
+    "pilotes": "Pilotes",
+    "settings": "Paramètres"
+  },
+  "settings": {
+    "title": "Paramètres de l'exploitant",
+    "logoSection": "Logo",
+    "logoUpload": "Télécharger un nouveau logo",
+    "logoUploadButton": "Mettre à jour le logo",
+    "logoUploadSuccess": "Logo mis à jour",
+    "contactSection": "Coordonnées",
+    "legalSection": "Informations légales",
+    "saveButton": "Enregistrer",
+    "saveSuccess": "Paramètres enregistrés",
+    "fields": {
+      "name": "Nom de la structure",
+      "frDecNumber": "Numéro FR.DEC",
+      "siret": "SIRET",
+      "numCamo": "N° organisme CAMO",
+      "adresse": "Adresse",
+      "codePostal": "Code postal",
+      "ville": "Ville",
+      "pays": "Pays",
+      "telephone": "Téléphone",
+      "email": "Email",
+      "website": "Site web",
+      "contactName": "Nom du contact"
+    }
+  },
+  "ballons": {
+    "title": "Ballons",
+    "new": "Nouveau ballon",
+    "edit": "Modifier",
+    "detail": "Détail du ballon",
+    "createTitle": "Créer un ballon",
+    "editTitle": "Modifier le ballon",
+    "saveButton": "Enregistrer",
+    "createButton": "Créer",
+    "backToList": "Retour à la liste",
+    "noResults": "Aucun ballon enregistré.",
+    "status": {
+      "actif": "Actif",
+      "inactif": "Inactif"
+    },
+    "table": {
+      "nom": "Nom",
+      "immat": "Immatriculation",
+      "volume": "Volume",
+      "pax": "Pax max",
+      "camo": "CAMO",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "fields": {
+      "nom": "Nom",
+      "immatriculation": "Immatriculation",
+      "volume": "Volume",
+      "nbPassagerMax": "Nombre de passagers max",
+      "peseeAVide": "Pesée à vide (kg)",
+      "configGaz": "Configuration gaz",
+      "manexAnnexRef": "Référence annexe MANEX",
+      "mtom": "MTOM (kg)",
+      "mlm": "MLM (kg)",
+      "camoOrganisme": "Organisme CAMO",
+      "camoExpiryDate": "Date expiration CAMO",
+      "certificatNavigabilite": "Certificat de navigabilité",
+      "performanceChart": "Abaque de performances (durée de vol en heures par température)"
+    }
+  },
+  "pilotes": {
+    "title": "Pilotes",
+    "new": "Nouveau pilote",
+    "edit": "Modifier",
+    "detail": "Détail du pilote",
+    "createTitle": "Créer un pilote",
+    "editTitle": "Modifier le pilote",
+    "saveButton": "Enregistrer",
+    "createButton": "Créer",
+    "backToList": "Retour à la liste",
+    "noResults": "Aucun pilote enregistré.",
+    "status": {
+      "actif": "Actif",
+      "inactif": "Inactif"
+    },
+    "table": {
+      "nom": "Nom",
+      "licence": "Licence BFCL",
+      "expiry": "Expiration",
+      "qualification": "Qual. commerciale",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "fields": {
+      "prenom": "Prénom",
+      "nom": "Nom",
+      "email": "Email",
+      "telephone": "Téléphone",
+      "poids": "Poids (kg)",
+      "licenceBfcl": "Numéro de licence BFCL",
+      "qualificationCommerciale": "Qualification vol commercial",
+      "dateExpirationLicence": "Date d'expiration de la licence",
+      "classesBallon": "Classes de ballon",
+      "heuresDeVol": "Heures de vol",
+      "poidsNote": "Données chiffrées — accès restreint"
+    },
+    "classes": {
+      "A": "Classe A",
+      "B": "Classe B",
+      "C": "Classe C",
+      "D": "Classe D"
+    }
   }
 }

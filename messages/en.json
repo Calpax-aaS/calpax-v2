@@ -17,5 +17,119 @@
   },
   "errors": {
     "unauthorized": "You must be signed in to access this page."
+  },
+  "nav": {
+    "home": "Home",
+    "ballons": "Balloons",
+    "pilotes": "Pilots",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Operator Settings",
+    "logoSection": "Logo",
+    "logoUpload": "Upload a new logo",
+    "logoUploadButton": "Update logo",
+    "logoUploadSuccess": "Logo updated",
+    "contactSection": "Contact Details",
+    "legalSection": "Legal Information",
+    "saveButton": "Save",
+    "saveSuccess": "Settings saved",
+    "fields": {
+      "name": "Organization name",
+      "frDecNumber": "FR.DEC number",
+      "siret": "SIRET",
+      "numCamo": "CAMO organization number",
+      "adresse": "Address",
+      "codePostal": "Postal code",
+      "ville": "City",
+      "pays": "Country",
+      "telephone": "Phone",
+      "email": "Email",
+      "website": "Website",
+      "contactName": "Contact name"
+    }
+  },
+  "ballons": {
+    "title": "Balloons",
+    "new": "New balloon",
+    "edit": "Edit",
+    "detail": "Balloon detail",
+    "createTitle": "Create balloon",
+    "editTitle": "Edit balloon",
+    "saveButton": "Save",
+    "createButton": "Create",
+    "backToList": "Back to list",
+    "noResults": "No balloons registered.",
+    "status": {
+      "actif": "Active",
+      "inactif": "Inactive"
+    },
+    "table": {
+      "nom": "Name",
+      "immat": "Registration",
+      "volume": "Volume",
+      "pax": "Max pax",
+      "camo": "CAMO",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "fields": {
+      "nom": "Name",
+      "immatriculation": "Registration",
+      "volume": "Volume",
+      "nbPassagerMax": "Max passengers",
+      "peseeAVide": "Empty weight (kg)",
+      "configGaz": "Gas configuration",
+      "manexAnnexRef": "MANEX annex reference",
+      "mtom": "MTOM (kg)",
+      "mlm": "MLM (kg)",
+      "camoOrganisme": "CAMO organization",
+      "camoExpiryDate": "CAMO expiry date",
+      "certificatNavigabilite": "Certificate of airworthiness",
+      "performanceChart": "Performance chart (flight time in hours by temperature)"
+    }
+  },
+  "pilotes": {
+    "title": "Pilots",
+    "new": "New pilot",
+    "edit": "Edit",
+    "detail": "Pilot detail",
+    "createTitle": "Create pilot",
+    "editTitle": "Edit pilot",
+    "saveButton": "Save",
+    "createButton": "Create",
+    "backToList": "Back to list",
+    "noResults": "No pilots registered.",
+    "status": {
+      "actif": "Active",
+      "inactif": "Inactive"
+    },
+    "table": {
+      "nom": "Name",
+      "licence": "BFCL licence",
+      "expiry": "Expiry",
+      "qualification": "Commercial qual.",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "fields": {
+      "prenom": "First name",
+      "nom": "Last name",
+      "email": "Email",
+      "telephone": "Phone",
+      "poids": "Weight (kg)",
+      "licenceBfcl": "BFCL licence number",
+      "qualificationCommerciale": "Commercial flight qualification",
+      "dateExpirationLicence": "Licence expiry date",
+      "classesBallon": "Balloon classes",
+      "heuresDeVol": "Flight hours",
+      "poidsNote": "Encrypted data — restricted access"
+    },
+    "classes": {
+      "A": "Class A",
+      "B": "Class B",
+      "C": "Class C",
+      "D": "Class D"
+    }
   }
 }
