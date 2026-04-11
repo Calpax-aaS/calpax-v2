@@ -22,7 +22,9 @@
     "home": "Home",
     "ballons": "Balloons",
     "pilotes": "Pilots",
-    "settings": "Settings"
+    "settings": "Settings",
+    "billets": "Tickets",
+    "rgpd": "GDPR"
   },
   "settings": {
     "title": "Operator Settings",
@@ -145,5 +147,114 @@
       "A3": "Group A3 (6,001–10,500 m³)",
       "A4": "Group A4 (> 10,500 m³)"
     }
+  },
+  "billets": {
+    "title": "Flight tickets",
+    "new": "New ticket",
+    "backToList": "Back to list",
+    "edit": "Edit",
+    "save": "Save",
+    "saveSuccess": "Ticket saved",
+    "detail": "Ticket detail",
+    "noPassengers": "No passengers",
+    "addPassenger": "Add passenger",
+    "removePassenger": "Remove",
+    "payeurIsPassenger": "Payer is also a passenger",
+    "noBillets": "No tickets",
+    "fields": {
+      "reference": "Reference",
+      "checksum": "Verification code",
+      "typePlannif": "Scheduling type",
+      "dateVolDeb": "Window start date",
+      "dateVolFin": "Window end date",
+      "dateValidite": "Validity date",
+      "payeurPrenom": "Payer first name",
+      "payeurNom": "Payer last name",
+      "payeurEmail": "Payer email",
+      "payeurTelephone": "Payer phone",
+      "payeurAdresse": "Address",
+      "payeurCp": "Postal code",
+      "payeurVille": "City",
+      "payeurCiv": "Title",
+      "montantTtc": "Amount incl. tax (EUR)",
+      "categorie": "Category",
+      "provenance": "Source",
+      "lieuDecollage": "Desired takeoff location",
+      "survol": "Desired flyover zone",
+      "commentaire": "Comment",
+      "dateRappel": "Reminder date",
+      "statut": "Status",
+      "statutPaiement": "Payment status",
+      "enAttente": "On hold"
+    },
+    "typePlannif": {
+      "MATIN": "Morning",
+      "SOIR": "Evening",
+      "TOUTE_LA_JOURNEE": "All day",
+      "AU_PLUS_VITE": "ASAP",
+      "AUTRE": "Other",
+      "INDETERMINE": "Undetermined"
+    },
+    "statut": {
+      "EN_ATTENTE": "Pending",
+      "PLANIFIE": "Scheduled",
+      "VOLE": "Flown",
+      "ANNULE": "Cancelled",
+      "REMBOURSE": "Refunded",
+      "EXPIRE": "Expired"
+    },
+    "statutPaiement": {
+      "EN_ATTENTE": "Pending",
+      "PARTIEL": "Partial",
+      "SOLDE": "Paid",
+      "REMBOURSE": "Refunded"
+    }
+  },
+  "passagers": {
+    "fields": {
+      "prenom": "First name",
+      "nom": "Last name",
+      "email": "Email",
+      "telephone": "Phone",
+      "age": "Age",
+      "poids": "Weight (kg)",
+      "pmr": "PRM"
+    }
+  },
+  "paiements": {
+    "title": "Payments",
+    "add": "Add payment",
+    "delete": "Delete",
+    "confirmDelete": "Delete this payment?",
+    "solde": "Remaining balance",
+    "noPaiements": "No payments",
+    "fields": {
+      "modePaiement": "Payment method",
+      "montantTtc": "Amount (EUR)",
+      "datePaiement": "Payment date",
+      "dateEncaissement": "Settlement date",
+      "commentaire": "Comment"
+    },
+    "modes": {
+      "ESPECES": "Cash",
+      "CHEQUE": "Cheque",
+      "CB": "Card",
+      "VIREMENT": "Wire transfer",
+      "CHEQUE_VACANCES": "Holiday voucher",
+      "AVOIR": "Credit"
+    }
+  },
+  "rgpd": {
+    "title": "GDPR - Passenger rights",
+    "search": "Search passenger",
+    "searchPlaceholder": "Name, email or phone",
+    "noResults": "No passenger found",
+    "actions": {
+      "view": "View",
+      "export": "Export (JSON)",
+      "anonymise": "Anonymise",
+      "confirmAnonymise": "This action is irreversible. Personal data will be deleted. Confirm?"
+    },
+    "anonymised": "Data anonymised"
   }
 }

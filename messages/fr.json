@@ -22,7 +22,9 @@
     "home": "Accueil",
     "ballons": "Ballons",
     "pilotes": "Pilotes",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "billets": "Billets",
+    "rgpd": "RGPD"
   },
   "settings": {
     "title": "Paramètres de l'exploitant",
@@ -145,5 +147,114 @@
       "A3": "Groupe A3 (6 001–10 500 m³)",
       "A4": "Groupe A4 (> 10 500 m³)"
     }
+  },
+  "billets": {
+    "title": "Billets de vol",
+    "new": "Nouveau billet",
+    "backToList": "Retour a la liste",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "saveSuccess": "Billet enregistre",
+    "detail": "Detail du billet",
+    "noPassengers": "Aucun passager",
+    "addPassenger": "Ajouter un passager",
+    "removePassenger": "Retirer",
+    "payeurIsPassenger": "Le payeur est aussi passager",
+    "noBillets": "Aucun billet",
+    "fields": {
+      "reference": "Reference",
+      "checksum": "Code verification",
+      "typePlannif": "Type de planification",
+      "dateVolDeb": "Date debut fenetre",
+      "dateVolFin": "Date fin fenetre",
+      "dateValidite": "Date validite",
+      "payeurPrenom": "Prenom payeur",
+      "payeurNom": "Nom payeur",
+      "payeurEmail": "Email payeur",
+      "payeurTelephone": "Telephone payeur",
+      "payeurAdresse": "Adresse",
+      "payeurCp": "Code postal",
+      "payeurVille": "Ville",
+      "payeurCiv": "Civilite",
+      "montantTtc": "Montant TTC (EUR)",
+      "categorie": "Categorie",
+      "provenance": "Provenance",
+      "lieuDecollage": "Lieu de decollage souhaite",
+      "survol": "Zone de survol souhaitee",
+      "commentaire": "Commentaire",
+      "dateRappel": "Date de rappel",
+      "statut": "Statut",
+      "statutPaiement": "Statut paiement",
+      "enAttente": "En attente"
+    },
+    "typePlannif": {
+      "MATIN": "Matin",
+      "SOIR": "Soir",
+      "TOUTE_LA_JOURNEE": "Toute la journee",
+      "AU_PLUS_VITE": "Au plus vite",
+      "AUTRE": "Autre",
+      "INDETERMINE": "Indetermine"
+    },
+    "statut": {
+      "EN_ATTENTE": "En attente",
+      "PLANIFIE": "Planifie",
+      "VOLE": "Vole",
+      "ANNULE": "Annule",
+      "REMBOURSE": "Rembourse",
+      "EXPIRE": "Expire"
+    },
+    "statutPaiement": {
+      "EN_ATTENTE": "En attente",
+      "PARTIEL": "Partiel",
+      "SOLDE": "Solde",
+      "REMBOURSE": "Rembourse"
+    }
+  },
+  "passagers": {
+    "fields": {
+      "prenom": "Prenom",
+      "nom": "Nom",
+      "email": "Email",
+      "telephone": "Telephone",
+      "age": "Age",
+      "poids": "Poids (kg)",
+      "pmr": "PMR"
+    }
+  },
+  "paiements": {
+    "title": "Paiements",
+    "add": "Ajouter un paiement",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer ce paiement ?",
+    "solde": "Solde restant",
+    "noPaiements": "Aucun paiement",
+    "fields": {
+      "modePaiement": "Mode de paiement",
+      "montantTtc": "Montant (EUR)",
+      "datePaiement": "Date paiement",
+      "dateEncaissement": "Date encaissement",
+      "commentaire": "Commentaire"
+    },
+    "modes": {
+      "ESPECES": "Especes",
+      "CHEQUE": "Cheque",
+      "CB": "Carte bancaire",
+      "VIREMENT": "Virement",
+      "CHEQUE_VACANCES": "Cheque-vacances",
+      "AVOIR": "Avoir"
+    }
+  },
+  "rgpd": {
+    "title": "RGPD - Droits des passagers",
+    "search": "Rechercher un passager",
+    "searchPlaceholder": "Nom, email ou telephone",
+    "noResults": "Aucun passager trouve",
+    "actions": {
+      "view": "Consulter",
+      "export": "Exporter (JSON)",
+      "anonymise": "Anonymiser",
+      "confirmAnonymise": "Cette action est irreversible. Les donnees personnelles seront supprimees. Confirmer ?"
+    },
+    "anonymised": "Donnees anonymisees"
   }
 }
