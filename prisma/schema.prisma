@@ -25,6 +25,7 @@ model Exploitant {
   users       User[]
   ballons     Ballon[]
   pilotes     Pilote[]
+  vols        Vol[]
   billets     Billet[]
   passagers   Passager[]
   paiements   Paiement[]
@@ -51,6 +52,7 @@ model Ballon {
   camoOrganisme          String?
   camoExpiryDate         DateTime?
   certificatNavigabilite String?
+  vols                   Vol[]
   actif                  Boolean    @default(true)
   createdAt              DateTime   @default(now())
   updatedAt              DateTime   @updatedAt
@@ -96,6 +98,7 @@ model Pilote {
   qualificationInstructeur Boolean    @default(false)
   // Vol captif (tethered)
   qualificationCaptif      Boolean    @default(false)
+  vols                     Vol[]
   actif                    Boolean    @default(true)
   createdAt                DateTime   @default(now())
   updatedAt                DateTime   @updatedAt
@@ -211,6 +214,19 @@ enum ModePaiement {
   AVOIR
 }
 
+enum StatutVol {
+  PLANIFIE
+  CONFIRME
+  TERMINE
+  ARCHIVE
+  ANNULE
+}
+
+enum Creneau {
+  MATIN
+  SOIR
+}
+
 model AuditLog {
   id             BigInt      @id @default(autoincrement())
   exploitantId   String?
@@ -301,11 +317,15 @@ model Passager {
   poidsEncrypted  String?
   pmr             Boolean    @default(false)
 
+  volId           String?
+  vol             Vol?       @relation(fields: [volId], references: [id])
+
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
   @@index([exploitantId])
   @@index([billetId])
+  @@index([volId])
   @@map("passager")
 }
 
@@ -328,4 +348,48 @@ model Paiement {
   @@index([exploitantId])
   @@index([billetId])
   @@map("paiement")
+}
+
+model Vol {
+  id              String     @id @default(cuid())
+  exploitantId    String
+  exploitant      Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+
+  date            DateTime   @db.Date
+  creneau         Creneau
+  statut          StatutVol  @default(PLANIFIE)
+
+  ballonId        String
+  ballon          Ballon     @relation(fields: [ballonId], references: [id])
+  piloteId        String
+  pilote          Pilote     @relation(fields: [piloteId], references: [id])
+  equipier        String?
+  vehicule        String?
+
+  configGaz       String?
+  qteGaz          Int?
+
+  lieuDecollage   String?
+
+  decoLieu        String?
+  decoHeure       DateTime?
+  atterLieu       String?
+  atterHeure      DateTime?
+  distance        Int?
+  gasConso        Int?
+  anomalies       String?
+  noteDansCarnet  Boolean    @default(false)
+
+  pvePdfUrl       String?
+  pveArchivedAt   DateTime?
+
+  passagers       Passager[]
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@unique([exploitantId, date, creneau, ballonId])
+  @@index([exploitantId])
+  @@index([exploitantId, date])
+  @@map("vol")
 }
