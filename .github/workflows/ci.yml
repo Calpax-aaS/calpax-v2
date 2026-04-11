@@ -135,12 +135,12 @@ jobs:
           SENTRY_AUTH_TOKEN: ''
 
   # -------------------------------------------------------------------------
-  # Job 4: E2E tests against staging (placeholder)
-  # Only runs on push to main after the other jobs complete.
-  # Will be fleshed out when staging is provisioned (Task 29).
+  # Job 4: Migrate production database
+  # Runs prisma migrate deploy against the production Supabase database.
+  # Only on push to main after all checks pass.
   # -------------------------------------------------------------------------
-  e2e-staging:
-    name: E2E (staging)
+  migrate-production:
+    name: Migrate production DB
     runs-on: ubuntu-latest
     needs: [lint-type-unit, integration, build]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -148,8 +148,61 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Placeholder - staging not yet provisioned
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Apply migrations to production
+        run: pnpm exec prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # -------------------------------------------------------------------------
+  # Job 5: Wait for Vercel deployment + health check
+  # Vercel auto-deploys on push via GitHub integration. This job waits for
+  # that deployment to reach "success", then pings the app to verify it's up.
+  # -------------------------------------------------------------------------
+  verify-deployment:
+    name: Verify Vercel deployment
+    runs-on: ubuntu-latest
+    needs: [migrate-production]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Wait for Vercel deployment
+        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+        id: vercel
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 300
+          environment: Production
+
+      - name: Health check
+        env:
+          DEPLOY_URL: ${{ steps.vercel.outputs.url }}
         run: |
-          echo "Staging E2E will run here once E2E_BASE_URL is set (Task 29)."
-          echo "Add E2E_BASE_URL and AUTH_SECRET to GitHub Actions secrets,"
-          echo "then replace this step with: pnpm test:e2e"
+          echo "Vercel deployment URL: $DEPLOY_URL"
+          for i in 1 2 3 4 5; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL/fr" || true)
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check passed"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
