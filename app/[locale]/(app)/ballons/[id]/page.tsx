@@ -20,6 +20,7 @@ export default async function BallonDetailPage({ params }: Props) {
   const { locale, id } = await params
   return requireAuth(async () => {
     const t = await getTranslations('ballons')
+    const tJournal = await getTranslations('journal')
 
     const ballon = await db.ballon.findUnique({ where: { id } })
     if (!ballon) notFound()
@@ -137,6 +138,15 @@ export default async function BallonDetailPage({ params }: Props) {
             <PerformanceChartDisplay chart={chart} />
           </CardContent>
         </Card>
+
+        <div className="flex justify-start">
+          <Link
+            href={`/${locale}/ballons/${id}/journal`}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+          >
+            {tJournal('viewJournal')}
+          </Link>
+        </div>
       </main>
     )
   })
