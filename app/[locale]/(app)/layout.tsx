@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
+import { AlertsBanner } from '@/components/alerts-banner'
 
 type Props = {
   children: React.ReactNode
@@ -23,7 +24,10 @@ export default async function AppLayout({ children, params }: Props) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        <AlertsBanner />
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   )
 }
