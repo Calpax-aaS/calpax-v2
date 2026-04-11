@@ -1,6 +1,3 @@
-import { requireAuth } from '@/lib/auth/requireAuth'
-import { db } from '@/lib/db'
-import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulatory/alerts'
 import type { Alert, AlertSeverity } from '@/lib/regulatory/alerts'
 
 const SEVERITY_STYLES: Record<AlertSeverity, string> = {
@@ -16,59 +13,27 @@ function formatDaysRemaining(daysRemaining: number): string {
   return `${daysRemaining} jours restants`
 }
 
-function AlertItem({ alert }: { alert: Alert }) {
-  const styles = SEVERITY_STYLES[alert.severity]
-  const certType = alert.alertType === 'CAMO_EXPIRY' ? 'CAMO' : 'BFCL'
-
-  return (
-    <div
-      className={`flex items-center justify-between rounded-md border px-4 py-2 text-sm ${styles}`}
-    >
-      <span>
-        <strong>{alert.entityName}</strong> — {certType}
-      </span>
-      <span className="font-medium">{formatDaysRemaining(alert.daysRemaining)}</span>
-    </div>
-  )
-}
-
 /**
- * Server component that fetches CAMO and BFCL expiry alerts for the current tenant
- * and renders colored banners. Renders nothing if no alerts are active.
+ * Renders a compact banner for EXPIRED/CRITICAL alerts only.
+ * WARNING alerts are visible only via the sidebar badge counter.
+ * Receives pre-computed alerts from the layout (no DB query here).
  */
-export async function AlertsBanner() {
-  const alerts = await requireAuth(async () => {
-    const today = new Date()
-
-    const [ballons, pilotes] = await Promise.all([
-      db.ballon.findMany({
-        where: { actif: true },
-        select: { id: true, immatriculation: true, camoExpiryDate: true, actif: true },
-      }),
-      db.pilote.findMany({
-        where: { actif: true },
-        select: {
-          id: true,
-          prenom: true,
-          nom: true,
-          dateExpirationLicence: true,
-          actif: true,
-        },
-      }),
-    ])
-
-    const ballonAlerts = buildBallonAlerts(ballons, today)
-    const piloteAlerts = buildPiloteAlerts(pilotes, today)
-
-    return sortAlerts([...ballonAlerts, ...piloteAlerts])
-  })
-
+export function AlertsBanner({ alerts }: { alerts: Alert[] }) {
   if (alerts.length === 0) return null
 
   return (
     <div className="flex flex-col gap-2 px-4 pt-4">
       {alerts.map((alert) => (
-        <AlertItem key={`${alert.entityType}-${alert.entityId}-${alert.alertType}`} alert={alert} />
+        <div
+          key={`${alert.entityType}-${alert.entityId}-${alert.alertType}`}
+          className={`flex items-center justify-between rounded-md border px-4 py-2 text-sm ${SEVERITY_STYLES[alert.severity]}`}
+        >
+          <span>
+            <strong>{alert.entityName}</strong> —{' '}
+            {alert.alertType === 'CAMO_EXPIRY' ? 'CAMO' : 'BFCL'}
+          </span>
+          <span className="font-medium">{formatDaysRemaining(alert.daysRemaining)}</span>
+        </div>
       ))}
     </div>
   )

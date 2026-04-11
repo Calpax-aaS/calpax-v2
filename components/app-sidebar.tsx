@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 
-export function AppSidebar() {
+export function AppSidebar({ alertCount = 0 }: { alertCount?: number }) {
   const t = useTranslations('nav')
   const locale = useLocale()
   const pathname = usePathname()
@@ -59,7 +59,12 @@ export function AppSidebar() {
                   <SidebarMenuItem key={key}>
                     <SidebarMenuButton isActive={isActive} render={<Link href={href} />}>
                       <Icon className="h-4 w-4" />
-                      <span>{t(key)}</span>
+                      <span className="flex-1">{t(key)}</span>
+                      {key === 'home' && alertCount > 0 && (
+                        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
+                          {alertCount}
+                        </span>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
