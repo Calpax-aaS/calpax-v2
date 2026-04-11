@@ -17,7 +17,9 @@ async function nextSequence(exploitantId: string, year: number): Promise<number>
     DO UPDATE SET "lastSeq" = billet_sequence."lastSeq" + 1
     RETURNING "lastSeq"
   `
-  return row[0].lastSeq
+  const first = row[0]
+  if (!first) throw new Error('nextSequence: no row returned')
+  return first.lastSeq
 }
 
 function extractBilletData(formData: FormData) {

@@ -14,7 +14,7 @@ export function computeLuhnChecksum(reference: string): string {
   const digits = reference.replace(/\D/g, '').split('').map(Number)
   let sum = 0
   for (let i = digits.length - 1; i >= 0; i--) {
-    let d = digits[i]
+    let d = digits[i] ?? 0
     if ((digits.length - i) % 2 === 0) {
       d *= 2
       if (d > 9) d -= 9

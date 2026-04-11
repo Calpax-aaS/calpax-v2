@@ -58,7 +58,7 @@ describe('billet tenant isolation', () => {
 
     const billets = await asUser(A, 'GERANT', async () => db.billet.findMany())
     expect(billets).toHaveLength(1)
-    expect(billets[0].reference).toBe('A-2026-0001')
+    expect(billets[0]?.reference).toBe('A-2026-0001')
   })
 
   it('passager findMany is tenant-isolated', async () => {
@@ -73,7 +73,7 @@ describe('billet tenant isolation', () => {
 
     const passagers = await asUser(A, 'GERANT', async () => db.passager.findMany())
     expect(passagers).toHaveLength(1)
-    expect(passagers[0].nom).toBe('PassagerA')
+    expect(passagers[0]?.nom).toBe('PassagerA')
   })
 
   it('paiement findMany is tenant-isolated', async () => {
@@ -88,26 +88,34 @@ describe('billet tenant isolation', () => {
 
     const paiements = await asUser(A, 'GERANT', async () => db.paiement.findMany())
     expect(paiements).toHaveLength(1)
-    expect(paiements[0].montantTtc).toBe(5000)
+    expect(paiements[0]?.montantTtc).toBe(5000)
   })
 
   it('create injects exploitantId automatically for billet', async () => {
     const A = await seedTenant('A')
 
     const created = await asUser(A, 'GERANT', async () =>
-      db.billet.create({
+      (
+        db as unknown as {
+          billet: {
+            create: (args: {
+              data: Record<string, unknown>
+            }) => Promise<{ id: string; exploitantId: string }>
+          }
+        }
+      ).billet.create({
         data: {
           reference: 'TEST-2026-0001',
           checksum: '0',
           payeurPrenom: 'Auto',
           payeurNom: 'Tenant',
           montantTtc: 10000,
-        } as Record<string, unknown>,
+        },
       }),
     )
 
     const row = await basePrisma.billet.findUnique({
-      where: { id: (created as { id: string }).id },
+      where: { id: created.id },
     })
     expect(row?.exploitantId).toBe(A.exploitantId)
   })
