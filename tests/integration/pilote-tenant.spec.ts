@@ -32,7 +32,7 @@ describe('pilote tenant isolation', () => {
     const pilotes = await asUser(A, 'GERANT', async () => db.pilote.findMany())
 
     expect(pilotes).toHaveLength(1)
-    expect(pilotes[0].licenceBfcl).toBe('BFCL-A-001')
-    expect(pilotes[0].nom).toBe('Dupont')
+    expect(pilotes[0]!.licenceBfcl).toBe('BFCL-A-001')
+    expect(pilotes[0]!.nom).toBe('Dupont')
   })
 })
