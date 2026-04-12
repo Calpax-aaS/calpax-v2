@@ -258,6 +258,7 @@
       "poidsPassagers": "Passengers",
       "poidsEquipement": "Equipment",
       "poidsTotal": "Loaded weight",
+      "chargeEmbarquee": "Loaded weight",
       "chargeUtileMax": "Max payload",
       "margeRestante": "Remaining margin",
       "conforme": "COMPLIANT",
