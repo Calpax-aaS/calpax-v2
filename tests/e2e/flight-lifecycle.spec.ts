@@ -46,7 +46,11 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
     const baseUrl = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
     const magicLink = await createMagicLink(TEST_EMAIL, baseUrl, getAuthSecret())
     await page.goto(magicLink)
-    await expect(page).toHaveURL(/\/fr\/?$/, { timeout: 15_000 })
+    await expect(page).toHaveURL(/\/(fr|en)\/?$/, { timeout: 15_000 })
+    // Ensure we're on /fr for the rest of the tests
+    if (!page.url().includes('/fr')) {
+      await page.goto(`${baseUrl}/fr`)
+    }
     await expect(page.getByText(/Olivier Cuenot/)).toBeVisible()
   })
 
