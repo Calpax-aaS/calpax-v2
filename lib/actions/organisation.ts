@@ -75,17 +75,11 @@ export async function desaffecterPassager(
       data: { volId: null },
     })
 
-    // If no passagers of this billet are assigned to any vol, reset billet to EN_ATTENTE
-    const assignedCount = await db.passager.count({
-      where: { billetId: passager.billetId, volId: { not: null } },
+    // Any unassigned passager means billet is not fully planned
+    await db.billet.update({
+      where: { id: passager.billetId },
+      data: { statut: 'EN_ATTENTE' },
     })
-
-    if (assignedCount === 0) {
-      await db.billet.update({
-        where: { id: passager.billetId },
-        data: { statut: 'EN_ATTENTE' },
-      })
-    }
 
     revalidatePath(`/${locale}/vols/${volId}/organiser`)
     return {}
