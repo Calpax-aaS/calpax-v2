@@ -37,24 +37,29 @@ function tomorrowDateStr(): string {
   return d.toISOString().slice(0, 10)
 }
 
+const BASE_URL = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
+
 test.beforeAll(async () => {
   await ensureSeedData()
 })
 
+async function signIn(page: import('@playwright/test').Page) {
+  const magicLink = await createMagicLink(TEST_EMAIL, BASE_URL, getAuthSecret())
+  await page.goto(magicLink)
+  await page.waitForURL(/\/(fr|en)\/?$/, { timeout: 15_000 })
+  if (!page.url().includes('/fr')) {
+    await page.goto(`${BASE_URL}/fr`)
+  }
+}
+
 test.describe.serial('Flight lifecycle — full E2E', () => {
   test('sign in', async ({ page }) => {
-    const baseUrl = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
-    const magicLink = await createMagicLink(TEST_EMAIL, baseUrl, getAuthSecret())
-    await page.goto(magicLink)
-    await expect(page).toHaveURL(/\/(fr|en)\/?$/, { timeout: 15_000 })
-    // Ensure we're on /fr for the rest of the tests
-    if (!page.url().includes('/fr')) {
-      await page.goto(`${baseUrl}/fr`)
-    }
+    await signIn(page)
     await expect(page.getByText(/Olivier Cuenot/)).toBeVisible()
   })
 
   test('create a pilote', async ({ page }) => {
+    await signIn(page)
     await page.goto('/fr/pilotes/new')
     await page.locator('input[name="prenom"]').fill('E2E')
     await page.locator('input[name="nom"]').fill('TestPilote')
@@ -69,6 +74,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
   })
 
   test('create a ballon', async ({ page }) => {
+    await signIn(page)
     await page.goto('/fr/ballons/new')
     await page.locator('input[name="nom"]').fill('E2E-Ballon')
     await page.locator('input[name="immatriculation"]').fill('F-E2ET')
@@ -88,6 +94,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
   })
 
   test('create a billet with 2 passengers', async ({ page }) => {
+    await signIn(page)
     await page.goto('/fr/billets/new/edit')
     // Payeur
     await page.locator('input[name="payeurPrenom"]').fill('E2E')
@@ -116,6 +123,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
   })
 
   test('create a vol for tomorrow morning', async ({ page }) => {
+    await signIn(page)
     const tomorrow = tomorrowDateStr()
     await page.goto(`/fr/vols/create?date=${tomorrow}&creneau=MATIN`)
     // Select the E2E ballon and pilote
@@ -140,7 +148,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
   })
 
   test('organise vol — assign billet', async ({ page }) => {
-    // Navigate to planning for tomorrow
+    await signIn(page)
     const tomorrow = tomorrowDateStr()
     await page.goto(`/fr/vols?week=${tomorrow}`)
     // Click on the E2E vol card
@@ -161,8 +169,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
   })
 
   test('confirm the vol', async ({ page }) => {
-    // We should still be on the organiser page from previous test,
-    // but navigate explicitly to be safe
+    await signIn(page)
     const tomorrow = tomorrowDateStr()
     await page.goto(`/fr/vols?week=${tomorrow}`)
     await page.getByText('E2E-Ballon').click()
@@ -171,6 +178,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
   })
 
   test('download fiche de vol PDF', async ({ page }) => {
+    await signIn(page)
     const tomorrow = tomorrowDateStr()
     await page.goto(`/fr/vols?week=${tomorrow}`)
     await page.getByText('E2E-Ballon').click()
@@ -183,6 +191,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
   })
 
   test('fill post-flight report', async ({ page }) => {
+    await signIn(page)
     const tomorrow = tomorrowDateStr()
     await page.goto(`/fr/vols?week=${tomorrow}`)
     await page.getByText('E2E-Ballon').click()
