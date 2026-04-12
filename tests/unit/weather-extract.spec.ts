@@ -24,15 +24,15 @@ describe('extractCreneauHours', () => {
   it('extracts MATIN hours 05:00-10:00', () => {
     const hours = extractCreneauHours(FULL_DAY, 'MATIN')
     expect(hours).toHaveLength(6)
-    expect(hours[0].time).toBe('05:00')
-    expect(hours[5].time).toBe('10:00')
+    expect(hours[0]?.time).toBe('05:00')
+    expect(hours[5]?.time).toBe('10:00')
   })
 
   it('extracts SOIR hours 17:00-22:00', () => {
     const hours = extractCreneauHours(FULL_DAY, 'SOIR')
     expect(hours).toHaveLength(6)
-    expect(hours[0].time).toBe('17:00')
-    expect(hours[5].time).toBe('22:00')
+    expect(hours[0]?.time).toBe('17:00')
+    expect(hours[5]?.time).toBe('22:00')
   })
 
   it('returns empty array if no matching hours', () => {

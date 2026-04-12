@@ -15,10 +15,12 @@ export function summarizeWeather(hours: readonly HourlyWeather[], seuilKt: numbe
 
   for (const hour of hours) {
     for (let i = 0; i < ALTITUDE_KEYS.length; i++) {
-      const wind = hour[ALTITUDE_KEYS[i]]
+      const key = ALTITUDE_KEYS[i]!
+      const alt = ALTITUDES[i]!
+      const wind = hour[key]
       if (wind.speed > maxWindKt) {
         maxWindKt = wind.speed
-        maxWindAltitude = ALTITUDES[i]
+        maxWindAltitude = alt
       }
     }
   }

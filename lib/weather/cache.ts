@@ -36,7 +36,7 @@ export async function getWeather(params: GetWeatherParams): Promise<WeatherForec
   await basePrisma.weatherCache.upsert({
     where: { exploitantId_date: { exploitantId, date: new Date(date + 'T00:00:00Z') } },
     update: {
-      data: response as unknown as Record<string, unknown>,
+      data: response as object,
       fetchedAt: new Date(),
       latitude,
       longitude,
@@ -44,7 +44,7 @@ export async function getWeather(params: GetWeatherParams): Promise<WeatherForec
     create: {
       exploitantId,
       date: new Date(date + 'T00:00:00Z'),
-      data: response as unknown as Record<string, unknown>,
+      data: response as object,
       latitude,
       longitude,
     },

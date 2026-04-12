@@ -9,7 +9,7 @@ export function extractCreneauHours(
   forecast: WeatherForecast,
   creneau: 'MATIN' | 'SOIR',
 ): HourlyWeather[] {
-  const range = CRENEAU_RANGES[creneau]
+  const range = CRENEAU_RANGES[creneau]!
   return forecast.hours.filter((h) => {
     const hour = parseInt(h.time.slice(0, 2))
     return hour >= range.start && hour <= range.end
