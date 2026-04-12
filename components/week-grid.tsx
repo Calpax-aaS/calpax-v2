@@ -32,8 +32,8 @@ const STATUT_BORDER: Record<string, string> = {
 const DAY_SHORT = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
 function addDays(dateStr: string, days: number): string {
-  const d = new Date(dateStr + 'T00:00:00')
-  d.setDate(d.getDate() + days)
+  const d = new Date(dateStr + 'T12:00:00Z')
+  d.setUTCDate(d.getUTCDate() + days)
   return d.toISOString().slice(0, 10)
 }
 

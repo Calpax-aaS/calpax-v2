@@ -13,16 +13,14 @@ type Props = {
   searchParams: Promise<{ week?: string }>
 }
 
-function getMondayOfWeek(date: Date): Date {
-  const d = new Date(date)
-  const day = d.getDay()
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1) // Monday
-  d.setDate(diff)
-  d.setHours(0, 0, 0, 0)
-  return d
+function getMondayOfWeek(dateStr: string): string {
+  const d = new Date(dateStr + 'T12:00:00Z')
+  const day = d.getUTCDay()
+  d.setUTCDate(d.getUTCDate() - ((day + 6) % 7)) // shift to Monday
+  return d.toISOString().slice(0, 10)
 }
 
-function toDateString(date: Date): string {
+function toDateOnly(date: Date): string {
   return date.toISOString().slice(0, 10)
 }
 
@@ -34,23 +32,21 @@ export default async function VolsPage({ params, searchParams }: Props) {
     const t = await getTranslations('vols')
     const ctx = getContext()
 
-    // Determine week start (Monday)
-    const referenceDate = week ? new Date(week + 'T00:00:00') : new Date()
-    const weekStart = getMondayOfWeek(referenceDate)
+    // Determine week start (Monday) — all date math in UTC to avoid timezone drift
+    const todayStr = toDateOnly(new Date())
+    const weekStartStr = getMondayOfWeek(week ?? todayStr)
 
-    // Week end: Sunday at 23:59:59
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekEnd.getDate() + 6)
-    weekEnd.setHours(23, 59, 59, 999)
-
-    const weekStartStr = toDateString(weekStart)
+    // Week end: Sunday
+    const weekStartDate = new Date(weekStartStr + 'T00:00:00Z')
+    const weekEndDate = new Date(weekStartStr + 'T00:00:00Z')
+    weekEndDate.setUTCDate(weekEndDate.getUTCDate() + 6)
 
     const volsRaw = await db.vol.findMany({
       where: {
         exploitantId: ctx.exploitantId,
         date: {
-          gte: weekStart,
-          lte: weekEnd,
+          gte: weekStartDate,
+          lte: weekEndDate,
         },
       },
       include: {
@@ -63,7 +59,7 @@ export default async function VolsPage({ params, searchParams }: Props) {
 
     const vols: VolSummary[] = volsRaw.map((vol) => ({
       id: vol.id,
-      date: toDateString(vol.date),
+      date: toDateOnly(vol.date),
       creneau: vol.creneau as 'MATIN' | 'SOIR',
       ballonNom: vol.ballon.nom,
       piloteInitiales:
@@ -86,7 +82,7 @@ export default async function VolsPage({ params, searchParams }: Props) {
           weekStart={weekStartStr}
           vols={vols}
           locale={locale}
-          todayMonday={toDateString(getMondayOfWeek(new Date()))}
+          todayMonday={getMondayOfWeek(todayStr)}
         />
       </main>
     )
