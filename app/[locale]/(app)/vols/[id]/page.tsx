@@ -6,6 +6,9 @@ import { db } from '@/lib/db'
 import { decrypt } from '@/lib/crypto'
 import { calculerDevisMasse } from '@/lib/vol/devis-masse'
 import { parseQteGazFromConfig } from '@/lib/vol/parse-config-gaz'
+import { getWeather } from '@/lib/weather/cache'
+import { extractCreneauHours } from '@/lib/weather/extract'
+import { summarizeWeather } from '@/lib/weather/classify'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -19,6 +22,8 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { VolActions } from './vol-actions'
+import { WeatherTable } from '@/components/weather-table'
+import { refreshWeather } from '@/lib/actions/weather'
 import type { StatutVol } from '@prisma/client'
 
 type Props = {
@@ -72,14 +77,40 @@ export default async function VolDetailPage({ params }: Props) {
         ballon: true,
         pilote: true,
         passagers: { include: { billet: { select: { reference: true } } } },
+        exploitant: { select: { meteoLatitude: true, meteoLongitude: true, meteoSeuilVent: true } },
       },
     })
     if (!vol) notFound()
+
+    const tMeteo = await getTranslations('meteo')
 
     const pilotePoids = safeDecrypt(vol.pilote.poidsEncrypted)
     const passagersPoids = vol.passagers.map((p) => ({
       poids: safeDecrypt(p.poidsEncrypted) ?? 0,
     }))
+
+    const seuilVent = vol.exploitant.meteoSeuilVent ?? 15
+
+    let weatherHours = null
+    let weatherSummary = null
+
+    if (vol.exploitant.meteoLatitude && vol.exploitant.meteoLongitude) {
+      try {
+        const dateStr = vol.date.toISOString().slice(0, 10)
+        const forecast = await getWeather({
+          exploitantId: vol.exploitantId,
+          latitude: vol.exploitant.meteoLatitude,
+          longitude: vol.exploitant.meteoLongitude,
+          date: dateStr,
+        })
+        weatherHours = extractCreneauHours(forecast, vol.creneau as 'MATIN' | 'SOIR')
+        weatherSummary = summarizeWeather(weatherHours, seuilVent)
+      } catch {
+        // Weather fetch failed silently — show no data message
+      }
+    }
+
+    const devisTemperature = weatherSummary?.avgTemperature ?? 20
 
     const devis =
       pilotePoids !== null
@@ -91,7 +122,7 @@ export default async function VolDetailPage({ params }: Props) {
             },
             pilotePoids,
             passagers: passagersPoids,
-            temperatureCelsius: 20,
+            temperatureCelsius: devisTemperature,
             qteGaz: vol.qteGaz ?? parseQteGazFromConfig(vol.configGaz ?? vol.ballon.configGaz) ?? 0,
           })
         : null
@@ -228,6 +259,39 @@ export default async function VolDetailPage({ params }: Props) {
           </CardContent>
         </Card>
 
+        {/* Meteo card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center justify-between">
+              <span>{tMeteo('title')}</span>
+              {vol.exploitant.meteoLatitude && (
+                <form
+                  action={async () => {
+                    'use server'
+                    await refreshWeather(id, locale)
+                  }}
+                >
+                  <button
+                    type="submit"
+                    className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+                  >
+                    {tMeteo('refresh')}
+                  </button>
+                </form>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!vol.exploitant.meteoLatitude || !vol.exploitant.meteoLongitude ? (
+              <p className="text-muted-foreground text-sm">{tMeteo('noGps')}</p>
+            ) : !weatherHours || !weatherSummary ? (
+              <p className="text-muted-foreground text-sm">{tMeteo('noData')}</p>
+            ) : (
+              <WeatherTable hours={weatherHours} summary={weatherSummary} seuilVent={seuilVent} />
+            )}
+          </CardContent>
+        </Card>
+
         {/* Devis de masse card */}
         <Card>
           <CardHeader>
@@ -242,7 +306,8 @@ export default async function VolDetailPage({ params }: Props) {
             ) : (
               <div className="space-y-4">
                 <p className="text-xs text-muted-foreground">
-                  {t('devis.temperature')} : 20 C (temperature par defaut)
+                  {t('devis.temperature')} : {devisTemperature} C
+                  {weatherSummary ? '' : ' (temperature par defaut)'}
                 </p>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
                   <div>
