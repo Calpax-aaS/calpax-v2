@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 
@@ -102,41 +101,27 @@ function Cell({ date, creneau, vols, locale }: CellProps) {
 
 export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps) {
   const t = useTranslations('vols')
-  const router = useRouter()
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+  const prevWeek = getMondayOffset(weekStart, -1)
+  const nextWeek = getMondayOffset(weekStart, 1)
 
-  function navigate(delta: number) {
-    const newWeek = getMondayOffset(weekStart, delta)
-    router.push(`/${locale}/vols?week=${newWeek}`)
-  }
-
-  function navigateToday() {
-    router.push(`/${locale}/vols?week=${todayMonday}`)
-  }
+  const navClass =
+    'px-3 py-1.5 text-sm border border-gray-200 rounded hover:bg-gray-50 transition-colors'
 
   return (
     <div className="space-y-4">
       {/* Week navigation */}
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => navigate(-1)}
-          className="px-3 py-1.5 text-sm border border-gray-200 rounded hover:bg-gray-50 transition-colors"
-        >
+        <Link href={`/${locale}/vols?week=${prevWeek}`} className={navClass}>
           &larr;
-        </button>
-        <button
-          onClick={navigateToday}
-          className="px-3 py-1.5 text-sm border border-gray-200 rounded hover:bg-gray-50 transition-colors font-medium"
-        >
+        </Link>
+        <Link href={`/${locale}/vols?week=${todayMonday}`} className={`${navClass} font-medium`}>
           {t('today')}
-        </button>
-        <button
-          onClick={() => navigate(1)}
-          className="px-3 py-1.5 text-sm border border-gray-200 rounded hover:bg-gray-50 transition-colors"
-        >
+        </Link>
+        <Link href={`/${locale}/vols?week=${nextWeek}`} className={navClass}>
           &rarr;
-        </button>
+        </Link>
         <span className="text-sm text-gray-500 ml-2">
           {t('week')} {formatShortDate(days[0] ?? weekStart)} &ndash;{' '}
           {formatShortDate(days[6] ?? weekStart)}
