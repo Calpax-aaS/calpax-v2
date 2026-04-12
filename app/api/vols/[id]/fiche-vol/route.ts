@@ -4,6 +4,9 @@ import { db } from '@/lib/db'
 import { decrypt } from '@/lib/crypto'
 import { generateFicheVolBuffer } from '@/lib/pdf/generate'
 import { parseQteGazFromConfig } from '@/lib/vol/parse-config-gaz'
+import { getWeather } from '@/lib/weather/cache'
+import { extractCreneauHours } from '@/lib/weather/extract'
+import { summarizeWeather } from '@/lib/weather/classify'
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   return requireAuth(async () => {
@@ -12,7 +15,16 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const vol = await db.vol.findUniqueOrThrow({
       where: { id },
       include: {
-        exploitant: { select: { name: true, frDecNumber: true, logoUrl: true } },
+        exploitant: {
+          select: {
+            name: true,
+            frDecNumber: true,
+            logoUrl: true,
+            meteoLatitude: true,
+            meteoLongitude: true,
+            meteoSeuilVent: true,
+          },
+        },
         ballon: true,
         pilote: true,
         passagers: { include: { billet: { select: { reference: true } } } },
@@ -31,6 +43,26 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       pmr: p.pmr,
       billetReference: p.billet.reference,
     }))
+
+    let meteo = undefined
+    const seuilVent = vol.exploitant.meteoSeuilVent ?? 15
+
+    if (vol.exploitant.meteoLatitude && vol.exploitant.meteoLongitude) {
+      try {
+        const dateStr = vol.date.toISOString().slice(0, 10)
+        const forecast = await getWeather({
+          exploitantId: vol.exploitantId,
+          latitude: vol.exploitant.meteoLatitude,
+          longitude: vol.exploitant.meteoLongitude,
+          date: dateStr,
+        })
+        const hours = extractCreneauHours(forecast, vol.creneau as 'MATIN' | 'SOIR')
+        const summary = summarizeWeather(hours, seuilVent)
+        meteo = { hours, summary, seuilVent }
+      } catch {
+        // Weather not available — PDF will show placeholder
+      }
+    }
 
     const buffer = await generateFicheVolBuffer({
       exploitant: vol.exploitant,
@@ -67,6 +99,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       temperatureCelsius: 20,
       isPve: false,
       archivedAt: null,
+      meteo,
     })
 
     const filename = `fiche-vol-${vol.ballon.immatriculation}-${vol.date.toISOString().slice(0, 10)}.pdf`

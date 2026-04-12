@@ -54,6 +54,25 @@ export type FicheVolData = {
   temperatureCelsius: number
   isPve: boolean
   archivedAt: Date | null
+  meteo?: {
+    hours: {
+      time: string
+      wind10m: { speed: number; direction: number }
+      wind80m: { speed: number; direction: number }
+      wind120m: { speed: number; direction: number }
+      wind180m: { speed: number; direction: number }
+      temperature: number
+      cloudCover: number
+      precipitationProb: number
+    }[]
+    summary: {
+      maxWindKt: number
+      maxWindAltitude: string
+      level: string
+      avgTemperature: number
+    }
+    seuilVent: number
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -250,6 +269,45 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 12,
   },
+  // Page 3 meteo banner
+  meteoBanner: {
+    backgroundColor: '#1e3a5f',
+    color: '#fff',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    marginBottom: 8,
+  },
+  meteoBannerTitle: {
+    fontSize: 12,
+    fontFamily: 'Helvetica-Bold',
+    color: '#fff',
+    marginBottom: 3,
+  },
+  meteoBannerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  meteoBannerMeta: {
+    fontSize: 8,
+    color: '#cce0ff',
+  },
+  meteoBannerLevel: {
+    fontSize: 9,
+    fontFamily: 'Helvetica-Bold',
+    color: '#fff',
+  },
+  // Meteo table columns
+  colMeteoTime: { width: 36 },
+  colMeteoWind: { flex: 1 },
+  colMeteoOat: { width: 30 },
+  colMeteoCloud: { width: 40 },
+  colMeteoPrec: { width: 35 },
+  meteoFooter: {
+    marginTop: 6,
+    fontSize: 7,
+    color: '#888',
+    fontFamily: 'Helvetica-Oblique',
+  },
 })
 
 // ---------------------------------------------------------------------------
@@ -266,6 +324,12 @@ function formatTime(d: Date): string {
 
 function formatDatetime(d: Date): string {
   return `${formatDate(d)} ${formatTime(d)}`
+}
+
+function pdfWindBg(speed: number, seuil: number): string {
+  if (speed > seuil + 5) return '#fecaca' // red-200
+  if (speed >= seuil) return '#fef3c7' // amber-100
+  return '#ffffff'
 }
 
 // ---------------------------------------------------------------------------
@@ -555,23 +619,103 @@ function Page2({ data }: { data: FicheVolData }) {
 // ---------------------------------------------------------------------------
 
 function Page3({ data }: { data: FicheVolData }) {
+  const { exploitant, vol, meteo } = data
+
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>METEO</Text>
         <View style={styles.headerSubRow}>
           <Text style={styles.headerMeta}>
-            {data.exploitant.name} — {data.exploitant.frDecNumber}
+            {exploitant.name} — {exploitant.frDecNumber}
           </Text>
-          <Text style={styles.headerMeta}>{formatDate(data.vol.date)}</Text>
+          <Text style={styles.headerMeta}>{formatDate(vol.date)}</Text>
         </View>
       </View>
 
-      <View style={styles.meteoPlaceholder}>
-        <Text>Page meteo — sera generee par le module meteo (Pw)</Text>
-      </View>
+      {meteo ? (
+        <>
+          {/* Banner */}
+          <View style={styles.meteoBanner}>
+            <Text style={styles.meteoBannerTitle}>
+              METEO — {formatDate(vol.date)} — {vol.creneau}
+            </Text>
+            <View style={styles.meteoBannerRow}>
+              <Text style={styles.meteoBannerMeta}>
+                Vent max: {meteo.summary.maxWindKt} kt ({meteo.summary.maxWindAltitude}) | OAT moy:{' '}
+                {meteo.summary.avgTemperature}°C
+              </Text>
+              <Text style={styles.meteoBannerLevel}>{meteo.summary.level}</Text>
+            </View>
+          </View>
 
-      <PageFooter exploitant={data.exploitant} />
+          {/* Table */}
+          <View style={styles.table}>
+            <View style={styles.tableHeader}>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoTime]}>Heure</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoWind]}>Vent 10m</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoWind]}>Vent 80m</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoWind]}>Vent 120m</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoWind]}>Vent 180m</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoOat]}>OAT</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoCloud]}>Nebulosite</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoPrec]}>Precip.</Text>
+            </View>
+            {meteo.hours.map((h, i) => (
+              <View key={h.time} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
+                <Text style={[styles.tableCell, styles.colMeteoTime]}>{h.time}</Text>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.colMeteoWind,
+                    { backgroundColor: pdfWindBg(h.wind10m.speed, meteo.seuilVent) },
+                  ]}
+                >
+                  {h.wind10m.speed} kt {h.wind10m.direction}°
+                </Text>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.colMeteoWind,
+                    { backgroundColor: pdfWindBg(h.wind80m.speed, meteo.seuilVent) },
+                  ]}
+                >
+                  {h.wind80m.speed} kt {h.wind80m.direction}°
+                </Text>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.colMeteoWind,
+                    { backgroundColor: pdfWindBg(h.wind120m.speed, meteo.seuilVent) },
+                  ]}
+                >
+                  {h.wind120m.speed} kt {h.wind120m.direction}°
+                </Text>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.colMeteoWind,
+                    { backgroundColor: pdfWindBg(h.wind180m.speed, meteo.seuilVent) },
+                  ]}
+                >
+                  {h.wind180m.speed} kt {h.wind180m.direction}°
+                </Text>
+                <Text style={[styles.tableCell, styles.colMeteoOat]}>{h.temperature}°C</Text>
+                <Text style={[styles.tableCell, styles.colMeteoCloud]}>{h.cloudCover}%</Text>
+                <Text style={[styles.tableCell, styles.colMeteoPrec]}>{h.precipitationProb}%</Text>
+              </View>
+            ))}
+          </View>
+
+          <Text style={styles.meteoFooter}>Source: Open-Meteo.com</Text>
+        </>
+      ) : (
+        <View style={styles.meteoPlaceholder}>
+          <Text>Page meteo — sera generee par le module meteo (Pw)</Text>
+        </View>
+      )}
+
+      <PageFooter exploitant={exploitant} />
     </Page>
   )
 }
