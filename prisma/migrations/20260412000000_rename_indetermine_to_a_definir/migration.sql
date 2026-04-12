@@ -1,0 +1,2 @@
+-- Rename INDETERMINE to A_DEFINIR in TypePlannif enum
+ALTER TYPE "TypePlannif" RENAME VALUE 'INDETERMINE' TO 'A_DEFINIR';

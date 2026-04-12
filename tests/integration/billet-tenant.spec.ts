@@ -13,7 +13,7 @@ async function seedBillet(exploitantId: string, reference: string) {
       payeurPrenom: 'Test',
       payeurNom: 'Payeur',
       montantTtc: 15000,
-      typePlannif: 'INDETERMINE',
+      typePlannif: 'A_DEFINIR',
       statut: 'EN_ATTENTE',
       statutPaiement: 'EN_ATTENTE',
     },

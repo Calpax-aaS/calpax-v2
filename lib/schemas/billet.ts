@@ -2,14 +2,7 @@ import { z } from 'zod'
 import { passagerSchema } from './passager'
 
 export const billetCreateSchema = z.object({
-  typePlannif: z.enum([
-    'MATIN',
-    'SOIR',
-    'TOUTE_LA_JOURNEE',
-    'AU_PLUS_VITE',
-    'AUTRE',
-    'INDETERMINE',
-  ]),
+  typePlannif: z.enum(['MATIN', 'SOIR', 'TOUTE_LA_JOURNEE', 'AU_PLUS_VITE', 'AUTRE', 'A_DEFINIR']),
   dateVolDeb: z.coerce.date().optional(),
   dateVolFin: z.coerce.date().optional(),
   dateValidite: z.coerce.date().optional(),

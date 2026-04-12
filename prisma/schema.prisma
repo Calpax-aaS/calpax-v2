@@ -186,7 +186,7 @@ enum TypePlannif {
   TOUTE_LA_JOURNEE
   AU_PLUS_VITE
   AUTRE
-  INDETERMINE
+  A_DEFINIR
 }
 
 enum StatutBillet {
@@ -263,7 +263,7 @@ model Billet {
   reference       String
   checksum        String
 
-  typePlannif     TypePlannif    @default(INDETERMINE)
+  typePlannif     TypePlannif    @default(A_DEFINIR)
   dateVolDeb      DateTime?
   dateVolFin      DateTime?
   dateValidite    DateTime?

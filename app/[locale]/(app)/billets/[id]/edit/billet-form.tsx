@@ -48,7 +48,7 @@ const TYPE_PLANNIF_OPTIONS = [
   'TOUTE_LA_JOURNEE',
   'AU_PLUS_VITE',
   'AUTRE',
-  'INDETERMINE',
+  'A_DEFINIR',
 ] as const
 
 function toDateInputValue(date: Date | null | undefined): string {
@@ -60,6 +60,10 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
   const t = useTranslations('billets')
   const [passagers, setPassagers] = useState<PassagerRow[]>(defaultPassagers)
   const [error, setError] = useState<string | null>(null)
+  const [typePlannif, setTypePlannif] = useState(defaultValues?.typePlannif ?? 'A_DEFINIR')
+
+  const showDates =
+    typePlannif === 'MATIN' || typePlannif === 'SOIR' || typePlannif === 'TOUTE_LA_JOURNEE'
 
   async function handleSubmit(formData: FormData) {
     formData.set('passagers', JSON.stringify(passagers))
@@ -174,7 +178,8 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             <select
               id="typePlannif"
               name="typePlannif"
-              defaultValue={defaultValues?.typePlannif ?? 'INDETERMINE'}
+              value={typePlannif}
+              onChange={(e) => setTypePlannif(e.target.value)}
               required
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
@@ -199,26 +204,28 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
               required
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Label htmlFor="dateVolDeb">{t('fields.dateVolDeb')}</Label>
-              <Input
-                id="dateVolDeb"
-                name="dateVolDeb"
-                type="date"
-                defaultValue={toDateInputValue(defaultValues?.dateVolDeb)}
-              />
+          {showDates && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <Label htmlFor="dateVolDeb">{t('fields.dateVolDeb')}</Label>
+                <Input
+                  id="dateVolDeb"
+                  name="dateVolDeb"
+                  type="date"
+                  defaultValue={toDateInputValue(defaultValues?.dateVolDeb)}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="dateVolFin">{t('fields.dateVolFin')}</Label>
+                <Input
+                  id="dateVolFin"
+                  name="dateVolFin"
+                  type="date"
+                  defaultValue={toDateInputValue(defaultValues?.dateVolFin)}
+                />
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="dateVolFin">{t('fields.dateVolFin')}</Label>
-              <Input
-                id="dateVolFin"
-                name="dateVolFin"
-                type="date"
-                defaultValue={toDateInputValue(defaultValues?.dateVolFin)}
-              />
-            </div>
-          </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label htmlFor="dateValidite">{t('fields.dateValidite')}</Label>

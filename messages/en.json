@@ -195,7 +195,7 @@
       "TOUTE_LA_JOURNEE": "All day",
       "AU_PLUS_VITE": "ASAP",
       "AUTRE": "Other",
-      "INDETERMINE": "Undetermined"
+      "A_DEFINIR": "To be defined"
     },
     "statut": {
       "EN_ATTENTE": "Pending",

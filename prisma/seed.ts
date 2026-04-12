@@ -688,7 +688,7 @@ async function main() {
     },
     {
       seq: 8,
-      typePlannif: 'INDETERMINE' as const,
+      typePlannif: 'A_DEFINIR' as const,
       dateVolDeb: null,
       dateVolFin: null,
       payeurPrenom: 'Eric',
