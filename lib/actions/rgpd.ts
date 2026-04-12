@@ -1,7 +1,9 @@
 'use server'
 
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
+import { basePrisma } from '@/lib/db/base'
 import { decrypt } from '@/lib/crypto'
 
 export type PassagerSearchResult = {
@@ -18,18 +20,26 @@ export async function searchPassagers(query: string): Promise<PassagerSearchResu
   return requireAuth(async () => {
     if (!query || query.length < 2) return []
 
-    const passagers = await db.passager.findMany({
-      where: {
-        OR: [
-          { nom: { contains: query, mode: 'insensitive' } },
-          { prenom: { contains: query, mode: 'insensitive' } },
-          { email: { contains: query, mode: 'insensitive' } },
-          { telephone: { contains: query } },
-        ],
-      },
-      include: { billet: { select: { id: true, reference: true } } },
-      take: 50,
-    })
+    const ctx = getContext()
+    const pattern = `%${query}%`
+    const passagers = await basePrisma.$queryRaw<
+      {
+        id: string
+        prenom: string
+        nom: string
+        email: string | null
+        telephone: string | null
+        billetId: string
+        billetReference: string
+      }[]
+    >`
+      SELECT p.id, p.prenom, p.nom, p.email, p.telephone, p."billetId", b.reference AS "billetReference"
+      FROM passager p
+      JOIN billet b ON b.id = p."billetId"
+      WHERE p."exploitantId" = ${ctx.exploitantId}
+        AND (p.nom ILIKE ${pattern} OR p.prenom ILIKE ${pattern} OR p.email ILIKE ${pattern} OR p.telephone LIKE ${pattern})
+      LIMIT 50
+    `
 
     return passagers.map((p) => ({
       id: p.id,
@@ -37,8 +47,8 @@ export async function searchPassagers(query: string): Promise<PassagerSearchResu
       nom: p.nom,
       email: p.email,
       telephone: p.telephone,
-      billetReference: p.billet.reference,
-      billetId: p.billet.id,
+      billetReference: p.billetReference,
+      billetId: p.billetId,
     }))
   }) as Promise<PassagerSearchResult[]>
 }
