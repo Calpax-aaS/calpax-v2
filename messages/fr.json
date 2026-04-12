@@ -54,7 +54,7 @@
       "contactName": "Nom du contact",
       "meteoLatitude": "Latitude",
       "meteoLongitude": "Longitude",
-      "meteoSeuilVent": "Seuil vent (kt)"
+      "meteoSeuilVent": "Seuil vent (km/h)"
     }
   },
   "meteo": {
@@ -84,7 +84,7 @@
       "title": "Meteo",
       "latitude": "Latitude",
       "longitude": "Longitude",
-      "seuilVent": "Seuil vent (kt)",
+      "seuilVent": "Seuil vent (km/h)",
       "seuilHelp": "Vent au-dessus duquel l'indicateur passe en orange"
     }
   },

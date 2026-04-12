@@ -1,0 +1,253 @@
+<h2>Affichage meteo — 3 options</h2>
+<p class="subtitle">Quel style preferes-tu pour le tableau meteo sur la page vol ?</p>
+
+<div class="cards">
+
+  <!-- Option A: Barres + fleches -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8fafc;">
+      <div style="font-weight: 600; margin-bottom: 12px; font-size: 13px;">A — Barres de vent + fleches de direction</div>
+
+      <!-- Banner -->
+      <div style="background: #dcfce7; color: #166534; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 12px;">
+        <span><strong>OK</strong> — Vent max: 12 kt (180m)</span>
+        <span>OAT moy: 14°C</span>
+      </div>
+
+      <!-- Table -->
+      <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f1f5f9; text-align: left;">
+            <th style="padding: 6px;">Heure</th>
+            <th style="padding: 6px;">10m</th>
+            <th style="padding: 6px;">80m</th>
+            <th style="padding: 6px;">120m</th>
+            <th style="padding: 6px;">180m</th>
+            <th style="padding: 6px;">OAT</th>
+            <th style="padding: 6px; text-align: center;">Ciel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 6px; font-weight: 600;">06:00</td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 30px; height: 8px; background: #86efac; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(180deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">5kt</span>
+              </div>
+            </td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 48px; height: 8px; background: #86efac; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(200deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">8kt</span>
+              </div>
+            </td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 60px; height: 8px; background: #86efac; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(210deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">10kt</span>
+              </div>
+            </td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 72px; height: 8px; background: #86efac; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(220deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">12kt</span>
+              </div>
+            </td>
+            <td style="padding: 6px;">14°C</td>
+            <td style="padding: 6px; text-align: center;">&#9729; 30%</td>
+          </tr>
+          <tr style="background: #f8fafc;">
+            <td style="padding: 6px; font-weight: 600;">07:00</td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 48px; height: 8px; background: #fde68a; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(190deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">8kt</span>
+              </div>
+            </td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 84px; height: 8px; background: #fde68a; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(195deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">14kt</span>
+              </div>
+            </td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 96px; height: 8px; background: #fca5a5; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(210deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">16kt</span>
+              </div>
+            </td>
+            <td style="padding: 4px;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <div style="width: 108px; height: 8px; background: #fca5a5; border-radius: 4px;"></div>
+                <span style="font-size: 10px; transform: rotate(215deg); display: inline-block;">&#x27A4;</span>
+                <span style="font-size: 10px; color: #666;">18kt</span>
+              </div>
+            </td>
+            <td style="padding: 6px;">16°C</td>
+            <td style="padding: 6px; text-align: center;">&#9729; 45%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-body">
+      <h3>Barres + fleches</h3>
+      <p>Longueur = vitesse, couleur = seuil, fleche = direction. Tres visuel, lecture rapide.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Cellules colorees compactes -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8fafc;">
+      <div style="font-weight: 600; margin-bottom: 12px; font-size: 13px;">B — Cellules colorees compactes (actuel ameliore)</div>
+
+      <div style="background: #fef3c7; color: #92400e; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 12px;">
+        <span><strong>Prudence</strong> — Vent max: 18 kt (180m)</span>
+        <span>OAT moy: 15°C</span>
+      </div>
+
+      <table style="width: 100%; font-size: 11px; border-collapse: collapse; text-align: center;">
+        <thead>
+          <tr style="background: #f1f5f9;">
+            <th style="padding: 6px; text-align: left;">Heure</th>
+            <th style="padding: 6px;">10m</th>
+            <th style="padding: 6px;">80m</th>
+            <th style="padding: 6px;">120m</th>
+            <th style="padding: 6px;">180m</th>
+            <th style="padding: 6px;">OAT</th>
+            <th style="padding: 6px;">&#9729;</th>
+            <th style="padding: 6px;">&#127783;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 6px; text-align: left; font-weight: 600;">06:00</td>
+            <td style="padding: 4px 6px; background: #dcfce7; border-radius: 4px;"><strong>5</strong><br><span style="font-size: 9px; color: #666;">S</span></td>
+            <td style="padding: 4px 6px; background: #dcfce7; border-radius: 4px;"><strong>8</strong><br><span style="font-size: 9px; color: #666;">SSW</span></td>
+            <td style="padding: 4px 6px; background: #dcfce7; border-radius: 4px;"><strong>10</strong><br><span style="font-size: 9px; color: #666;">SW</span></td>
+            <td style="padding: 4px 6px; background: #dcfce7; border-radius: 4px;"><strong>12</strong><br><span style="font-size: 9px; color: #666;">SW</span></td>
+            <td style="padding: 6px;">14°</td>
+            <td style="padding: 6px;">30%</td>
+            <td style="padding: 6px;">0%</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px; text-align: left; font-weight: 600;">07:00</td>
+            <td style="padding: 4px 6px; background: #dcfce7; border-radius: 4px;"><strong>8</strong><br><span style="font-size: 9px; color: #666;">S</span></td>
+            <td style="padding: 4px 6px; background: #dcfce7; border-radius: 4px;"><strong>14</strong><br><span style="font-size: 9px; color: #666;">SSW</span></td>
+            <td style="padding: 4px 6px; background: #fef3c7; border-radius: 4px;"><strong>16</strong><br><span style="font-size: 9px; color: #666;">SW</span></td>
+            <td style="padding: 4px 6px; background: #fecaca; border-radius: 4px;"><strong>18</strong><br><span style="font-size: 9px; color: #666;">SW</span></td>
+            <td style="padding: 6px;">16°</td>
+            <td style="padding: 6px;">45%</td>
+            <td style="padding: 6px;">5%</td>
+          </tr>
+          <tr>
+            <td style="padding: 6px; text-align: left; font-weight: 600;">08:00</td>
+            <td style="padding: 4px 6px; background: #fef3c7; border-radius: 4px;"><strong>15</strong><br><span style="font-size: 9px; color: #666;">SSW</span></td>
+            <td style="padding: 4px 6px; background: #fecaca; border-radius: 4px;"><strong>20</strong><br><span style="font-size: 9px; color: #666;">SW</span></td>
+            <td style="padding: 4px 6px; background: #fecaca; border-radius: 4px;"><strong>22</strong><br><span style="font-size: 9px; color: #666;">SW</span></td>
+            <td style="padding: 4px 6px; background: #fecaca; border-radius: 4px;"><strong>24</strong><br><span style="font-size: 9px; color: #666;">WSW</span></td>
+            <td style="padding: 6px;">17°</td>
+            <td style="padding: 6px;">60%</td>
+            <td style="padding: 6px;">15%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-body">
+      <h3>Cellules colorees + direction cardinale</h3>
+      <p>Compact, fond colore par seuil, direction en cardinal (S, SW, NW). Facile a lire en un coup d'oeil. Compatible PDF.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Heatmap gradient -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8fafc;">
+      <div style="font-weight: 600; margin-bottom: 12px; font-size: 13px;">C — Heatmap gradient (altitude x heure)</div>
+
+      <div style="background: #fecaca; color: #991b1b; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 12px;">
+        <span><strong>Defavorable</strong> — Vent max: 24 kt (180m)</span>
+        <span>OAT moy: 15°C</span>
+      </div>
+
+      <!-- Heatmap-style grid -->
+      <div style="display: grid; grid-template-columns: 50px repeat(6, 1fr); gap: 2px; font-size: 10px;">
+        <!-- Header -->
+        <div></div>
+        <div style="text-align: center; font-weight: 600; padding: 4px;">05:00</div>
+        <div style="text-align: center; font-weight: 600; padding: 4px;">06:00</div>
+        <div style="text-align: center; font-weight: 600; padding: 4px;">07:00</div>
+        <div style="text-align: center; font-weight: 600; padding: 4px;">08:00</div>
+        <div style="text-align: center; font-weight: 600; padding: 4px;">09:00</div>
+        <div style="text-align: center; font-weight: 600; padding: 4px;">10:00</div>
+
+        <!-- 180m -->
+        <div style="font-weight: 600; padding: 4px; display: flex; align-items: center;">180m</div>
+        <div style="background: #bbf7d0; text-align: center; padding: 6px; border-radius: 4px;">8<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">12<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #fef3c7; text-align: center; padding: 6px; border-radius: 4px;">18<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #fecaca; text-align: center; padding: 6px; border-radius: 4px;"><strong>24</strong><br><span style="font-size: 8px;">WSW</span></div>
+        <div style="background: #fecaca; text-align: center; padding: 6px; border-radius: 4px;"><strong>22</strong><br><span style="font-size: 8px;">WSW</span></div>
+        <div style="background: #fef3c7; text-align: center; padding: 6px; border-radius: 4px;">16<br><span style="font-size: 8px;">W</span></div>
+
+        <!-- 120m -->
+        <div style="font-weight: 600; padding: 4px; display: flex; align-items: center;">120m</div>
+        <div style="background: #bbf7d0; text-align: center; padding: 6px; border-radius: 4px;">6<br><span style="font-size: 8px;">S</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">10<br><span style="font-size: 8px;">SSW</span></div>
+        <div style="background: #fef3c7; text-align: center; padding: 6px; border-radius: 4px;">16<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #fecaca; text-align: center; padding: 6px; border-radius: 4px;"><strong>22</strong><br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #fef3c7; text-align: center; padding: 6px; border-radius: 4px;">18<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">14<br><span style="font-size: 8px;">W</span></div>
+
+        <!-- 80m -->
+        <div style="font-weight: 600; padding: 4px; display: flex; align-items: center;">80m</div>
+        <div style="background: #bbf7d0; text-align: center; padding: 6px; border-radius: 4px;">4<br><span style="font-size: 8px;">S</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">8<br><span style="font-size: 8px;">SSW</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">14<br><span style="font-size: 8px;">SSW</span></div>
+        <div style="background: #fef3c7; text-align: center; padding: 6px; border-radius: 4px;">20<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #fef3c7; text-align: center; padding: 6px; border-radius: 4px;">16<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">12<br><span style="font-size: 8px;">WSW</span></div>
+
+        <!-- 10m -->
+        <div style="font-weight: 600; padding: 4px; display: flex; align-items: center;">10m</div>
+        <div style="background: #bbf7d0; text-align: center; padding: 6px; border-radius: 4px;">3<br><span style="font-size: 8px;">S</span></div>
+        <div style="background: #bbf7d0; text-align: center; padding: 6px; border-radius: 4px;">5<br><span style="font-size: 8px;">S</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">8<br><span style="font-size: 8px;">SSW</span></div>
+        <div style="background: #fef3c7; text-align: center; padding: 6px; border-radius: 4px;">15<br><span style="font-size: 8px;">SW</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">12<br><span style="font-size: 8px;">SSW</span></div>
+        <div style="background: #dcfce7; text-align: center; padding: 6px; border-radius: 4px;">9<br><span style="font-size: 8px;">WSW</span></div>
+      </div>
+
+      <!-- OAT row below -->
+      <div style="display: grid; grid-template-columns: 50px repeat(6, 1fr); gap: 2px; font-size: 10px; margin-top: 8px; border-top: 1px solid #e2e8f0; padding-top: 6px;">
+        <div style="font-weight: 600; padding: 4px;">OAT</div>
+        <div style="text-align: center;">12°</div>
+        <div style="text-align: center;">14°</div>
+        <div style="text-align: center;">16°</div>
+        <div style="text-align: center;">17°</div>
+        <div style="text-align: center;">16°</div>
+        <div style="text-align: center;">15°</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 50px repeat(6, 1fr); gap: 2px; font-size: 10px; margin-top: 2px;">
+        <div style="font-weight: 600; padding: 4px;">Ciel</div>
+        <div style="text-align: center;">&#9729; 20%</div>
+        <div style="text-align: center;">&#9729; 30%</div>
+        <div style="text-align: center;">&#9729; 45%</div>
+        <div style="text-align: center;">&#9729; 60%</div>
+        <div style="text-align: center;">&#9729; 55%</div>
+        <div style="text-align: center;">&#9729; 40%</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Heatmap altitude x heure</h3>
+      <p>Axes inverses : altitude en vertical (180m en haut), heures en horizontal. Lecture naturelle "le vent monte avec l'altitude et l'heure". Format carte chaleur.</p>
+    </div>
+  </div>
+
+</div>

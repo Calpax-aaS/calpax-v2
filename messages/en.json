@@ -54,7 +54,7 @@
       "contactName": "Contact name",
       "meteoLatitude": "Latitude",
       "meteoLongitude": "Longitude",
-      "meteoSeuilVent": "Wind threshold (kt)"
+      "meteoSeuilVent": "Wind threshold (km/h)"
     }
   },
   "meteo": {
@@ -84,7 +84,7 @@
       "title": "Weather",
       "latitude": "Latitude",
       "longitude": "Longitude",
-      "seuilVent": "Wind threshold (kt)",
+      "seuilVent": "Wind threshold (km/h)",
       "seuilHelp": "Wind speed above which the indicator turns orange"
     }
   },

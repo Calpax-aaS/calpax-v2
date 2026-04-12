@@ -32,7 +32,7 @@ model Exploitant {
   weatherCache WeatherCache[]
   meteoLatitude  Float?
   meteoLongitude Float?
-  meteoSeuilVent Int?     @default(15)
+  meteoSeuilVent Int?     @default(28)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

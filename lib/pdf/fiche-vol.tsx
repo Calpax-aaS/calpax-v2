@@ -642,8 +642,8 @@ function Page3({ data }: { data: FicheVolData }) {
             </Text>
             <View style={styles.meteoBannerRow}>
               <Text style={styles.meteoBannerMeta}>
-                Vent max: {meteo.summary.maxWindKt} kt ({meteo.summary.maxWindAltitude}) | OAT moy:{' '}
-                {meteo.summary.avgTemperature}°C
+                Vent max: {meteo.summary.maxWindKt} km/h ({meteo.summary.maxWindAltitude}) | OAT
+                moy: {meteo.summary.avgTemperature}°C
               </Text>
               <Text style={styles.meteoBannerLevel}>{meteo.summary.level}</Text>
             </View>
@@ -671,7 +671,7 @@ function Page3({ data }: { data: FicheVolData }) {
                     { backgroundColor: pdfWindBg(h.wind10m.speed, meteo.seuilVent) },
                   ]}
                 >
-                  {h.wind10m.speed} kt {h.wind10m.direction}°
+                  {h.wind10m.speed} km/h {h.wind10m.direction}°
                 </Text>
                 <Text
                   style={[
@@ -680,7 +680,7 @@ function Page3({ data }: { data: FicheVolData }) {
                     { backgroundColor: pdfWindBg(h.wind80m.speed, meteo.seuilVent) },
                   ]}
                 >
-                  {h.wind80m.speed} kt {h.wind80m.direction}°
+                  {h.wind80m.speed} km/h {h.wind80m.direction}°
                 </Text>
                 <Text
                   style={[
@@ -689,7 +689,7 @@ function Page3({ data }: { data: FicheVolData }) {
                     { backgroundColor: pdfWindBg(h.wind120m.speed, meteo.seuilVent) },
                   ]}
                 >
-                  {h.wind120m.speed} kt {h.wind120m.direction}°
+                  {h.wind120m.speed} km/h {h.wind120m.direction}°
                 </Text>
                 <Text
                   style={[
@@ -698,7 +698,7 @@ function Page3({ data }: { data: FicheVolData }) {
                     { backgroundColor: pdfWindBg(h.wind180m.speed, meteo.seuilVent) },
                   ]}
                 >
-                  {h.wind180m.speed} kt {h.wind180m.direction}°
+                  {h.wind180m.speed} km/h {h.wind180m.direction}°
                 </Text>
                 <Text style={[styles.tableCell, styles.colMeteoOat]}>{h.temperature}°C</Text>
                 <Text style={[styles.tableCell, styles.colMeteoCloud]}>{h.cloudCover}%</Text>
