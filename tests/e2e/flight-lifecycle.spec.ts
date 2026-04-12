@@ -69,7 +69,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
     await page.locator('input[name="qualificationCommerciale"]').check()
     await page.locator('input[name="classeA"]').check()
     await page.locator('input[name="groupeA1"]').check()
-    await page.getByRole('button', { name: /enregistrer/i }).click()
+    await page.getByRole('button', { name: /enregistrer|cr[eé]er|save|create/i }).click()
     await expect(page.getByText('E2E TestPilote')).toBeVisible({ timeout: 10_000 })
   })
 
@@ -88,7 +88,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
     await page.locator('input[name="chart_10"]').fill('482')
     await page.locator('input[name="chart_20"]').fill('365')
     await page.locator('input[name="chart_30"]').fill('256')
-    await page.getByRole('button', { name: /enregistrer/i }).click()
+    await page.getByRole('button', { name: /enregistrer|cr[eé]er|save|create/i }).click()
     await expect(page.getByText('E2E-Ballon')).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText('F-E2ET')).toBeVisible()
   })
@@ -115,7 +115,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
     await rows.nth(1).locator('input[type="number"]').nth(0).fill('35')
     await rows.nth(1).locator('input[type="number"]').nth(1).fill('80')
     // Submit
-    await page.getByRole('button', { name: /enregistrer/i }).click()
+    await page.getByRole('button', { name: /enregistrer|cr[eé]er|save|create/i }).click()
     // Should redirect to billet detail
     await expect(page.getByText('CBF-')).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText('Alice')).toBeVisible()
@@ -204,7 +204,7 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
     await page.locator('input[name="atterHeure"]').fill('2026-04-12T07:45')
     await page.locator('input[name="gasConso"]').fill('55')
     await page.locator('input[name="distance"]').fill('12')
-    await page.getByRole('button', { name: /enregistrer/i }).click()
+    await page.getByRole('button', { name: /enregistrer|cr[eé]er|save|create/i }).click()
     // Should redirect to vol detail with TERMINE status
     await expect(page.getByText(/termin/i)).toBeVisible({ timeout: 10_000 })
   })
