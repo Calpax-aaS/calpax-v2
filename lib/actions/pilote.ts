@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
@@ -91,6 +92,7 @@ export async function updatePilote(
 
     await db.pilote.update({ where: { id }, data })
 
+    revalidatePath(`/${locale}/pilotes/${id}`)
     redirect(`/${locale}/pilotes/${id}`)
   })
 }

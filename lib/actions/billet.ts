@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
@@ -142,6 +143,7 @@ export async function updateBillet(
       },
     })
 
+    revalidatePath(`/${locale}/billets/${id}`)
     redirect(`/${locale}/billets/${id}`)
   })
 }
