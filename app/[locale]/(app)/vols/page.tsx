@@ -82,7 +82,12 @@ export default async function VolsPage({ params, searchParams }: Props) {
           </Link>
         </div>
 
-        <WeekGrid weekStart={weekStartStr} vols={vols} locale={locale} />
+        <WeekGrid
+          weekStart={weekStartStr}
+          vols={vols}
+          locale={locale}
+          todayMonday={toDateString(getMondayOfWeek(new Date()))}
+        />
       </main>
     )
   })

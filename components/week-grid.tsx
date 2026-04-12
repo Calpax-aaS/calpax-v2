@@ -20,6 +20,7 @@ type WeekGridProps = {
   weekStart: string // YYYY-MM-DD (Monday)
   vols: VolSummary[]
   locale: string
+  todayMonday: string // YYYY-MM-DD, computed server-side to avoid hydration mismatch
 }
 
 const STATUT_BORDER: Record<string, string> = {
@@ -47,16 +48,6 @@ function formatShortDate(dateStr: string): string {
 
 function getMondayOffset(current: string, delta: number): string {
   return addDays(current, delta * 7)
-}
-
-function getTodayMonday(): string {
-  const today = new Date()
-  const day = today.getDay()
-  const diff = today.getDate() - day + (day === 0 ? -6 : 1)
-  const monday = new Date(today)
-  monday.setDate(diff)
-  monday.setHours(0, 0, 0, 0)
-  return monday.toISOString().slice(0, 10)
 }
 
 type VolCardProps = {
@@ -109,12 +100,11 @@ function Cell({ date, creneau, vols, locale }: CellProps) {
   )
 }
 
-export function WeekGrid({ weekStart, vols, locale }: WeekGridProps) {
+export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps) {
   const t = useTranslations('vols')
   const router = useRouter()
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
-  const todayMonday = getTodayMonday()
 
   function navigate(delta: number) {
     const newWeek = getMondayOffset(weekStart, delta)
