@@ -19,7 +19,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { affecterBillet, desaffecterPassager, confirmerVol } from '@/lib/actions/organisation'
+import { desaffecterPassager, confirmerVol } from '@/lib/actions/organisation'
+import { BilletAssignCard } from '@/components/billet-assign-card'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
@@ -140,57 +141,30 @@ export default async function OrganiserVolPage({ params }: Props) {
             {availableBillets.length === 0 ? (
               <p className="text-muted-foreground text-sm">{t('organisation.noBillets')}</p>
             ) : (
-              availableBillets.map((billet) => {
-                const unassignedPassagers = billet.passagers
-                const totalWeightEstimate = unassignedPassagers.reduce(
-                  (sum, p) => sum + safeDecryptInt(p.poidsEncrypted, 75),
-                  0,
-                )
-
-                return (
-                  <Card key={billet.id}>
-                    <CardContent className="pt-4 space-y-3">
-                      <div>
-                        <p className="font-semibold">{billet.reference}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {billet.payeurPrenom} {billet.payeurNom}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {unassignedPassagers.length}{' '}
-                          {unassignedPassagers.length === 1 ? 'passager' : 'passagers'} — ~
-                          {totalWeightEstimate} kg
-                        </p>
-                      </div>
-                      {/* One button per vol in the session */}
-                      <div className="flex flex-wrap gap-2">
-                        {sessionVols.map((sv) => (
-                          <form
-                            key={sv.id}
-                            action={async () => {
-                              'use server'
-                              await affecterBillet(sv.id, billet.id, locale)
-                            }}
-                          >
-                            <button
-                              type="submit"
-                              className={cn(
-                                buttonVariants({
-                                  size: 'sm',
-                                  variant: sv.id === id ? 'default' : 'outline',
-                                }),
-                              )}
-                            >
-                              {isMultiBallon
-                                ? `${sv.ballon.immatriculation}`
-                                : t('organisation.affecter')}
-                            </button>
-                          </form>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })
+              availableBillets.map((billet) => (
+                <BilletAssignCard
+                  key={billet.id}
+                  billet={{
+                    id: billet.id,
+                    reference: billet.reference,
+                    payeurPrenom: billet.payeurPrenom,
+                    payeurNom: billet.payeurNom,
+                  }}
+                  passagers={billet.passagers.map((p) => ({
+                    id: p.id,
+                    prenom: p.prenom,
+                    nom: p.nom,
+                    poids: safeDecryptInt(p.poidsEncrypted, 75),
+                  }))}
+                  sessionVols={sessionVols.map((sv) => ({
+                    id: sv.id,
+                    immatriculation: sv.ballon.immatriculation,
+                  }))}
+                  currentVolId={id}
+                  locale={locale}
+                  isMultiBallon={isMultiBallon}
+                />
+              ))
             )}
           </div>
 

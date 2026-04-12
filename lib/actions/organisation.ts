@@ -15,10 +15,47 @@ export async function affecterBillet(
       data: { volId },
     })
 
-    await db.billet.update({
-      where: { id: billetId },
-      data: { statut: 'PLANIFIE' },
+    // All passagers now assigned — mark billet as PLANIFIE
+    const unassigned = await db.passager.count({
+      where: { billetId, volId: null },
     })
+
+    if (unassigned === 0) {
+      await db.billet.update({
+        where: { id: billetId },
+        data: { statut: 'PLANIFIE' },
+      })
+    }
+
+    revalidatePath(`/${locale}/vols/${volId}/organiser`)
+    return {}
+  })
+}
+
+export async function affecterPassager(
+  volId: string,
+  passagerId: string,
+  locale: string,
+): Promise<{ error?: string }> {
+  return requireAuth(async () => {
+    const passager = await db.passager.findUniqueOrThrow({ where: { id: passagerId } })
+
+    await db.passager.update({
+      where: { id: passagerId },
+      data: { volId },
+    })
+
+    // Check if all passagers of this billet are now assigned (to any vol)
+    const unassigned = await db.passager.count({
+      where: { billetId: passager.billetId, volId: null },
+    })
+
+    if (unassigned === 0) {
+      await db.billet.update({
+        where: { id: passager.billetId },
+        data: { statut: 'PLANIFIE' },
+      })
+    }
 
     revalidatePath(`/${locale}/vols/${volId}/organiser`)
     return {}
@@ -38,11 +75,12 @@ export async function desaffecterPassager(
       data: { volId: null },
     })
 
-    const remaining = await db.passager.count({
-      where: { billetId: passager.billetId, volId },
+    // If no passagers of this billet are assigned to any vol, reset billet to EN_ATTENTE
+    const assignedCount = await db.passager.count({
+      where: { billetId: passager.billetId, volId: { not: null } },
     })
 
-    if (remaining === 0) {
+    if (assignedCount === 0) {
       await db.billet.update({
         where: { id: passager.billetId },
         data: { statut: 'EN_ATTENTE' },
