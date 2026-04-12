@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
 import { decrypt } from '@/lib/crypto'
 import { calculerDevisMasse } from '@/lib/vol/devis-masse'
+import { parseQteGazFromConfig } from '@/lib/vol/parse-config-gaz'
 import { DevisMasseLive } from '@/components/devis-masse-live'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -94,7 +95,7 @@ export default async function OrganiserVolPage({ params }: Props) {
       pilotePoids,
       passagers: passagersPoids,
       temperatureCelsius: 20,
-      qteGaz: vol.qteGaz ?? 0,
+      qteGaz: vol.qteGaz ?? parseQteGazFromConfig(vol.configGaz ?? vol.ballon.configGaz) ?? 0,
     })
 
     const capacite = vol.passagers.length

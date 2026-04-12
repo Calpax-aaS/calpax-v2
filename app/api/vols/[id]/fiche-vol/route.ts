@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
 import { decrypt } from '@/lib/crypto'
 import { generateFicheVolBuffer } from '@/lib/pdf/generate'
+import { parseQteGazFromConfig } from '@/lib/vol/parse-config-gaz'
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   return requireAuth(async () => {
