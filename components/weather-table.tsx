@@ -9,16 +9,44 @@ type Props = {
   seuilVent: number
 }
 
-const LEVEL_BG: Record<WindLevel, string> = {
+const LEVEL_BANNER: Record<WindLevel, string> = {
   OK: 'bg-green-100 text-green-800',
   WARNING: 'bg-amber-100 text-amber-800',
   DANGER: 'bg-red-100 text-red-800',
 }
 
-const WIND_CELL_BG: Record<WindLevel, string> = {
+const CELL_BG: Record<WindLevel, string> = {
   OK: 'bg-green-50',
   WARNING: 'bg-amber-50',
   DANGER: 'bg-red-50',
+}
+
+const ARROW_COLOR: Record<WindLevel, string> = {
+  OK: '#334155',
+  WARNING: '#92400e',
+  DANGER: '#991b1b',
+}
+
+const ALTITUDES = ['180m', '120m', '80m', '10m'] as const
+const ALTITUDE_KEYS = ['wind180m', 'wind120m', 'wind80m', 'wind10m'] as const
+
+function WindArrow({ direction, color }: { direction: number; color: string }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      style={{ transform: `rotate(${direction}deg)` }}
+    >
+      <path
+        d="M12 2 L12 20 M12 2 L7 8 M12 2 L17 8"
+        stroke={color}
+        strokeWidth="2.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
 }
 
 function WindCell({
@@ -32,15 +60,24 @@ function WindCell({
 }) {
   const level = classifyWind(speed, seuil)
   return (
-    <td className={cn('px-2 py-1.5 text-center tabular-nums', WIND_CELL_BG[level])}>
-      <div className="font-medium">{Math.round(speed)} kt</div>
-      <div className="text-xs text-muted-foreground">{Math.round(direction)}&deg;</div>
-    </td>
+    <div
+      className={cn(
+        'rounded-md flex flex-col items-center justify-center py-1.5 min-h-[52px]',
+        CELL_BG[level],
+      )}
+    >
+      <span className="font-bold text-sm tabular-nums">{Math.round(speed)}</span>
+      <WindArrow direction={direction} color={ARROW_COLOR[level]} />
+    </div>
   )
 }
 
 export async function WeatherTable({ hours, summary, seuilVent }: Props) {
   const t = await getTranslations('meteo')
+
+  if (hours.length === 0) {
+    return <p className="text-sm text-muted-foreground">{t('noData')}</p>
+  }
 
   return (
     <div className="space-y-3">
@@ -48,77 +85,94 @@ export async function WeatherTable({ hours, summary, seuilVent }: Props) {
       <div
         className={cn(
           'rounded-md px-4 py-3 flex items-center justify-between',
-          LEVEL_BG[summary.level],
+          LEVEL_BANNER[summary.level],
         )}
       >
         <div>
-          <span className="font-semibold">{t(`level.${summary.level}`)}</span>
-          <span className="ml-3">
+          <span className="font-semibold text-base">{t(`level.${summary.level}`)}</span>
+          <span className="ml-3 text-sm">
             {t('maxWind')}: {summary.maxWindKt} kt ({summary.maxWindAltitude})
           </span>
         </div>
-        <div>
+        <div className="text-sm">
           {t('avgTemp')}: {summary.avgTemperature}&deg;C
         </div>
       </div>
 
-      {/* Table */}
+      {/* Heatmap grid: altitude (rows) x hours (columns) */}
       <div className="overflow-x-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead>
-            <tr className="bg-muted text-left">
-              <th className="px-2 py-2 border-b font-medium">{t('fields.heure')}</th>
-              <th className="px-2 py-2 border-b font-medium text-center">{t('fields.vent10m')}</th>
-              <th className="px-2 py-2 border-b font-medium text-center">{t('fields.vent80m')}</th>
-              <th className="px-2 py-2 border-b font-medium text-center">{t('fields.vent120m')}</th>
-              <th className="px-2 py-2 border-b font-medium text-center">{t('fields.vent180m')}</th>
-              <th className="px-2 py-2 border-b font-medium text-center">
-                {t('fields.temperature')}
-              </th>
-              <th className="px-2 py-2 border-b font-medium text-center">
-                {t('fields.cloudCover')}
-              </th>
-              <th className="px-2 py-2 border-b font-medium text-center">
-                {t('fields.precipitation')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {hours.map((h) => (
-              <tr key={h.time} className="border-b last:border-b-0">
-                <td className="px-2 py-1.5 font-medium">{h.time}</td>
-                <WindCell
-                  speed={h.wind10m.speed}
-                  direction={h.wind10m.direction}
-                  seuil={seuilVent}
-                />
-                <WindCell
-                  speed={h.wind80m.speed}
-                  direction={h.wind80m.direction}
-                  seuil={seuilVent}
-                />
-                <WindCell
-                  speed={h.wind120m.speed}
-                  direction={h.wind120m.direction}
-                  seuil={seuilVent}
-                />
-                <WindCell
-                  speed={h.wind180m.speed}
-                  direction={h.wind180m.direction}
-                  seuil={seuilVent}
-                />
-                <td className="px-2 py-1.5 text-center tabular-nums">
-                  {Math.round(h.temperature)}&deg;C
-                </td>
-                <td className="px-2 py-1.5 text-center tabular-nums">{h.cloudCover}%</td>
-                <td className="px-2 py-1.5 text-center tabular-nums">{h.precipitationProb}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div
+          className="grid gap-1"
+          style={{
+            gridTemplateColumns: `56px repeat(${hours.length}, minmax(56px, 1fr))`,
+          }}
+        >
+          {/* Header row — hours */}
+          <div />
+          {hours.map((h) => (
+            <div key={h.time} className="text-center text-xs font-semibold py-1">
+              {h.time}
+            </div>
+          ))}
+
+          {/* Altitude rows — 180m (top) to 10m (bottom) */}
+          {ALTITUDES.map((alt, altIdx) => (
+            <>
+              <div
+                key={`label-${alt}`}
+                className="flex items-center text-xs font-bold text-muted-foreground"
+              >
+                {alt}
+              </div>
+              {hours.map((h) => {
+                const key = ALTITUDE_KEYS[altIdx]!
+                const wind = h[key]
+                return (
+                  <WindCell
+                    key={`${alt}-${h.time}`}
+                    speed={wind.speed}
+                    direction={wind.direction}
+                    seuil={seuilVent}
+                  />
+                )
+              })}
+            </>
+          ))}
+        </div>
+
+        {/* Info rows below the heatmap */}
+        <div
+          className="grid gap-1 mt-2 pt-2 border-t text-xs text-muted-foreground"
+          style={{
+            gridTemplateColumns: `56px repeat(${hours.length}, minmax(56px, 1fr))`,
+          }}
+        >
+          <div className="font-semibold text-foreground">{t('fields.temperature')}</div>
+          {hours.map((h) => (
+            <div key={`oat-${h.time}`} className="text-center tabular-nums">
+              {Math.round(h.temperature)}&deg;C
+            </div>
+          ))}
+
+          <div className="font-semibold text-foreground">{t('fields.cloudCover')}</div>
+          {hours.map((h) => (
+            <div key={`cloud-${h.time}`} className="text-center tabular-nums">
+              {h.cloudCover}%
+            </div>
+          ))}
+
+          <div className="font-semibold text-foreground">{t('fields.precipitation')}</div>
+          {hours.map((h) => (
+            <div key={`precip-${h.time}`} className="text-center tabular-nums">
+              {h.precipitationProb}%
+            </div>
+          ))}
+        </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">{t('source')}</p>
+      <p className="text-xs text-muted-foreground">
+        {t('source')} — Seuil: {seuilVent} kt
+      </p>
     </div>
   )
 }
