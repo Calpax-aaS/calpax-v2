@@ -66,12 +66,20 @@ export default async function OrganiserVolPage({ params }: Props) {
 
     if (!vol) notFound()
 
+    // Billets without a date window (AU_PLUS_VITE, AUTRE, A_DEFINIR) always match.
+    // Billets with a date window must include the vol date.
+    const noWindowTypes = ['AU_PLUS_VITE', 'AUTRE', 'A_DEFINIR'] as const
     const availableBillets = await db.billet.findMany({
       where: {
         statut: 'EN_ATTENTE',
-        AND: [
-          { OR: [{ dateVolDeb: null }, { dateVolDeb: { lte: vol.date } }] },
-          { OR: [{ dateVolFin: null }, { dateVolFin: { gte: vol.date } }] },
+        OR: [
+          { typePlannif: { in: [...noWindowTypes] } },
+          {
+            AND: [
+              { OR: [{ dateVolDeb: null }, { dateVolDeb: { lte: vol.date } }] },
+              { OR: [{ dateVolFin: null }, { dateVolFin: { gte: vol.date } }] },
+            ],
+          },
         ],
       },
       include: {
