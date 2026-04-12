@@ -116,6 +116,14 @@ export default async function VolDetailPage({ params }: Props) {
 
         {/* Action buttons */}
         <div className="flex items-center gap-3 flex-wrap">
+          {(vol.statut === 'PLANIFIE' || vol.statut === 'CONFIRME') && (
+            <Link
+              href={`/${locale}/vols/${id}/edit`}
+              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+            >
+              {t('edit')}
+            </Link>
+          )}
           {vol.statut === 'PLANIFIE' && (
             <Link
               href={`/${locale}/vols/${id}/organiser`}

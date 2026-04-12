@@ -75,6 +75,78 @@ export async function createVol(locale: string, formData: FormData): Promise<{ e
   })
 }
 
+export async function updateVol(
+  volId: string,
+  locale: string,
+  formData: FormData,
+): Promise<{ error?: string }> {
+  return requireAuth(async () => {
+    const vol = await db.vol.findUniqueOrThrow({ where: { id: volId } })
+    if (vol.statut !== 'PLANIFIE' && vol.statut !== 'CONFIRME') {
+      return { error: 'Impossible de modifier un vol termine ou archive' }
+    }
+
+    const raw = {
+      date: formData.get('date'),
+      creneau: formData.get('creneau'),
+      ballonId: formData.get('ballonId'),
+      piloteId: formData.get('piloteId'),
+      equipier: formData.get('equipier') || undefined,
+      vehicule: formData.get('vehicule') || undefined,
+      lieuDecollage: formData.get('lieuDecollage') || undefined,
+      configGaz: formData.get('configGaz') || undefined,
+      qteGaz: formData.get('qteGaz') || undefined,
+    }
+
+    const result = volCreateSchema.safeParse(raw)
+    if (!result.success) {
+      const firstError = result.error.issues[0]
+      return { error: firstError?.message ?? 'Donnees invalides' }
+    }
+
+    const { ballonId, piloteId, date, creneau, ...rest } = result.data
+
+    const [ballon, pilote, existingVols] = await Promise.all([
+      db.ballon.findUniqueOrThrow({ where: { id: ballonId } }),
+      db.pilote.findUniqueOrThrow({ where: { id: piloteId } }),
+      db.vol.findMany({
+        where: { date, statut: { not: 'ANNULE' }, id: { not: volId } },
+        select: { ballonId: true, piloteId: true, creneau: true },
+      }),
+    ])
+
+    const validation = validateVolCreation({
+      ballon,
+      pilote,
+      date,
+      creneau,
+      existingVols: existingVols.map((v) => ({
+        ballonId: v.ballonId,
+        piloteId: v.piloteId,
+        creneau: v.creneau,
+      })),
+    })
+
+    if (!validation.valid) {
+      return { error: validation.errors.join('. ') }
+    }
+
+    await db.vol.update({
+      where: { id: volId },
+      data: {
+        ...rest,
+        date,
+        creneau,
+        ballonId,
+        piloteId,
+        configGaz: rest.configGaz || ballon.configGaz,
+      },
+    })
+
+    redirect(`/${locale}/vols/${volId}`)
+  })
+}
+
 export async function savePostFlight(
   volId: string,
   locale: string,

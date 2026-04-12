@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { createVol } from '@/lib/actions/vol'
+import { createVol, updateVol } from '@/lib/actions/vol'
 import { cn } from '@/lib/utils'
 
 type BallonOption = {
@@ -29,19 +29,46 @@ type Props = {
   pilotes: PiloteOption[]
   defaultDate: string
   defaultCreneau: string
+  volId?: string
+  defaultBallonId?: string
+  defaultPiloteId?: string
+  defaultEquipier?: string
+  defaultVehicule?: string
+  defaultLieuDecollage?: string
+  defaultConfigGaz?: string
+  defaultQteGaz?: string
 }
 
 const CRENEAU_OPTIONS = ['MATIN', 'SOIR'] as const
 
-export function VolCreateForm({ locale, ballons, pilotes, defaultDate, defaultCreneau }: Props) {
+export function VolCreateForm({
+  locale,
+  ballons,
+  pilotes,
+  defaultDate,
+  defaultCreneau,
+  volId,
+  defaultBallonId,
+  defaultPiloteId,
+  defaultEquipier,
+  defaultVehicule,
+  defaultLieuDecollage,
+  defaultConfigGaz,
+  defaultQteGaz,
+}: Props) {
   const t = useTranslations('vols')
   const [error, setError] = useState<string | null>(null)
-  const [selectedBallonId, setSelectedBallonId] = useState<string>(ballons[0]?.id ?? '')
+  const [selectedBallonId, setSelectedBallonId] = useState<string>(
+    defaultBallonId ?? ballons[0]?.id ?? '',
+  )
+  const isEdit = !!volId
 
   const selectedBallon = ballons.find((b) => b.id === selectedBallonId)
 
   async function handleSubmit(formData: FormData) {
-    const result = await createVol(locale, formData)
+    const result = volId
+      ? await updateVol(volId, locale, formData)
+      : await createVol(locale, formData)
     if (result?.error) setError(result.error)
   }
 
@@ -105,6 +132,7 @@ export function VolCreateForm({ locale, ballons, pilotes, defaultDate, defaultCr
             <select
               id="piloteId"
               name="piloteId"
+              defaultValue={defaultPiloteId ?? ''}
               required
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
@@ -127,17 +155,21 @@ export function VolCreateForm({ locale, ballons, pilotes, defaultDate, defaultCr
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label htmlFor="equipier">{t('fields.equipier')}</Label>
-              <Input id="equipier" name="equipier" />
+              <Input id="equipier" name="equipier" defaultValue={defaultEquipier ?? ''} />
             </div>
             <div className="space-y-1">
               <Label htmlFor="vehicule">{t('fields.vehicule')}</Label>
-              <Input id="vehicule" name="vehicule" />
+              <Input id="vehicule" name="vehicule" defaultValue={defaultVehicule ?? ''} />
             </div>
           </div>
 
           <div className="space-y-1">
             <Label htmlFor="lieuDecollage">{t('fields.lieuDecollage')}</Label>
-            <Input id="lieuDecollage" name="lieuDecollage" />
+            <Input
+              id="lieuDecollage"
+              name="lieuDecollage"
+              defaultValue={defaultLieuDecollage ?? ''}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -146,12 +178,19 @@ export function VolCreateForm({ locale, ballons, pilotes, defaultDate, defaultCr
               <Input
                 id="configGaz"
                 name="configGaz"
-                defaultValue={selectedBallon?.configGaz ?? ''}
+                defaultValue={defaultConfigGaz ?? selectedBallon?.configGaz ?? ''}
               />
             </div>
             <div className="space-y-1">
               <Label htmlFor="qteGaz">{t('fields.qteGaz')}</Label>
-              <Input id="qteGaz" name="qteGaz" type="number" min="0" step="0.1" />
+              <Input
+                id="qteGaz"
+                name="qteGaz"
+                type="number"
+                min="0"
+                step="1"
+                defaultValue={defaultQteGaz ?? ''}
+              />
             </div>
           </div>
         </CardContent>
@@ -161,7 +200,7 @@ export function VolCreateForm({ locale, ballons, pilotes, defaultDate, defaultCr
         <Link href={`/${locale}/vols`} className={cn(buttonVariants({ variant: 'outline' }))}>
           {t('backToList')}
         </Link>
-        <Button type="submit">{t('new')}</Button>
+        <Button type="submit">{isEdit ? t('save') : t('new')}</Button>
       </div>
     </form>
   )

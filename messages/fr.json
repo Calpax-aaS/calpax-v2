@@ -221,6 +221,8 @@
     "confirmCancel": "Annuler ce vol ? Les passagers seront desaffectes.",
     "organiser": "Organiser",
     "confirmer": "Confirmer le vol",
+    "save": "Enregistrer",
+    "edit": "Modifier le vol",
     "noVols": "Aucun vol sur cette semaine",
     "week": "Semaine",
     "today": "Aujourd'hui",

@@ -221,6 +221,8 @@
     "confirmCancel": "Cancel this flight? Passengers will be unassigned.",
     "organiser": "Organise",
     "confirmer": "Confirm flight",
+    "save": "Save",
+    "edit": "Edit flight",
     "noVols": "No flights this week",
     "week": "Week",
     "today": "Today",
