@@ -19,7 +19,7 @@ export default async function PostVolPage({ params }: Props) {
       select: { id: true, statut: true },
     })
 
-    if (!vol || vol.statut !== 'CONFIRME') {
+    if (!vol || vol.statut === 'ARCHIVE' || vol.statut === 'ANNULE') {
       redirect(`/${locale}/vols/${id}`)
     }
 

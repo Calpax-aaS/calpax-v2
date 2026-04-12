@@ -56,7 +56,7 @@ export function VolActions({ volId, locale, statut }: Props) {
           {t('downloadFiche')}
         </a>
       )}
-      {statut === 'CONFIRME' && (
+      {(statut === 'PLANIFIE' || statut === 'CONFIRME') && (
         <Link
           href={`/${locale}/vols/${volId}/post-vol`}
           className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
