@@ -66,6 +66,25 @@ export default async function OrganiserVolPage({ params }: Props) {
 
     if (!vol) notFound()
 
+    // Fetch all sibling vols (same date + creneau) for session view
+    const sessionVols = await db.vol.findMany({
+      where: {
+        date: vol.date,
+        creneau: vol.creneau,
+        statut: { not: 'ANNULE' },
+      },
+      include: {
+        ballon: true,
+        pilote: true,
+        passagers: {
+          include: {
+            billet: { select: { id: true, reference: true } },
+          },
+        },
+      },
+      orderBy: { ballon: { nom: 'asc' } },
+    })
+
     // Billets without a date window (AU_PLUS_VITE, AUTRE, A_DEFINIR) always match.
     // Billets with a date window must include the vol date.
     const noWindowTypes = ['AU_PLUS_VITE', 'AUTRE', 'A_DEFINIR'] as const
@@ -88,25 +107,7 @@ export default async function OrganiserVolPage({ params }: Props) {
       orderBy: { createdAt: 'desc' },
     })
 
-    // Compute devis de masse
-    const pilotePoids = safeDecryptInt(vol.pilote.poidsEncrypted, 80)
-    const passagersPoids = vol.passagers.map((p) => ({
-      poids: safeDecryptInt(p.poidsEncrypted, 75),
-    }))
-
-    const devis = calculerDevisMasse({
-      ballon: {
-        peseeAVide: vol.ballon.peseeAVide,
-        performanceChart: vol.ballon.performanceChart as Record<string, number>,
-        configGaz: vol.ballon.configGaz,
-      },
-      pilotePoids,
-      passagers: passagersPoids,
-      temperatureCelsius: 20,
-      qteGaz: vol.qteGaz ?? parseQteGazFromConfig(vol.configGaz ?? vol.ballon.configGaz) ?? 0,
-    })
-
-    const capacite = vol.passagers.length
+    const isMultiBallon = sessionVols.length > 1
 
     return (
       <div className="space-y-6">
@@ -118,12 +119,20 @@ export default async function OrganiserVolPage({ params }: Props) {
           >
             {t('backToList')}
           </Link>
-          <h1 className="text-2xl font-bold">{t('organisation.title')}</h1>
+          <h1 className="text-2xl font-bold">
+            {isMultiBallon ? 'Organisation de la session' : t('organisation.title')}
+          </h1>
           <Badge variant="outline">{t(`statut.${vol.statut}`)}</Badge>
         </div>
 
-        {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Session info */}
+        <p className="text-sm text-muted-foreground">
+          {formatDate(vol.date)} — {t(`creneau.${vol.creneau}`)}
+          {isMultiBallon && ` — ${sessionVols.length} ballons`}
+        </p>
+
+        {/* Layout: billets left, ballons right */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
           {/* LEFT COLUMN — Billets disponibles */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">{t('organisation.billetsDisponibles')}</h2>
@@ -141,28 +150,42 @@ export default async function OrganiserVolPage({ params }: Props) {
                 return (
                   <Card key={billet.id}>
                     <CardContent className="pt-4 space-y-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className="font-semibold">{billet.reference}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {billet.payeurPrenom} {billet.payeurNom}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {unassignedPassagers.length}{' '}
-                            {unassignedPassagers.length === 1 ? 'passager' : 'passagers'} — ~
-                            {totalWeightEstimate} kg
-                          </p>
-                        </div>
-                        <form
-                          action={async () => {
-                            'use server'
-                            await affecterBillet(vol.id, billet.id, locale)
-                          }}
-                        >
-                          <button type="submit" className={cn(buttonVariants({ size: 'sm' }))}>
-                            {t('organisation.affecter')}
-                          </button>
-                        </form>
+                      <div>
+                        <p className="font-semibold">{billet.reference}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {billet.payeurPrenom} {billet.payeurNom}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {unassignedPassagers.length}{' '}
+                          {unassignedPassagers.length === 1 ? 'passager' : 'passagers'} — ~
+                          {totalWeightEstimate} kg
+                        </p>
+                      </div>
+                      {/* One button per vol in the session */}
+                      <div className="flex flex-wrap gap-2">
+                        {sessionVols.map((sv) => (
+                          <form
+                            key={sv.id}
+                            action={async () => {
+                              'use server'
+                              await affecterBillet(sv.id, billet.id, locale)
+                            }}
+                          >
+                            <button
+                              type="submit"
+                              className={cn(
+                                buttonVariants({
+                                  size: 'sm',
+                                  variant: sv.id === id ? 'default' : 'outline',
+                                }),
+                              )}
+                            >
+                              {isMultiBallon
+                                ? `${sv.ballon.immatriculation}`
+                                : t('organisation.affecter')}
+                            </button>
+                          </form>
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
@@ -171,122 +194,142 @@ export default async function OrganiserVolPage({ params }: Props) {
             )}
           </div>
 
-          {/* RIGHT COLUMN — Vol en cours */}
-          <div className="space-y-4">
-            {/* Vol info */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">{t('detail')}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                <div>
-                  <p className="text-muted-foreground">{t('fields.date')}</p>
-                  <p className="font-medium">{formatDate(vol.date)}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">{t('fields.creneau')}</p>
-                  <p className="font-medium">{t(`creneau.${vol.creneau}`)}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">{t('fields.ballon')}</p>
-                  <p className="font-medium">
-                    {vol.ballon.nom} — {vol.ballon.immatriculation}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">{t('fields.pilote')}</p>
-                  <p className="font-medium">
-                    {vol.pilote.prenom} {vol.pilote.nom}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+          {/* RIGHT COLUMN — Ballons de la session */}
+          <div className="space-y-6">
+            {sessionVols.map((sv) => {
+              const pilotePoids = safeDecryptInt(sv.pilote.poidsEncrypted, 80)
+              const passagersPoids = sv.passagers.map((p) => ({
+                poids: safeDecryptInt(p.poidsEncrypted, 75),
+              }))
 
-            {/* Passagers affectés */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center justify-between">
-                  <span>{t('organisation.passagersAffectes')}</span>
-                  <Badge variant={capacite >= vol.ballon.nbPassagerMax ? 'destructive' : 'outline'}>
-                    {t('organisation.capacite')}: {capacite} / {vol.ballon.nbPassagerMax}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {vol.passagers.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">{t('organisation.noPassagers')}</p>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{tPassagers('fields.prenom')}</TableHead>
-                        <TableHead>{tPassagers('fields.nom')}</TableHead>
-                        <TableHead>{tPassagers('fields.poids')}</TableHead>
-                        <TableHead>Billet</TableHead>
-                        <TableHead />
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {vol.passagers.map((passager) => {
-                        const poids = safeDecryptInt(passager.poidsEncrypted, 75)
-                        return (
-                          <TableRow key={passager.id}>
-                            <TableCell>{passager.prenom}</TableCell>
-                            <TableCell>{passager.nom}</TableCell>
-                            <TableCell className="tabular-nums">{poids} kg</TableCell>
-                            <TableCell className="text-muted-foreground text-xs">
-                              {passager.billet?.reference ?? '—'}
-                            </TableCell>
-                            <TableCell>
-                              <form
-                                action={async () => {
-                                  'use server'
-                                  await desaffecterPassager(passager.id, vol.id, locale)
-                                }}
-                              >
-                                <button
-                                  type="submit"
-                                  className={cn(
-                                    buttonVariants({ variant: 'ghost', size: 'sm' }),
-                                    'text-destructive hover:text-destructive',
-                                  )}
+              const devis = calculerDevisMasse({
+                ballon: {
+                  peseeAVide: sv.ballon.peseeAVide,
+                  performanceChart: sv.ballon.performanceChart as Record<string, number>,
+                  configGaz: sv.ballon.configGaz,
+                },
+                pilotePoids,
+                passagers: passagersPoids,
+                temperatureCelsius: 20,
+                qteGaz:
+                  sv.qteGaz ?? parseQteGazFromConfig(sv.configGaz ?? sv.ballon.configGaz) ?? 0,
+              })
+
+              const isCurrent = sv.id === id
+
+              return (
+                <div
+                  key={sv.id}
+                  className={cn(
+                    'space-y-4 rounded-lg p-4',
+                    isCurrent ? 'bg-muted/50 ring-1 ring-border' : '',
+                  )}
+                >
+                  {/* Ballon header */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg">
+                        {sv.ballon.nom} — {sv.ballon.immatriculation}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {sv.pilote.prenom} {sv.pilote.nom}
+                        {sv.equipier ? ` + ${sv.equipier}` : ''}
+                      </p>
+                    </div>
+                    <Badge
+                      variant={
+                        sv.passagers.length >= sv.ballon.nbPassagerMax ? 'destructive' : 'outline'
+                      }
+                    >
+                      {sv.passagers.length} / {sv.ballon.nbPassagerMax}
+                    </Badge>
+                  </div>
+
+                  {/* Passagers */}
+                  {sv.passagers.length === 0 ? (
+                    <p className="text-muted-foreground text-sm">{t('organisation.noPassagers')}</p>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{tPassagers('fields.prenom')}</TableHead>
+                          <TableHead>{tPassagers('fields.nom')}</TableHead>
+                          <TableHead>{tPassagers('fields.poids')}</TableHead>
+                          <TableHead>Billet</TableHead>
+                          <TableHead />
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sv.passagers.map((passager) => {
+                          const poids = safeDecryptInt(passager.poidsEncrypted, 75)
+                          return (
+                            <TableRow key={passager.id}>
+                              <TableCell>{passager.prenom}</TableCell>
+                              <TableCell>{passager.nom}</TableCell>
+                              <TableCell className="tabular-nums">{poids} kg</TableCell>
+                              <TableCell className="text-muted-foreground text-xs">
+                                {passager.billet?.reference ?? '—'}
+                              </TableCell>
+                              <TableCell>
+                                <form
+                                  action={async () => {
+                                    'use server'
+                                    await desaffecterPassager(passager.id, sv.id, locale)
+                                  }}
                                 >
-                                  {t('organisation.desaffecter')}
-                                </button>
-                              </form>
-                            </TableCell>
-                          </TableRow>
-                        )
-                      })}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
+                                  <button
+                                    type="submit"
+                                    className={cn(
+                                      buttonVariants({ variant: 'ghost', size: 'sm' }),
+                                      'text-destructive hover:text-destructive',
+                                    )}
+                                  >
+                                    {t('organisation.desaffecter')}
+                                  </button>
+                                </form>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  )}
 
-            {/* Devis de masse */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">{t('devis.title')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <DevisMasseLive result={devis} />
-              </CardContent>
-            </Card>
+                  {/* Devis compact */}
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-muted-foreground">Charge:</span>
+                    <span className="font-medium tabular-nums">{devis.chargeEmbarquee} kg</span>
+                    <span className="text-muted-foreground">/</span>
+                    <span className="tabular-nums">{devis.chargeUtileMax} kg max</span>
+                    <span
+                      className={cn(
+                        'font-semibold',
+                        devis.estSurcharge ? 'text-destructive' : 'text-green-600',
+                      )}
+                    >
+                      {devis.estSurcharge ? 'SURCHARGE' : `+${devis.margeRestante} kg`}
+                    </span>
+                  </div>
 
-            {/* Confirmer le vol */}
-            {vol.statut === 'PLANIFIE' && (
-              <form
-                action={async () => {
-                  'use server'
-                  await confirmerVol(vol.id, locale)
-                }}
-              >
-                <button type="submit" className={cn(buttonVariants({ size: 'lg' }), 'w-full')}>
-                  {t('confirmer')}
-                </button>
-              </form>
-            )}
+                  {/* Confirmer */}
+                  {sv.statut === 'PLANIFIE' && (
+                    <form
+                      action={async () => {
+                        'use server'
+                        await confirmerVol(sv.id, locale)
+                      }}
+                    >
+                      <button
+                        type="submit"
+                        className={cn(buttonVariants({ size: 'sm' }), 'w-full')}
+                      >
+                        {t('confirmer')}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
