@@ -16,6 +16,7 @@ function createClient(): PrismaClient {
   const pool = new Pool({
     connectionString,
     ssl: isRemote ? { rejectUnauthorized: false } : false,
+    max: isRemote ? 2 : 10,
   })
   const adapter = new PrismaPg(pool)
   return new PrismaClient({
