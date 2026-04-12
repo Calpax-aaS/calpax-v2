@@ -56,30 +56,28 @@ test.describe.serial('Flight lifecycle — full E2E', () => {
 
   test('create a pilote', async ({ page }) => {
     await page.goto('/fr/pilotes/new')
-    await page.getByLabel(/prenom/i).fill('E2E')
-    await page.getByLabel(/^nom/i).fill('TestPilote')
-    await page.getByLabel(/licence/i).fill('BFCL-E2E-001')
-    await page.getByLabel(/expiration/i).fill('2027-12-31')
-    await page.getByLabel(/poids/i).fill('85')
-    // Check qualification commerciale + classe A + groupe A1
+    await page.locator('input[name="prenom"]').fill('E2E')
+    await page.locator('input[name="nom"]').fill('TestPilote')
+    await page.locator('input[name="licenceBfcl"]').fill('BFCL-E2E-001')
+    await page.locator('input[name="dateExpirationLicence"]').fill('2027-12-31')
+    await page.locator('input[name="poids"]').fill('85')
     await page.locator('input[name="qualificationCommerciale"]').check()
     await page.locator('input[name="classeA"]').check()
     await page.locator('input[name="groupeA1"]').check()
     await page.getByRole('button', { name: /enregistrer/i }).click()
-    // Should redirect to pilote detail
     await expect(page.getByText('E2E TestPilote')).toBeVisible({ timeout: 10_000 })
   })
 
   test('create a ballon', async ({ page }) => {
     await page.goto('/fr/ballons/new')
-    await page.getByLabel(/^nom/i).fill('E2E-Ballon')
-    await page.getByLabel(/immatriculation/i).fill('F-E2ET')
-    await page.getByLabel(/volume/i).fill('3000')
-    await page.getByLabel(/passagers max/i).fill('4')
-    await page.getByLabel(/vide/i).fill('376')
-    await page.getByLabel(/configuration gaz/i).fill('4xCB2990:4x23kg')
-    await page.getByLabel(/manex/i).fill('Test Manex')
-    await page.getByLabel(/camo.*date|expiration.*camo/i).fill('2027-12-31')
+    await page.locator('input[name="nom"]').fill('E2E-Ballon')
+    await page.locator('input[name="immatriculation"]').fill('F-E2ET')
+    await page.locator('input[name="volumeM3"]').fill('3000')
+    await page.locator('input[name="nbPassagerMax"]').fill('4')
+    await page.locator('input[name="peseeAVide"]').fill('376')
+    await page.locator('input[name="configGaz"]').fill('4xCB2990:4x23kg')
+    await page.locator('input[name="manexAnnexRef"]').fill('Test Manex')
+    await page.locator('input[name="camoExpiryDate"]').fill('2027-12-31')
     // Fill a few performance chart entries
     await page.locator('input[name="chart_10"]').fill('482')
     await page.locator('input[name="chart_20"]').fill('365')
