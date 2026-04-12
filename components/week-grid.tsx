@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 
@@ -112,22 +112,17 @@ function Cell({ date, creneau, vols, locale }: CellProps) {
 export function WeekGrid({ weekStart, vols, locale }: WeekGridProps) {
   const t = useTranslations('vols')
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
   const todayMonday = getTodayMonday()
 
   function navigate(delta: number) {
     const newWeek = getMondayOffset(weekStart, delta)
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('week', newWeek)
-    router.push(`?${params.toString()}`)
+    router.push(`/${locale}/vols?week=${newWeek}`)
   }
 
   function navigateToday() {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('week', todayMonday)
-    router.push(`?${params.toString()}`)
+    router.push(`/${locale}/vols?week=${todayMonday}`)
   }
 
   return (
