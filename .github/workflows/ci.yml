@@ -182,14 +182,14 @@ jobs:
       - name: Generate Prisma client
         run: pnpm exec prisma generate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
 
-      - name: Apply migrations to production
+      - name: Apply migrations to production (direct connection required for DDL)
         run: pnpm exec prisma migrate deploy
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
 
-      - name: Seed production database
+      - name: Seed production database (uses pooled connection)
         run: pnpm exec tsx prisma/seed.ts
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
