@@ -230,18 +230,26 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Wait for Vercel deployment
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
-        id: vercel
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 300
-          environment: Production
+      - name: Wait for production deploy
+        env:
+          PROD_URL: https://www.calpax.fr
+        run: |
+          echo "Waiting for Vercel production deploy to go live..."
+          for i in $(seq 1 30); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PROD_URL/fr/auth/signin" || true)
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "Production is live"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Production not ready after 5 minutes, proceeding anyway"
 
       - name: Run E2E flight lifecycle test
         run: pnpm exec playwright test tests/e2e/flight-lifecycle.spec.ts --reporter=list
         env:
-          E2E_BASE_URL: ${{ steps.vercel.outputs.url }}
+          E2E_BASE_URL: https://www.calpax.fr
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
