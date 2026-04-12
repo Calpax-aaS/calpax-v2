@@ -26,7 +26,7 @@ async function main() {
       contactName: 'Olivier Cuenot',
       meteoLatitude: 47.0833,
       meteoLongitude: 5.4833,
-      meteoSeuilVent: 28,
+      meteoSeuilVent: 15,
     },
     create: {
       name: 'Cameron Balloons France',
@@ -39,7 +39,7 @@ async function main() {
       contactName: 'Olivier Cuenot',
       meteoLatitude: 47.0833,
       meteoLongitude: 5.4833,
-      meteoSeuilVent: 28,
+      meteoSeuilVent: 15,
     },
   })
 
