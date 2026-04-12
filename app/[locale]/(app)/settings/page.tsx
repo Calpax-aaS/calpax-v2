@@ -130,6 +130,48 @@ export default async function SettingsPage() {
             </CardContent>
           </Card>
 
+          <Separator />
+
+          {/* Meteo section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t('meteoSection')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label htmlFor="meteoLatitude">{t('fields.meteoLatitude')}</Label>
+                  <Input
+                    id="meteoLatitude"
+                    name="meteoLatitude"
+                    type="number"
+                    step="0.000001"
+                    defaultValue={exploitant.meteoLatitude ?? ''}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="meteoLongitude">{t('fields.meteoLongitude')}</Label>
+                  <Input
+                    id="meteoLongitude"
+                    name="meteoLongitude"
+                    type="number"
+                    step="0.000001"
+                    defaultValue={exploitant.meteoLongitude ?? ''}
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="meteoSeuilVent">{t('fields.meteoSeuilVent')}</Label>
+                <Input
+                  id="meteoSeuilVent"
+                  name="meteoSeuilVent"
+                  type="number"
+                  defaultValue={exploitant.meteoSeuilVent ?? 15}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="flex justify-end">
             <Button type="submit">{t('saveButton')}</Button>
           </div>

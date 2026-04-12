@@ -36,6 +36,7 @@
     "logoUploadSuccess": "Logo mis à jour",
     "contactSection": "Coordonnées",
     "legalSection": "Informations légales",
+    "meteoSection": "Météo",
     "saveButton": "Enregistrer",
     "saveSuccess": "Paramètres enregistrés",
     "fields": {
@@ -50,7 +51,41 @@
       "telephone": "Téléphone",
       "email": "Email",
       "website": "Site web",
-      "contactName": "Nom du contact"
+      "contactName": "Nom du contact",
+      "meteoLatitude": "Latitude",
+      "meteoLongitude": "Longitude",
+      "meteoSeuilVent": "Seuil vent (kt)"
+    }
+  },
+  "meteo": {
+    "title": "Meteo",
+    "refresh": "Rafraichir meteo",
+    "noGps": "Configurez les coordonnees GPS dans Parametres",
+    "noData": "Donnees meteo non disponibles",
+    "maxWind": "Vent max",
+    "avgTemp": "OAT moy",
+    "source": "Source: Open-Meteo.com",
+    "fields": {
+      "heure": "Heure",
+      "vent10m": "Vent 10m",
+      "vent80m": "Vent 80m",
+      "vent120m": "Vent 120m",
+      "vent180m": "Vent 180m",
+      "temperature": "OAT",
+      "cloudCover": "Nebulosite",
+      "precipitation": "Precip."
+    },
+    "level": {
+      "OK": "OK",
+      "WARNING": "Prudence",
+      "DANGER": "Defavorable"
+    },
+    "settings": {
+      "title": "Meteo",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "seuilVent": "Seuil vent (kt)",
+      "seuilHelp": "Vent au-dessus duquel l'indicateur passe en orange"
     }
   },
   "ballons": {

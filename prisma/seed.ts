@@ -24,6 +24,9 @@ async function main() {
       codePostal: '39100',
       ville: 'Dole',
       contactName: 'Olivier Cuenot',
+      meteoLatitude: 47.0833,
+      meteoLongitude: 5.4833,
+      meteoSeuilVent: 15,
     },
     create: {
       name: 'Cameron Balloons France',
@@ -34,6 +37,9 @@ async function main() {
       codePostal: '39100',
       ville: 'Dole',
       contactName: 'Olivier Cuenot',
+      meteoLatitude: 47.0833,
+      meteoLongitude: 5.4833,
+      meteoSeuilVent: 15,
     },
   })
 

@@ -36,6 +36,7 @@
     "logoUploadSuccess": "Logo updated",
     "contactSection": "Contact Details",
     "legalSection": "Legal Information",
+    "meteoSection": "Weather",
     "saveButton": "Save",
     "saveSuccess": "Settings saved",
     "fields": {
@@ -50,7 +51,41 @@
       "telephone": "Phone",
       "email": "Email",
       "website": "Website",
-      "contactName": "Contact name"
+      "contactName": "Contact name",
+      "meteoLatitude": "Latitude",
+      "meteoLongitude": "Longitude",
+      "meteoSeuilVent": "Wind threshold (kt)"
+    }
+  },
+  "meteo": {
+    "title": "Weather",
+    "refresh": "Refresh weather",
+    "noGps": "Configure GPS coordinates in Settings",
+    "noData": "Weather data not available",
+    "maxWind": "Max wind",
+    "avgTemp": "Avg OAT",
+    "source": "Source: Open-Meteo.com",
+    "fields": {
+      "heure": "Hour",
+      "vent10m": "Wind 10m",
+      "vent80m": "Wind 80m",
+      "vent120m": "Wind 120m",
+      "vent180m": "Wind 180m",
+      "temperature": "OAT",
+      "cloudCover": "Cloud cover",
+      "precipitation": "Precip."
+    },
+    "level": {
+      "OK": "OK",
+      "WARNING": "Caution",
+      "DANGER": "Unfavorable"
+    },
+    "settings": {
+      "title": "Weather",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "seuilVent": "Wind threshold (kt)",
+      "seuilHelp": "Wind speed above which the indicator turns orange"
     }
   },
   "ballons": {
