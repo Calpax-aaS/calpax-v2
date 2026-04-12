@@ -17,7 +17,7 @@ export type DevisMasseResult = {
   poidsPilote: number
   poidsPassagers: number
   poidsEquipement: number
-  poidsTotal: number
+  chargeEmbarquee: number
   chargeUtileMax: number
   margeRestante: number
   estSurcharge: boolean
@@ -57,14 +57,16 @@ export function calculerDevisMasse(input: DevisMasseInput): DevisMasseResult {
   const poidsPilote = input.pilotePoids
   const poidsPassagers = input.passagers.reduce((sum, p) => sum + p.poids, 0)
   const poidsEquipement = input.equipementSupp ?? 0
-  const poidsTotal = poidsAVide + poidsGaz + poidsPilote + poidsPassagers + poidsEquipement
+  // Charge embarquee = everything loaded into the basket (NOT including the balloon's own weight)
+  // The performance chart gives the max payload the balloon can carry at a given temperature
+  const chargeEmbarquee = poidsGaz + poidsPilote + poidsPassagers + poidsEquipement
 
   const { chargeUtileMax, temperatureUtilisee } = lookupChargeUtileMax(
     input.ballon.performanceChart,
     input.temperatureCelsius,
   )
 
-  const margeRestante = chargeUtileMax - poidsTotal
+  const margeRestante = chargeUtileMax - chargeEmbarquee
 
   return {
     poidsAVide,
@@ -72,7 +74,7 @@ export function calculerDevisMasse(input: DevisMasseInput): DevisMasseResult {
     poidsPilote,
     poidsPassagers,
     poidsEquipement,
-    poidsTotal,
+    chargeEmbarquee,
     chargeUtileMax,
     margeRestante,
     estSurcharge: margeRestante < 0,

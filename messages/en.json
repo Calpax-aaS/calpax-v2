@@ -257,7 +257,7 @@
       "poidsPilote": "Pilot",
       "poidsPassagers": "Passengers",
       "poidsEquipement": "Equipment",
-      "poidsTotal": "Total weight",
+      "poidsTotal": "Loaded weight",
       "chargeUtileMax": "Max payload",
       "margeRestante": "Remaining margin",
       "conforme": "COMPLIANT",

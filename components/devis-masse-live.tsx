@@ -29,7 +29,7 @@ export async function DevisMasseLive({ result }: Props) {
           ))}
           <tr className="border-t-2 font-semibold">
             <td className="pt-2 pb-1">{t('poidsTotal')}</td>
-            <td className="pt-2 pb-1 text-right tabular-nums">{result.poidsTotal} kg</td>
+            <td className="pt-2 pb-1 text-right tabular-nums">{result.chargeEmbarquee} kg</td>
           </tr>
           <tr>
             <td className="py-1 text-muted-foreground">

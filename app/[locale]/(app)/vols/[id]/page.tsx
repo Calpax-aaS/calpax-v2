@@ -262,8 +262,8 @@ export default async function VolDetailPage({ params }: Props) {
                     <p className="font-medium">{devis.poidsPassagers} kg</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">{t('devis.poidsTotal')}</p>
-                    <p className="font-bold text-base">{devis.poidsTotal} kg</p>
+                    <p className="text-muted-foreground">{t('devis.chargeEmbarquee')}</p>
+                    <p className="font-bold text-base">{devis.chargeEmbarquee} kg</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">{t('devis.chargeUtileMax')}</p>

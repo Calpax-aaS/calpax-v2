@@ -406,8 +406,8 @@ function Page1({ data }: { data: FicheVolData }) {
             <Text style={styles.devisValue}>{devis.poidsPassagers} kg</Text>
           </View>
           <View style={styles.devisTotalRow}>
-            <Text style={styles.devisTotalLabel}>MASSE TOTALE</Text>
-            <Text style={styles.devisTotalValue}>{devis.poidsTotal} kg</Text>
+            <Text style={styles.devisTotalLabel}>CHARGE EMBARQUEE</Text>
+            <Text style={styles.devisTotalValue}>{devis.chargeEmbarquee} kg</Text>
           </View>
           <View style={styles.devisRow}>
             <Text style={styles.devisLabel}>Charge utile max a {devis.temperatureUtilisee}°C</Text>

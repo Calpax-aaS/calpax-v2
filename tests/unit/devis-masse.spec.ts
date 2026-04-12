@@ -79,10 +79,10 @@ describe('calculerDevisMasse', () => {
     expect(result.poidsGaz).toBe(92)
     expect(result.poidsPilote).toBe(92)
     expect(result.poidsPassagers).toBe(155)
-    expect(result.poidsTotal).toBe(376 + 92 + 92 + 155)
+    expect(result.chargeEmbarquee).toBe(92 + 92 + 155) // gaz + pilote + passagers = 339
     expect(result.chargeUtileMax).toBe(365)
-    expect(result.margeRestante).toBe(365 - (376 + 92 + 92 + 155))
-    expect(result.estSurcharge).toBe(true)
+    expect(result.margeRestante).toBe(365 - 339) // 26 kg margin
+    expect(result.estSurcharge).toBe(false)
     expect(result.temperatureUtilisee).toBe(20)
   })
 
@@ -125,21 +125,21 @@ describe('calculerDevisMasse', () => {
     expect(result.poidsAVide).toBe(746)
     expect(result.poidsPassagers).toBe(290)
     expect(result.chargeUtileMax).toBe(842)
-    expect(result.poidsTotal).toBe(746 + 144 + 92 + 290)
-    // chargeUtileMax (842) < poidsTotal (1272) — this balloon is overloaded in this test scenario
-    expect(result.estSurcharge).toBe(true)
+    expect(result.chargeEmbarquee).toBe(144 + 92 + 290) // 526 kg
+    // chargeUtileMax (842) > chargeEmbarquee (526) — not overloaded
+    expect(result.estSurcharge).toBe(false)
   })
 
   it('includes equipementSupp in total', () => {
     const result = calculerDevisMasse(makeInput({ equipementSupp: 20 }))
     expect(result.poidsEquipement).toBe(20)
-    expect(result.poidsTotal).toBe(376 + 92 + 92 + 155 + 20)
+    expect(result.chargeEmbarquee).toBe(92 + 92 + 155 + 20)
   })
 
   it('handles zero passengers', () => {
     const result = calculerDevisMasse(makeInput({ passagers: [] }))
     expect(result.poidsPassagers).toBe(0)
-    expect(result.poidsTotal).toBe(376 + 92 + 92)
+    expect(result.chargeEmbarquee).toBe(92 + 92)
   })
 
   it('computes F-HFCC at 34C — most restrictive', () => {
