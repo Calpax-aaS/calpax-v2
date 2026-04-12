@@ -17,7 +17,7 @@ export function PerformanceChartInput({ defaultValues = {} }: PerformanceChartIn
                 Temp. (°C)
               </th>
               <th className="border border-border px-3 py-2 text-left font-medium">
-                Durée vol (h)
+                Charge utile max (kg)
               </th>
             </tr>
           </thead>
@@ -32,9 +32,8 @@ export function PerformanceChartInput({ defaultValues = {} }: PerformanceChartIn
                     type="number"
                     name={`chart_${t}`}
                     defaultValue={defaultValues[String(t)] ?? ''}
-                    step="0.1"
+                    step="1"
                     min="0"
-                    max="24"
                     placeholder="—"
                     className="w-full bg-transparent outline-none focus:ring-1 focus:ring-ring rounded px-1 py-0.5 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
