@@ -81,7 +81,7 @@ export default async function VolDetailPage({ params }: Props) {
     }))
 
     const devis =
-      pilotePoids !== null && vol.qteGaz !== null
+      pilotePoids !== null
         ? calculerDevisMasse({
             ballon: {
               peseeAVide: vol.ballon.peseeAVide,
@@ -91,7 +91,7 @@ export default async function VolDetailPage({ params }: Props) {
             pilotePoids,
             passagers: passagersPoids,
             temperatureCelsius: 20,
-            qteGaz: vol.qteGaz,
+            qteGaz: vol.qteGaz ?? 0,
           })
         : null
 
