@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -31,47 +32,59 @@ export default async function VehiculesPage({ params }: Props) {
     })
 
     return (
-      <main className="container mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
 
         <VehiculeCreateForm locale={locale} />
 
         {vehicules.length === 0 ? (
           <p className="text-muted-foreground">{t('noEntries')}</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('fields.nom')}</TableHead>
-                <TableHead>{t('fields.immatriculation')}</TableHead>
-                <TableHead>{t('fields.statut')}</TableHead>
-                <TableHead>{t('fields.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {vehicules.map((v) => (
-                <TableRow key={v.id}>
-                  <TableCell className="font-medium">{v.nom}</TableCell>
-                  <TableCell>{v.immatriculation ?? '—'}</TableCell>
-                  <TableCell>
-                    <Badge variant={v.actif ? 'default' : 'secondary'}>
-                      {v.actif ? t('status.actif') : t('status.inactif')}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <ToggleActifButton
-                      id={v.id}
-                      actif={v.actif}
-                      locale={locale}
-                      action={toggleVehiculeActif}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.nom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.immatriculation')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.statut')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.actions')}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {vehicules.map((v) => (
+                    <TableRow key={v.id} className="hover:bg-muted/50">
+                      <TableCell className="font-medium">{v.nom}</TableCell>
+                      <TableCell>{v.immatriculation ?? '--'}</TableCell>
+                      <TableCell>
+                        <Badge variant={v.actif ? 'default' : 'secondary'}>
+                          {v.actif ? t('status.actif') : t('status.inactif')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <ToggleActifButton
+                          id={v.id}
+                          actif={v.actif}
+                          locale={locale}
+                          action={toggleVehiculeActif}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
-      </main>
+      </div>
     )
   })
 }

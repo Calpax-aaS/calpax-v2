@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { buttonVariants } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { WeekGrid } from '@/components/week-grid'
 import type { VolSummary } from '@/components/week-grid'
@@ -70,21 +71,28 @@ export default async function VolsPage({ params, searchParams }: Props) {
     }))
 
     return (
-      <main className="container mx-auto px-4 py-8 space-y-6">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t('title')}</h1>
-          <Link href={`/${locale}/vols/create`} className={cn(buttonVariants({ size: 'sm' }))}>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <Link
+            href={`/${locale}/vols/create`}
+            className={cn(buttonVariants({ variant: 'default' }))}
+          >
             {t('new')}
           </Link>
         </div>
 
-        <WeekGrid
-          weekStart={weekStartStr}
-          vols={vols}
-          locale={locale}
-          todayMonday={getMondayOfWeek(todayStr)}
-        />
-      </main>
+        <Card>
+          <CardContent className="p-4">
+            <WeekGrid
+              weekStart={weekStartStr}
+              vols={vols}
+              locale={locale}
+              todayMonday={getMondayOfWeek(todayStr)}
+            />
+          </CardContent>
+        </Card>
+      </div>
     )
   })
 }

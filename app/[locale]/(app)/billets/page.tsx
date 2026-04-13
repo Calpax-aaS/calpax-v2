@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { StatutBillet, StatutPaiement } from '@prisma/client'
 
@@ -71,10 +72,13 @@ export default async function BilletsPage({ params }: Props) {
     })
 
     return (
-      <main className="container mx-auto px-4 py-8 space-y-6">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t('title')}</h1>
-          <Link href={`/${locale}/billets/new`} className={cn(buttonVariants({ size: 'sm' }))}>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <Link
+            href={`/${locale}/billets/new`}
+            className={cn(buttonVariants({ variant: 'default' }))}
+          >
             {t('new')}
           </Link>
         </div>
@@ -82,51 +86,69 @@ export default async function BilletsPage({ params }: Props) {
         {billets.length === 0 ? (
           <p className="text-muted-foreground">{t('noBillets')}</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('fields.reference')}</TableHead>
-                <TableHead>{t('fields.payeurNom')}</TableHead>
-                <TableHead>Passagers</TableHead>
-                <TableHead>{t('fields.montantTtc')}</TableHead>
-                <TableHead>{t('fields.statut')}</TableHead>
-                <TableHead>{t('fields.statutPaiement')}</TableHead>
-                <TableHead>{t('fields.typePlannif')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {billets.map((billet) => (
-                <TableRow key={billet.id}>
-                  <TableCell className="font-medium">
-                    <Link
-                      href={`/${locale}/billets/${billet.id}`}
-                      className="underline underline-offset-4 hover:text-primary"
-                    >
-                      {billet.reference}
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    {billet.payeurPrenom} {billet.payeurNom}
-                  </TableCell>
-                  <TableCell>{billet._count.passagers}</TableCell>
-                  <TableCell>{formatEuros(Number(billet.montantTtc))}</TableCell>
-                  <TableCell>
-                    <Badge variant={statutVariant(billet.statut)}>
-                      {t(`statut.${billet.statut}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={statutPaiementVariant(billet.statutPaiement)}>
-                      {t(`statutPaiement.${billet.statutPaiement}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{t(`typePlannif.${billet.typePlannif}`)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.reference')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.payeurNom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      Passagers
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.montantTtc')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.statut')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.statutPaiement')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.typePlannif')}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {billets.map((billet) => (
+                    <TableRow key={billet.id} className="hover:bg-muted/50">
+                      <TableCell className="font-medium">
+                        <Link
+                          href={`/${locale}/billets/${billet.id}`}
+                          className="underline underline-offset-4 hover:text-primary"
+                        >
+                          {billet.reference}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        {billet.payeurPrenom} {billet.payeurNom}
+                      </TableCell>
+                      <TableCell>{billet._count.passagers}</TableCell>
+                      <TableCell>{formatEuros(Number(billet.montantTtc))}</TableCell>
+                      <TableCell>
+                        <Badge variant={statutVariant(billet.statut)}>
+                          {t(`statut.${billet.statut}`)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={statutPaiementVariant(billet.statutPaiement)}>
+                          {t(`statutPaiement.${billet.statutPaiement}`)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{t(`typePlannif.${billet.typePlannif}`)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
-      </main>
+      </div>
     )
   })
 }

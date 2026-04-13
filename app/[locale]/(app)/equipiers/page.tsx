@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Table,
   TableBody,
@@ -31,49 +32,63 @@ export default async function EquipiersPage({ params }: Props) {
     })
 
     return (
-      <main className="container mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
 
         <EquipierCreateForm locale={locale} />
 
         {equipiers.length === 0 ? (
           <p className="text-muted-foreground">{t('noEntries')}</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('fields.prenom')}</TableHead>
-                <TableHead>{t('fields.nom')}</TableHead>
-                <TableHead>{t('fields.telephone')}</TableHead>
-                <TableHead>{t('fields.statut')}</TableHead>
-                <TableHead>{t('fields.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {equipiers.map((e) => (
-                <TableRow key={e.id}>
-                  <TableCell>{e.prenom}</TableCell>
-                  <TableCell className="font-medium">{e.nom}</TableCell>
-                  <TableCell>{e.telephone ?? '—'}</TableCell>
-                  <TableCell>
-                    <Badge variant={e.actif ? 'default' : 'secondary'}>
-                      {e.actif ? t('status.actif') : t('status.inactif')}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <ToggleActifButton
-                      id={e.id}
-                      actif={e.actif}
-                      locale={locale}
-                      action={toggleEquipierActif}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.prenom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.nom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.telephone')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.statut')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('fields.actions')}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {equipiers.map((e) => (
+                    <TableRow key={e.id} className="hover:bg-muted/50">
+                      <TableCell>{e.prenom}</TableCell>
+                      <TableCell className="font-medium">{e.nom}</TableCell>
+                      <TableCell>{e.telephone ?? '--'}</TableCell>
+                      <TableCell>
+                        <Badge variant={e.actif ? 'default' : 'secondary'}>
+                          {e.actif ? t('status.actif') : t('status.inactif')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <ToggleActifButton
+                          id={e.id}
+                          actif={e.actif}
+                          locale={locale}
+                          action={toggleEquipierActif}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
-      </main>
+      </div>
     )
   })
 }
