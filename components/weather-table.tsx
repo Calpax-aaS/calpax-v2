@@ -10,15 +10,15 @@ type Props = {
 }
 
 const LEVEL_BANNER: Record<WindLevel, string> = {
-  OK: 'bg-green-100 text-green-800',
-  WARNING: 'bg-amber-100 text-amber-800',
-  DANGER: 'bg-red-100 text-red-800',
+  OK: 'bg-success/15 text-success',
+  WARNING: 'bg-warning/15 text-warning',
+  DANGER: 'bg-destructive/15 text-destructive',
 }
 
 const CELL_BG: Record<WindLevel, string> = {
-  OK: 'bg-green-50',
-  WARNING: 'bg-amber-50',
-  DANGER: 'bg-red-50',
+  OK: 'bg-success/10',
+  WARNING: 'bg-warning/10',
+  DANGER: 'bg-destructive/10',
 }
 
 const ARROW_COLOR: Record<WindLevel, string> = {

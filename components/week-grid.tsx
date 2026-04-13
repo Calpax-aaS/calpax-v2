@@ -60,10 +60,10 @@ function VolCard({ vol, locale }: VolCardProps) {
   return (
     <Link href={`/${locale}/vols/${vol.id}`} className="block">
       <div
-        className={`bg-white rounded p-2 text-xs shadow-sm hover:shadow-md transition-shadow cursor-pointer ${borderClass}`}
+        className={`bg-card rounded p-2 text-xs shadow-sm hover:shadow-md transition-shadow cursor-pointer ${borderClass}`}
       >
-        <div className="font-semibold text-gray-900 truncate">{vol.ballonNom}</div>
-        <div className="text-gray-500 mt-0.5">{vol.piloteInitiales}</div>
+        <div className="font-semibold text-foreground truncate">{vol.ballonNom}</div>
+        <div className="text-muted-foreground mt-0.5">{vol.piloteInitiales}</div>
         <div className="mt-1">
           <Badge variant="outline" className="text-xs px-1 py-0">
             {vol.passagerCount}/{vol.nbPassagerMax}
@@ -85,13 +85,13 @@ function Cell({ date, creneau, vols, locale }: CellProps) {
   const cellVols = vols.filter((v) => v.date === date && v.creneau === creneau)
 
   return (
-    <div className="border border-gray-100 min-h-[80px] p-1 bg-gray-50 space-y-1">
+    <div className="border border-border min-h-[80px] p-1 bg-muted/40 space-y-1">
       {cellVols.map((vol) => (
         <VolCard key={vol.id} vol={vol} locale={locale} />
       ))}
       <Link
         href={`/${locale}/vols/create?date=${date}&creneau=${creneau}`}
-        className="flex items-center justify-center w-full h-6 text-gray-300 hover:text-gray-500 hover:bg-gray-100 rounded text-sm transition-colors"
+        className="flex items-center justify-center w-full h-6 text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted rounded text-sm transition-colors"
         title="Nouveau vol"
       >
         +
@@ -108,7 +108,7 @@ export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps
   const nextWeek = getMondayOffset(weekStart, 1)
 
   const navClass =
-    'px-3 py-1.5 text-sm border border-gray-200 rounded hover:bg-gray-50 transition-colors'
+    'px-3 py-1.5 text-sm border border-border rounded hover:bg-muted transition-colors'
 
   return (
     <div className="space-y-4">
@@ -123,7 +123,7 @@ export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps
         <Link href={`/${locale}/vols?week=${nextWeek}`} className={navClass}>
           &rarr;
         </Link>
-        <span className="text-sm text-gray-500 ml-2">
+        <span className="text-sm text-muted-foreground ml-2">
           {t('week')} {formatShortDate(days[0] ?? weekStart)} &ndash;{' '}
           {formatShortDate(days[6] ?? weekStart)}
         </span>
@@ -133,17 +133,17 @@ export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps
       <div className="overflow-x-auto">
         <div className="grid grid-cols-[80px_repeat(7,1fr)] min-w-[640px]">
           {/* Header row */}
-          <div className="border border-gray-200 bg-white p-2" />
+          <div className="border border-border bg-card p-2" />
           {days.map((day, i) => (
-            <div key={day} className="border border-gray-200 bg-white p-2 text-center">
-              <div className="text-xs font-semibold text-gray-700">{DAY_SHORT[i]}</div>
-              <div className="text-xs text-gray-400">{formatShortDate(day)}</div>
+            <div key={day} className="border border-border bg-card p-2 text-center">
+              <div className="text-xs font-semibold text-foreground">{DAY_SHORT[i]}</div>
+              <div className="text-xs text-muted-foreground">{formatShortDate(day)}</div>
             </div>
           ))}
 
           {/* MATIN row */}
-          <div className="border border-gray-200 bg-white p-2 flex items-center justify-center">
-            <span className="text-xs font-medium text-gray-600 writing-mode-vertical rotate-0">
+          <div className="border border-border bg-card p-2 flex items-center justify-center">
+            <span className="text-xs font-medium text-muted-foreground writing-mode-vertical rotate-0">
               {t('creneau.MATIN')}
             </span>
           </div>
@@ -152,8 +152,8 @@ export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps
           ))}
 
           {/* SOIR row */}
-          <div className="border border-gray-200 bg-white p-2 flex items-center justify-center">
-            <span className="text-xs font-medium text-gray-600">{t('creneau.SOIR')}</span>
+          <div className="border border-border bg-card p-2 flex items-center justify-center">
+            <span className="text-xs font-medium text-muted-foreground">{t('creneau.SOIR')}</span>
           </div>
           {days.map((day) => (
             <Cell key={`soir-${day}`} date={day} creneau="SOIR" vols={vols} locale={locale} />

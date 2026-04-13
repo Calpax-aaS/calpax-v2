@@ -7,7 +7,7 @@ export default async function VerifyPage() {
     <main className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-sm space-y-4 p-8 text-center">
         <h1 className="text-2xl font-bold">{t('verifyTitle')}</h1>
-        <p className="text-gray-600">{t('verifySent')}</p>
+        <p className="text-muted-foreground">{t('verifySent')}</p>
       </div>
     </main>
   )

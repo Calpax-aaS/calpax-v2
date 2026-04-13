@@ -42,7 +42,7 @@ export async function DevisMasseLive({ result }: Props) {
             <td className="py-1 text-muted-foreground">{t('margeRestante')}</td>
             <td
               className={`py-1 text-right font-semibold tabular-nums ${
-                result.margeRestante < 0 ? 'text-destructive' : 'text-green-600'
+                result.margeRestante < 0 ? 'text-destructive' : 'text-success'
               }`}
             >
               {result.margeRestante} kg
@@ -57,7 +57,7 @@ export async function DevisMasseLive({ result }: Props) {
             {t('surcharge')}
           </Badge>
         ) : (
-          <Badge className="bg-green-600 hover:bg-green-700 text-base px-4 py-1">
+          <Badge variant="success" className="text-base px-4 py-1">
             {t('conforme')}
           </Badge>
         )}
