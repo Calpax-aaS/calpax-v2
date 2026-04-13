@@ -1,3 +1,4 @@
+import { Pool } from 'pg'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
@@ -8,11 +9,18 @@ import { PrismaPg } from '@prisma/adapter-pg'
 /**
  * Create a dedicated PrismaClient for E2E test helpers.
  * Never reuses the app's basePrisma singleton.
+ * Mirrors the SSL logic from lib/db/base.ts for remote connections.
  */
 function createTestClient(): PrismaClient {
   const connectionString =
     process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
-  const adapter = new PrismaPg({ connectionString })
+  const isRemote =
+    !connectionString.includes('127.0.0.1') && !connectionString.includes('localhost')
+  const pool = new Pool({
+    connectionString,
+    ssl: isRemote ? { rejectUnauthorized: false } : false,
+  })
+  const adapter = new PrismaPg(pool)
   return new PrismaClient({ adapter })
 }
 
