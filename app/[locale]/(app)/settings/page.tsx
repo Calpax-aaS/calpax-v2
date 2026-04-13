@@ -25,8 +25,8 @@ export default async function SettingsPage() {
     }
 
     return (
-      <main className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
 
         {/* Logo upload section */}
         <Card>
@@ -186,7 +186,7 @@ export default async function SettingsPage() {
             <Button type="submit">{t('saveButton')}</Button>
           </div>
         </form>
-      </main>
+      </div>
     )
   })
 }

@@ -24,10 +24,10 @@ export default async function PostVolPage({ params }: Props) {
     }
 
     return (
-      <main className="container mx-auto max-w-3xl px-4 py-8 space-y-6">
-        <h1 className="text-2xl font-bold">{t('postVol.title')}</h1>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">{t('postVol.title')}</h1>
         <PostVolForm volId={id} locale={locale} />
-      </main>
+      </div>
     )
   })
 }

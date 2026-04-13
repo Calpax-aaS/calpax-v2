@@ -121,7 +121,7 @@ export default async function OrganiserVolPage({ params }: Props) {
           >
             {t('backToList')}
           </Link>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-3xl font-bold tracking-tight">
             {isMultiBallon ? 'Organisation de la session' : t('organisation.title')}
           </h1>
           <Badge variant="outline">{t(`statut.${vol.statut}`)}</Badge>
@@ -136,38 +136,41 @@ export default async function OrganiserVolPage({ params }: Props) {
         {/* Layout: billets left, ballons right */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
           {/* LEFT COLUMN — Billets disponibles */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">{t('organisation.billetsDisponibles')}</h2>
-
-            {availableBillets.length === 0 ? (
-              <p className="text-muted-foreground text-sm">{t('organisation.noBillets')}</p>
-            ) : (
-              availableBillets.map((billet) => (
-                <BilletAssignCard
-                  key={billet.id}
-                  billet={{
-                    id: billet.id,
-                    reference: billet.reference,
-                    payeurPrenom: billet.payeurPrenom,
-                    payeurNom: billet.payeurNom,
-                  }}
-                  passagers={billet.passagers.map((p) => ({
-                    id: p.id,
-                    prenom: p.prenom,
-                    nom: p.nom,
-                    poids: safeDecryptInt(p.poidsEncrypted, 75),
-                  }))}
-                  sessionVols={sessionVols.map((sv) => ({
-                    id: sv.id,
-                    immatriculation: sv.ballon.immatriculation,
-                  }))}
-                  currentVolId={id}
-                  locale={locale}
-                  isMultiBallon={isMultiBallon}
-                />
-              ))
-            )}
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t('organisation.billetsDisponibles')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {availableBillets.length === 0 ? (
+                <p className="text-muted-foreground text-sm">{t('organisation.noBillets')}</p>
+              ) : (
+                availableBillets.map((billet) => (
+                  <BilletAssignCard
+                    key={billet.id}
+                    billet={{
+                      id: billet.id,
+                      reference: billet.reference,
+                      payeurPrenom: billet.payeurPrenom,
+                      payeurNom: billet.payeurNom,
+                    }}
+                    passagers={billet.passagers.map((p) => ({
+                      id: p.id,
+                      prenom: p.prenom,
+                      nom: p.nom,
+                      poids: safeDecryptInt(p.poidsEncrypted, 75),
+                    }))}
+                    sessionVols={sessionVols.map((sv) => ({
+                      id: sv.id,
+                      immatriculation: sv.ballon.immatriculation,
+                    }))}
+                    currentVolId={id}
+                    locale={locale}
+                    isMultiBallon={isMultiBallon}
+                  />
+                ))
+              )}
+            </CardContent>
+          </Card>
 
           {/* RIGHT COLUMN — Ballons de la session */}
           <div className="space-y-6">
@@ -230,11 +233,19 @@ export default async function OrganiserVolPage({ params }: Props) {
                   ) : (
                     <Table>
                       <TableHeader>
-                        <TableRow>
-                          <TableHead>{tPassagers('fields.prenom')}</TableHead>
-                          <TableHead>{tPassagers('fields.nom')}</TableHead>
-                          <TableHead>{tPassagers('fields.poids')}</TableHead>
-                          <TableHead>Billet</TableHead>
+                        <TableRow className="hover:bg-transparent">
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                            {tPassagers('fields.prenom')}
+                          </TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                            {tPassagers('fields.nom')}
+                          </TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                            {tPassagers('fields.poids')}
+                          </TableHead>
+                          <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                            Billet
+                          </TableHead>
                           <TableHead />
                         </TableRow>
                       </TableHeader>
@@ -242,7 +253,7 @@ export default async function OrganiserVolPage({ params }: Props) {
                         {sv.passagers.map((passager) => {
                           const poids = safeDecryptInt(passager.poidsEncrypted, 75)
                           return (
-                            <TableRow key={passager.id}>
+                            <TableRow key={passager.id} className="hover:bg-muted/50">
                               <TableCell>{passager.prenom}</TableCell>
                               <TableCell>{passager.nom}</TableCell>
                               <TableCell className="tabular-nums">{poids} kg</TableCell>

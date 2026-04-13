@@ -66,7 +66,7 @@ export default async function BallonJournalPage({ params }: Props) {
     const volsArchives = vols.filter((v) => v.statut === 'ARCHIVE').length
 
     return (
-      <main className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
+      <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Link
             href={`/${locale}/ballons/${id}`}
@@ -74,7 +74,7 @@ export default async function BallonJournalPage({ params }: Props) {
           >
             {ballon.nom} ({ballon.immatriculation})
           </Link>
-          <h1 className="text-2xl font-bold">{tJournal('title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{tJournal('title')}</h1>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
@@ -113,68 +113,92 @@ export default async function BallonJournalPage({ params }: Props) {
         {vols.length === 0 ? (
           <p className="text-muted-foreground">{tJournal('noVols')}</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{tVols('fields.date')}</TableHead>
-                <TableHead>{tVols('fields.creneau')}</TableHead>
-                <TableHead>{tVols('fields.pilote')}</TableHead>
-                <TableHead>{tVols('fields.statut')}</TableHead>
-                <TableHead>{tVols('postVol.decoLieu')}</TableHead>
-                <TableHead>{tVols('postVol.atterLieu')}</TableHead>
-                <TableHead>{tVols('postVol.distance')}</TableHead>
-                <TableHead>{tVols('postVol.gasConso')}</TableHead>
-                <TableHead>{tVols('postVol.anomalies')}</TableHead>
-                <TableHead>PVE</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {vols.map((vol) => (
-                <TableRow key={vol.id}>
-                  <TableCell className="whitespace-nowrap">
-                    <Link
-                      href={`/${locale}/vols/${vol.id}`}
-                      className="underline underline-offset-4 hover:text-primary"
-                    >
-                      {formatDate(vol.date)}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{tVols(`creneau.${vol.creneau}`)}</TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {vol.pilote.prenom} {vol.pilote.nom}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={statutVariant(vol.statut)}>
-                      {tVols(`statut.${vol.statut}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{vol.decoLieu ?? '—'}</TableCell>
-                  <TableCell>{vol.atterLieu ?? '—'}</TableCell>
-                  <TableCell>{vol.distance !== null ? `${vol.distance} km` : '—'}</TableCell>
-                  <TableCell>{vol.gasConso !== null ? `${vol.gasConso} kg` : '—'}</TableCell>
-                  <TableCell className="max-w-[180px] text-sm text-muted-foreground">
-                    {truncate(vol.anomalies, 60)}
-                  </TableCell>
-                  <TableCell>
-                    {vol.pvePdfUrl ? (
-                      <a
-                        href={`/api/vols/${vol.id}/pve`}
-                        className="underline underline-offset-4 hover:text-primary text-sm"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        PVE
-                      </a>
-                    ) : (
-                      '—'
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('fields.date')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('fields.creneau')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('fields.pilote')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('fields.statut')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('postVol.decoLieu')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('postVol.atterLieu')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('postVol.distance')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('postVol.gasConso')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tVols('postVol.anomalies')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      PVE
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {vols.map((vol) => (
+                    <TableRow key={vol.id} className="hover:bg-muted/50">
+                      <TableCell className="whitespace-nowrap">
+                        <Link
+                          href={`/${locale}/vols/${vol.id}`}
+                          className="underline underline-offset-4 hover:text-primary"
+                        >
+                          {formatDate(vol.date)}
+                        </Link>
+                      </TableCell>
+                      <TableCell>{tVols(`creneau.${vol.creneau}`)}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {vol.pilote.prenom} {vol.pilote.nom}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={statutVariant(vol.statut)}>
+                          {tVols(`statut.${vol.statut}`)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{vol.decoLieu ?? '—'}</TableCell>
+                      <TableCell>{vol.atterLieu ?? '—'}</TableCell>
+                      <TableCell>{vol.distance !== null ? `${vol.distance} km` : '—'}</TableCell>
+                      <TableCell>{vol.gasConso !== null ? `${vol.gasConso} kg` : '—'}</TableCell>
+                      <TableCell className="max-w-[180px] text-sm text-muted-foreground">
+                        {truncate(vol.anomalies, 60)}
+                      </TableCell>
+                      <TableCell>
+                        {vol.pvePdfUrl ? (
+                          <a
+                            href={`/api/vols/${vol.id}/pve`}
+                            className="underline underline-offset-4 hover:text-primary text-sm"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            PVE
+                          </a>
+                        ) : (
+                          '—'
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
-      </main>
+      </div>
     )
   })
 }
