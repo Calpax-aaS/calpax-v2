@@ -19,6 +19,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -27,6 +28,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { Globe } from 'lucide-react'
 
 type NavItem = {
   key: string
@@ -112,6 +114,18 @@ export function AppSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="text-sidebar-muted-foreground">
+              <Link href={pathname.replace(`/${locale}`, `/${locale === 'fr' ? 'en' : 'fr'}`)}>
+                <Globe className="h-4 w-4" />
+                <span>{locale === 'fr' ? 'English' : 'Français'}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }
