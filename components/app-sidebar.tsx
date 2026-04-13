@@ -92,8 +92,10 @@ export function AppSidebar({ alertCount = 0 }: { alertCount?: number }) {
 
   return (
     <Sidebar>
-      <SidebarHeader className="px-4 py-3 border-b">
-        <span className="text-lg font-semibold tracking-tight">Calpax</span>
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <span className="text-lg font-bold text-sidebar-primary">Calpax</span>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -109,7 +111,7 @@ export function AppSidebar({ alertCount = 0 }: { alertCount?: number }) {
                         <Icon className="h-4 w-4" />
                         <span className="flex-1">{t(key)}</span>
                         {key === 'home' && alertCount > 0 && (
-                          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
+                          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-medium text-destructive-foreground">
                             {alertCount}
                           </span>
                         )}
