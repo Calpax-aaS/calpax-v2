@@ -2,12 +2,22 @@
 
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { addPaiement } from '@/lib/actions/paiement'
 
 const MODES = ['ESPECES', 'CHEQUE', 'CB', 'VIREMENT', 'CHEQUE_VACANCES', 'AVOIR'] as const
+
+const labelClassName = 'text-xs font-medium uppercase tracking-wider text-muted-foreground'
 
 type Props = { billetId: string; locale: string }
 
@@ -15,6 +25,7 @@ export function PaiementForm({ billetId, locale }: Props) {
   const t = useTranslations('paiements')
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [modePaiement, setModePaiement] = useState<string>('')
 
   if (!open) {
     return (
@@ -25,12 +36,16 @@ export function PaiementForm({ billetId, locale }: Props) {
   }
 
   async function handleSubmit(formData: FormData) {
+    formData.set('modePaiement', modePaiement)
     const result = await addPaiement(billetId, locale, formData)
     if (result?.error) {
       setError(result.error)
+      toast.error('Erreur lors de la sauvegarde')
     } else {
       setOpen(false)
       setError(null)
+      setModePaiement('')
+      toast.success('Paiement enregistre')
     }
   }
 
@@ -39,34 +54,34 @@ export function PaiementForm({ billetId, locale }: Props) {
       {error && <div className="text-red-600 text-sm">{error}</div>}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label>{t('fields.modePaiement')}</Label>
-          <select
-            name="modePaiement"
-            required
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            <option value="" />
-            {MODES.map((m) => (
-              <option key={m} value={m}>
-                {t(`modes.${m}`)}
-              </option>
-            ))}
-          </select>
+          <Label className={labelClassName}>{t('fields.modePaiement')}</Label>
+          <Select value={modePaiement} onValueChange={setModePaiement}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="--" />
+            </SelectTrigger>
+            <SelectContent>
+              {MODES.map((m) => (
+                <SelectItem key={m} value={m}>
+                  {t(`modes.${m}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
-          <Label>{t('fields.montantTtc')}</Label>
+          <Label className={labelClassName}>{t('fields.montantTtc')}</Label>
           <Input name="montantTtc" type="number" min="0" required />
         </div>
         <div>
-          <Label>{t('fields.datePaiement')}</Label>
+          <Label className={labelClassName}>{t('fields.datePaiement')}</Label>
           <Input name="datePaiement" type="date" required />
         </div>
         <div>
-          <Label>{t('fields.dateEncaissement')}</Label>
+          <Label className={labelClassName}>{t('fields.dateEncaissement')}</Label>
           <Input name="dateEncaissement" type="date" />
         </div>
         <div className="col-span-2">
-          <Label>{t('fields.commentaire')}</Label>
+          <Label className={labelClassName}>{t('fields.commentaire')}</Label>
           <Input name="commentaire" />
         </div>
       </div>

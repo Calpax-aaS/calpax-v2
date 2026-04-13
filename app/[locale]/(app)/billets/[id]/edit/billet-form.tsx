@@ -3,12 +3,20 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { PassagerTableEditor, type PassagerRow } from '@/components/passager-table-editor'
 import { createBillet, updateBillet } from '@/lib/actions/billet'
 import { cn } from '@/lib/utils'
@@ -61,16 +69,24 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
   const [passagers, setPassagers] = useState<PassagerRow[]>(defaultPassagers)
   const [error, setError] = useState<string | null>(null)
   const [typePlannif, setTypePlannif] = useState(defaultValues?.typePlannif ?? 'A_DEFINIR')
+  const [payeurCiv, setPayeurCiv] = useState(defaultValues?.payeurCiv ?? '')
 
   const showDates =
     typePlannif === 'MATIN' || typePlannif === 'SOIR' || typePlannif === 'TOUTE_LA_JOURNEE'
 
   async function handleSubmit(formData: FormData) {
     formData.set('passagers', JSON.stringify(passagers))
+    formData.set('payeurCiv', payeurCiv)
+    formData.set('typePlannif', typePlannif)
     const result = billetId
       ? await updateBillet(billetId, locale, formData)
       : await createBillet(locale, formData)
-    if (result?.error) setError(result.error)
+    if (result?.error) {
+      setError(result.error)
+      toast.error('Erreur lors de la sauvegarde')
+    } else {
+      toast.success('Billet enregistre')
+    }
   }
 
   const isNew = !billetId
@@ -91,21 +107,27 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="payeurCiv">{t('fields.payeurCiv')}</Label>
-            <select
-              id="payeurCiv"
-              name="payeurCiv"
-              defaultValue={defaultValues?.payeurCiv ?? ''}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            >
-              <option value="">—</option>
-              <option value="M.">M.</option>
-              <option value="Mme">Mme</option>
-            </select>
+            <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {t('fields.payeurCiv')}
+            </Label>
+            <Select value={payeurCiv} onValueChange={setPayeurCiv}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="M.">M.</SelectItem>
+                <SelectItem value="Mme">Mme</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label htmlFor="payeurPrenom">{t('fields.payeurPrenom')} *</Label>
+              <Label
+                htmlFor="payeurPrenom"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                {t('fields.payeurPrenom')} *
+              </Label>
               <Input
                 id="payeurPrenom"
                 name="payeurPrenom"
@@ -114,7 +136,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="payeurNom">{t('fields.payeurNom')} *</Label>
+              <Label
+                htmlFor="payeurNom"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                {t('fields.payeurNom')} *
+              </Label>
               <Input
                 id="payeurNom"
                 name="payeurNom"
@@ -124,7 +151,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             </div>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="payeurEmail">{t('fields.payeurEmail')}</Label>
+            <Label
+              htmlFor="payeurEmail"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.payeurEmail')}
+            </Label>
             <Input
               id="payeurEmail"
               name="payeurEmail"
@@ -133,7 +165,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="payeurTelephone">{t('fields.payeurTelephone')}</Label>
+            <Label
+              htmlFor="payeurTelephone"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.payeurTelephone')}
+            </Label>
             <Input
               id="payeurTelephone"
               name="payeurTelephone"
@@ -141,7 +178,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="payeurAdresse">{t('fields.payeurAdresse')}</Label>
+            <Label
+              htmlFor="payeurAdresse"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.payeurAdresse')}
+            </Label>
             <Input
               id="payeurAdresse"
               name="payeurAdresse"
@@ -150,11 +192,21 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label htmlFor="payeurCp">{t('fields.payeurCp')}</Label>
+              <Label
+                htmlFor="payeurCp"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                {t('fields.payeurCp')}
+              </Label>
               <Input id="payeurCp" name="payeurCp" defaultValue={defaultValues?.payeurCp ?? ''} />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="payeurVille">{t('fields.payeurVille')}</Label>
+              <Label
+                htmlFor="payeurVille"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                {t('fields.payeurVille')}
+              </Label>
               <Input
                 id="payeurVille"
                 name="payeurVille"
@@ -174,24 +226,29 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="typePlannif">{t('fields.typePlannif')} *</Label>
-            <select
-              id="typePlannif"
-              name="typePlannif"
-              value={typePlannif}
-              onChange={(e) => setTypePlannif(e.target.value)}
-              required
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            >
-              {TYPE_PLANNIF_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>
-                  {t(`typePlannif.${opt}`)}
-                </option>
-              ))}
-            </select>
+            <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {t('fields.typePlannif')} *
+            </Label>
+            <Select value={typePlannif} onValueChange={setTypePlannif}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TYPE_PLANNIF_OPTIONS.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {t(`typePlannif.${opt}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="montantTtc">{t('fields.montantTtc')} *</Label>
+            <Label
+              htmlFor="montantTtc"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.montantTtc')} *
+            </Label>
             <Input
               id="montantTtc"
               name="montantTtc"
@@ -207,7 +264,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
           {showDates && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <Label htmlFor="dateVolDeb">{t('fields.dateVolDeb')}</Label>
+                <Label
+                  htmlFor="dateVolDeb"
+                  className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  {t('fields.dateVolDeb')}
+                </Label>
                 <Input
                   id="dateVolDeb"
                   name="dateVolDeb"
@@ -216,7 +278,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="dateVolFin">{t('fields.dateVolFin')}</Label>
+                <Label
+                  htmlFor="dateVolFin"
+                  className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+                >
+                  {t('fields.dateVolFin')}
+                </Label>
                 <Input
                   id="dateVolFin"
                   name="dateVolFin"
@@ -228,7 +295,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
           )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label htmlFor="dateValidite">{t('fields.dateValidite')}</Label>
+              <Label
+                htmlFor="dateValidite"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                {t('fields.dateValidite')}
+              </Label>
               <Input
                 id="dateValidite"
                 name="dateValidite"
@@ -237,7 +309,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="dateRappel">{t('fields.dateRappel')}</Label>
+              <Label
+                htmlFor="dateRappel"
+                className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                {t('fields.dateRappel')}
+              </Label>
               <Input
                 id="dateRappel"
                 name="dateRappel"
@@ -247,7 +324,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             </div>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="lieuDecollage">{t('fields.lieuDecollage')}</Label>
+            <Label
+              htmlFor="lieuDecollage"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.lieuDecollage')}
+            </Label>
             <Input
               id="lieuDecollage"
               name="lieuDecollage"
@@ -255,15 +337,30 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="survol">{t('fields.survol')}</Label>
+            <Label
+              htmlFor="survol"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.survol')}
+            </Label>
             <Input id="survol" name="survol" defaultValue={defaultValues?.survol ?? ''} />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="categorie">{t('fields.categorie')}</Label>
+            <Label
+              htmlFor="categorie"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.categorie')}
+            </Label>
             <Input id="categorie" name="categorie" defaultValue={defaultValues?.categorie ?? ''} />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="provenance">{t('fields.provenance')}</Label>
+            <Label
+              htmlFor="provenance"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.provenance')}
+            </Label>
             <Input
               id="provenance"
               name="provenance"
@@ -271,7 +368,12 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="commentaire">{t('fields.commentaire')}</Label>
+            <Label
+              htmlFor="commentaire"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {t('fields.commentaire')}
+            </Label>
             <Textarea
               id="commentaire"
               name="commentaire"

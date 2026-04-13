@@ -3,10 +3,18 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { createVol, updateVol } from '@/lib/actions/vol'
 import { cn } from '@/lib/utils'
 
@@ -63,8 +71,7 @@ type Props = {
 
 const CRENEAU_OPTIONS = ['MATIN', 'SOIR'] as const
 
-const selectClassName =
-  'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring'
+const labelClassName = 'text-xs font-medium uppercase tracking-wider text-muted-foreground'
 
 export function VolCreateForm({
   locale,
@@ -92,6 +99,8 @@ export function VolCreateForm({
   const [selectedBallonId, setSelectedBallonId] = useState<string>(
     defaultBallonId ?? ballons[0]?.id ?? '',
   )
+  const [selectedCreneau, setSelectedCreneau] = useState<string>(defaultCreneau || 'MATIN')
+  const [selectedPiloteId, setSelectedPiloteId] = useState<string>(defaultPiloteId ?? '')
 
   // Determine initial select values: if there is an *Autre value but no *Id, it means "AUTRE" was selected
   const initialEquipierId = defaultEquipierId ?? (defaultEquipierAutre ? 'AUTRE' : '')
@@ -107,10 +116,21 @@ export function VolCreateForm({
   const selectedBallon = ballons.find((b) => b.id === selectedBallonId)
 
   async function handleSubmit(formData: FormData) {
+    formData.set('creneau', selectedCreneau)
+    formData.set('ballonId', selectedBallonId)
+    formData.set('piloteId', selectedPiloteId)
+    formData.set('equipierId', selectedEquipierId)
+    formData.set('vehiculeId', selectedVehiculeId)
+    formData.set('siteDecollageId', selectedSiteId)
     const result = volId
       ? await updateVol(volId, locale, formData)
       : await createVol(locale, formData)
-    if (result?.error) setError(result.error)
+    if (result?.error) {
+      setError(result.error)
+      toast.error('Erreur lors de la sauvegarde')
+    } else {
+      toast.success('Vol enregistre')
+    }
   }
 
   return (
@@ -128,62 +148,58 @@ export function VolCreateForm({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label htmlFor="date">{t('fields.date')} *</Label>
+              <Label htmlFor="date" className={labelClassName}>
+                {t('fields.date')} *
+              </Label>
               <Input id="date" name="date" type="date" defaultValue={defaultDate} required />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="creneau">{t('fields.creneau')} *</Label>
-              <select
-                id="creneau"
-                name="creneau"
-                defaultValue={defaultCreneau || 'MATIN'}
-                required
-                className={selectClassName}
-              >
-                {CRENEAU_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {t(`creneau.${opt}`)}
-                  </option>
-                ))}
-              </select>
+              <Label className={labelClassName}>{t('fields.creneau')} *</Label>
+              <Select value={selectedCreneau} onValueChange={setSelectedCreneau}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CRENEAU_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>
+                      {t(`creneau.${opt}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="ballonId">{t('fields.ballon')} *</Label>
-            <select
-              id="ballonId"
-              name="ballonId"
-              value={selectedBallonId}
-              onChange={(e) => setSelectedBallonId(e.target.value)}
-              required
-              className={selectClassName}
-            >
-              <option value="">— Choisir un ballon</option>
-              {ballons.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.nom} ({b.immatriculation})
-                </option>
-              ))}
-            </select>
+            <Label className={labelClassName}>{t('fields.ballon')} *</Label>
+            <Select value={selectedBallonId} onValueChange={setSelectedBallonId}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="-- Choisir un ballon" />
+              </SelectTrigger>
+              <SelectContent>
+                {ballons.map((b) => (
+                  <SelectItem key={b.id} value={b.id}>
+                    {b.nom} ({b.immatriculation})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="piloteId">{t('fields.pilote')} *</Label>
-            <select
-              id="piloteId"
-              name="piloteId"
-              defaultValue={defaultPiloteId ?? ''}
-              required
-              className={selectClassName}
-            >
-              <option value="">— Choisir un pilote</option>
-              {pilotes.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.prenom} {p.nom}
-                </option>
-              ))}
-            </select>
+            <Label className={labelClassName}>{t('fields.pilote')} *</Label>
+            <Select value={selectedPiloteId} onValueChange={setSelectedPiloteId}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="-- Choisir un pilote" />
+              </SelectTrigger>
+              <SelectContent>
+                {pilotes.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.prenom} {p.nom}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -196,22 +212,20 @@ export function VolCreateForm({
           <div className="grid grid-cols-2 gap-4">
             {/* Equipier */}
             <div className="space-y-1">
-              <Label htmlFor="equipierId">{t('fields.equipier')}</Label>
-              <select
-                id="equipierId"
-                name="equipierId"
-                value={selectedEquipierId}
-                onChange={(e) => setSelectedEquipierId(e.target.value)}
-                className={selectClassName}
-              >
-                <option value="">— Choisir</option>
-                {equipiers.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.prenom} {e.nom}
-                  </option>
-                ))}
-                <option value="AUTRE">Autre...</option>
-              </select>
+              <Label className={labelClassName}>{t('fields.equipier')}</Label>
+              <Select value={selectedEquipierId} onValueChange={setSelectedEquipierId}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="-- Choisir" />
+                </SelectTrigger>
+                <SelectContent>
+                  {equipiers.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.prenom} {e.nom}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="AUTRE">Autre...</SelectItem>
+                </SelectContent>
+              </Select>
               {selectedEquipierId === 'AUTRE' && (
                 <Input
                   name="equipierAutre"
@@ -224,22 +238,20 @@ export function VolCreateForm({
 
             {/* Vehicule */}
             <div className="space-y-1">
-              <Label htmlFor="vehiculeId">{t('fields.vehicule')}</Label>
-              <select
-                id="vehiculeId"
-                name="vehiculeId"
-                value={selectedVehiculeId}
-                onChange={(e) => setSelectedVehiculeId(e.target.value)}
-                className={selectClassName}
-              >
-                <option value="">— Choisir</option>
-                {vehicules.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.nom}
-                  </option>
-                ))}
-                <option value="AUTRE">Autre...</option>
-              </select>
+              <Label className={labelClassName}>{t('fields.vehicule')}</Label>
+              <Select value={selectedVehiculeId} onValueChange={setSelectedVehiculeId}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="-- Choisir" />
+                </SelectTrigger>
+                <SelectContent>
+                  {vehicules.map((v) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.nom}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="AUTRE">Autre...</SelectItem>
+                </SelectContent>
+              </Select>
               {selectedVehiculeId === 'AUTRE' && (
                 <Input
                   name="vehiculeAutre"
@@ -253,22 +265,20 @@ export function VolCreateForm({
 
           {/* Site de decollage */}
           <div className="space-y-1">
-            <Label htmlFor="siteDecollageId">{t('fields.lieuDecollage')}</Label>
-            <select
-              id="siteDecollageId"
-              name="siteDecollageId"
-              value={selectedSiteId}
-              onChange={(e) => setSelectedSiteId(e.target.value)}
-              className={selectClassName}
-            >
-              <option value="">— Choisir</option>
-              {sites.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.nom}
-                </option>
-              ))}
-              <option value="AUTRE">Autre...</option>
-            </select>
+            <Label className={labelClassName}>{t('fields.lieuDecollage')}</Label>
+            <Select value={selectedSiteId} onValueChange={setSelectedSiteId}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="-- Choisir" />
+              </SelectTrigger>
+              <SelectContent>
+                {sites.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.nom}
+                  </SelectItem>
+                ))}
+                <SelectItem value="AUTRE">Autre...</SelectItem>
+              </SelectContent>
+            </Select>
             {selectedSiteId === 'AUTRE' && (
               <Input
                 name="lieuDecollageAutre"
@@ -281,7 +291,9 @@ export function VolCreateForm({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label htmlFor="configGaz">{t('fields.configGaz')}</Label>
+              <Label htmlFor="configGaz" className={labelClassName}>
+                {t('fields.configGaz')}
+              </Label>
               <Input
                 id="configGaz"
                 name="configGaz"
@@ -289,7 +301,9 @@ export function VolCreateForm({
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="qteGaz">{t('fields.qteGaz')}</Label>
+              <Label htmlFor="qteGaz" className={labelClassName}>
+                {t('fields.qteGaz')}
+              </Label>
               <Input
                 id="qteGaz"
                 name="qteGaz"

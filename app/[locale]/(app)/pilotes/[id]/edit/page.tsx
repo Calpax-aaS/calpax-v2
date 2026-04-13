@@ -4,13 +4,9 @@ import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
 import { decrypt } from '@/lib/crypto'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { updatePilote } from '@/lib/actions/pilote'
+import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { PiloteEditForm } from './pilote-edit-form'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
@@ -33,11 +29,6 @@ export default async function PiloteEditPage({ params }: Props) {
       }
     }
 
-    async function handleUpdate(formData: FormData) {
-      'use server'
-      await updatePilote(id, locale, formData)
-    }
-
     const dateExpirationStr = pilote.dateExpirationLicence
       ? pilote.dateExpirationLicence.toISOString().substring(0, 10)
       : ''
@@ -54,184 +45,32 @@ export default async function PiloteEditPage({ params }: Props) {
           <h1 className="text-2xl font-bold">{t('editTitle')}</h1>
         </div>
 
-        <form action={handleUpdate} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Identité</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label htmlFor="prenom">{t('fields.prenom')} *</Label>
-                  <Input id="prenom" name="prenom" defaultValue={pilote.prenom} required />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="nom">{t('fields.nom')} *</Label>
-                  <Input id="nom" name="nom" defaultValue={pilote.nom} required />
-                </div>
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="email">{t('fields.email')}</Label>
-                <Input id="email" name="email" type="email" defaultValue={pilote.email ?? ''} />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="telephone">{t('fields.telephone')}</Label>
-                <Input id="telephone" name="telephone" defaultValue={pilote.telephone ?? ''} />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="poids">
-                  {t('fields.poids')}{' '}
-                  <span className="text-xs text-muted-foreground">({t('fields.poidsNote')})</span>
-                </Label>
-                <Input
-                  id="poids"
-                  name="poids"
-                  type="number"
-                  min="1"
-                  step="0.1"
-                  defaultValue={poids ?? ''}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Separator />
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Licence BFCL</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="licenceBfcl">{t('fields.licenceBfcl')} *</Label>
-                <Input
-                  id="licenceBfcl"
-                  name="licenceBfcl"
-                  defaultValue={pilote.licenceBfcl}
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="dateExpirationLicence">{t('fields.dateExpirationLicence')} *</Label>
-                <Input
-                  id="dateExpirationLicence"
-                  name="dateExpirationLicence"
-                  type="date"
-                  defaultValue={dateExpirationStr}
-                  required
-                />
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  id="qualificationCommerciale"
-                  name="qualificationCommerciale"
-                  type="checkbox"
-                  defaultChecked={pilote.qualificationCommerciale}
-                  className="h-4 w-4 rounded border-input"
-                />
-                <Label htmlFor="qualificationCommerciale">
-                  {t('fields.qualificationCommerciale')}
-                </Label>
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  id="qualificationNuit"
-                  name="qualificationNuit"
-                  type="checkbox"
-                  defaultChecked={pilote.qualificationNuit}
-                  className="h-4 w-4 rounded border-input"
-                />
-                <Label htmlFor="qualificationNuit">{t('fields.qualificationNuit')}</Label>
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  id="qualificationInstructeur"
-                  name="qualificationInstructeur"
-                  type="checkbox"
-                  defaultChecked={pilote.qualificationInstructeur}
-                  className="h-4 w-4 rounded border-input"
-                />
-                <Label htmlFor="qualificationInstructeur">
-                  {t('fields.qualificationInstructeur')}
-                </Label>
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  id="qualificationCaptif"
-                  name="qualificationCaptif"
-                  type="checkbox"
-                  defaultChecked={pilote.qualificationCaptif}
-                  className="h-4 w-4 rounded border-input"
-                />
-                <Label htmlFor="qualificationCaptif">{t('fields.qualificationCaptif')}</Label>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Separator />
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t('sections.classesBfcl')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>{t('fields.classesBfcl')}</Label>
-                <div className="flex gap-4">
-                  {(['A', 'B', 'C', 'D'] as const).map((cls) => (
-                    <div key={cls} className="flex items-center gap-2">
-                      <input
-                        id={`classe${cls}`}
-                        name={`classe${cls}`}
-                        type="checkbox"
-                        defaultChecked={pilote[`classe${cls}` as 'classeA']}
-                        className="h-4 w-4 rounded border-input"
-                      />
-                      <Label htmlFor={`classe${cls}`}>{t(`classes.${cls}`)}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>{t('fields.groupesA')}</Label>
-                <div className="flex gap-4">
-                  {([1, 2, 3, 4] as const).map((g) => (
-                    <div key={g} className="flex items-center gap-2">
-                      <input
-                        id={`groupeA${g}`}
-                        name={`groupeA${g}`}
-                        type="checkbox"
-                        defaultChecked={pilote[`groupeA${g}` as 'groupeA1']}
-                        className="h-4 w-4 rounded border-input"
-                      />
-                      <Label htmlFor={`groupeA${g}`}>{t(`groupes.A${g}`)}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="heuresDeVol">{t('fields.heuresDeVol')}</Label>
-                <Input
-                  id="heuresDeVol"
-                  name="heuresDeVol"
-                  type="number"
-                  min="0"
-                  defaultValue={pilote.heuresDeVol ?? ''}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end gap-3">
-            <Link
-              href={`/${locale}/pilotes/${id}`}
-              className={cn(buttonVariants({ variant: 'outline' }))}
-            >
-              {t('backToList')}
-            </Link>
-            <Button type="submit">{t('saveButton')}</Button>
-          </div>
-        </form>
+        <PiloteEditForm
+          locale={locale}
+          piloteId={id}
+          pilote={{
+            prenom: pilote.prenom,
+            nom: pilote.nom,
+            email: pilote.email,
+            telephone: pilote.telephone,
+            poids,
+            licenceBfcl: pilote.licenceBfcl,
+            dateExpirationLicence: dateExpirationStr,
+            qualificationCommerciale: pilote.qualificationCommerciale,
+            qualificationNuit: pilote.qualificationNuit,
+            qualificationInstructeur: pilote.qualificationInstructeur,
+            qualificationCaptif: pilote.qualificationCaptif,
+            classeA: pilote.classeA,
+            classeB: pilote.classeB,
+            classeC: pilote.classeC,
+            classeD: pilote.classeD,
+            groupeA1: pilote.groupeA1,
+            groupeA2: pilote.groupeA2,
+            groupeA3: pilote.groupeA3,
+            groupeA4: pilote.groupeA4,
+            heuresDeVol: pilote.heuresDeVol,
+          }}
+        />
       </main>
     )
   })
