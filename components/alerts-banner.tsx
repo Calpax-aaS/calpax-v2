@@ -6,12 +6,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Badge } from '@/components/ui/badge'
 import type { Alert, AlertSeverity } from '@/lib/regulatory/alerts'
 
-const SEVERITY_VARIANT: Record<AlertSeverity, 'destructive' | 'warning' | 'outline'> = {
-  EXPIRED: 'destructive',
-  CRITICAL: 'warning',
-  WARNING: 'outline',
-  OK: 'outline',
-}
+const SEVERITY_VARIANT: Record<AlertSeverity, 'destructive' | 'critical' | 'warning' | 'outline'> =
+  {
+    EXPIRED: 'destructive',
+    CRITICAL: 'critical',
+    WARNING: 'warning',
+    OK: 'outline',
+  }
 
 function formatDaysRemaining(daysRemaining: number): string {
   if (daysRemaining <= 0) return 'Expire'

@@ -8,12 +8,12 @@ interface ExpiryBadgeProps {
 
 const severityConfig: Record<
   string,
-  { label: string; variant: 'success' | 'warning' | 'destructive' | 'outline' }
+  { label: string; variant: 'success' | 'warning' | 'critical' | 'destructive' | 'outline' }
 > = {
   OK: { label: 'Valide', variant: 'success' },
   WARNING: { label: 'Attention', variant: 'warning' },
-  CRITICAL: { label: 'Critique', variant: 'destructive' },
-  EXPIRED: { label: 'Expiré', variant: 'destructive' },
+  CRITICAL: { label: 'Critique', variant: 'critical' },
+  EXPIRED: { label: 'Expire', variant: 'destructive' },
 }
 
 export function ExpiryBadge({ date, type }: ExpiryBadgeProps) {

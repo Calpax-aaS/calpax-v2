@@ -19,6 +19,8 @@ const badgeVariants = cva(
         link: 'text-primary underline-offset-4 [a&]:hover:underline',
         success: 'border-transparent bg-success text-success-foreground shadow hover:bg-success/80',
         warning: 'border-transparent bg-warning text-warning-foreground shadow hover:bg-warning/80',
+        critical:
+          'border-transparent bg-[oklch(0.45_0.15_30)] text-white shadow hover:bg-[oklch(0.45_0.15_30)]/80',
       },
     },
     defaultVariants: {
