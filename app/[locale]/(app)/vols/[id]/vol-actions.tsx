@@ -42,7 +42,7 @@ export function VolActions({ volId, locale, statut }: Props) {
     }
   }
 
-  const showFiche = statut === 'CONFIRME' || statut === 'TERMINE' || statut === 'ARCHIVE'
+  const showFiche = statut === 'CONFIRME' || statut === 'TERMINE'
 
   return (
     <div className="flex items-center gap-2 flex-wrap">

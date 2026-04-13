@@ -10,6 +10,9 @@ import { decrypt } from '@/lib/crypto'
 import { generateFicheVolBuffer } from '@/lib/pdf/generate'
 import { uploadPve } from '@/lib/storage/pve'
 import { validateVolCreation } from '@/lib/vol/validation'
+import { getWeather } from '@/lib/weather/cache'
+import { extractCreneauHours } from '@/lib/weather/extract'
+import { summarizeWeather } from '@/lib/weather/classify'
 
 export async function createVol(locale: string, formData: FormData): Promise<{ error?: string }> {
   return requireAuth(async () => {
@@ -209,7 +212,16 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
     const vol = await db.vol.findUniqueOrThrow({
       where: { id: volId },
       include: {
-        exploitant: { select: { name: true, frDecNumber: true, logoUrl: true } },
+        exploitant: {
+          select: {
+            name: true,
+            frDecNumber: true,
+            logoUrl: true,
+            meteoLatitude: true,
+            meteoLongitude: true,
+            meteoSeuilVent: true,
+          },
+        },
         ballon: true,
         pilote: true,
         equipierEntity: { select: { prenom: true, nom: true } },
@@ -237,6 +249,25 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
     }))
 
     const now = new Date()
+    const seuilVent = vol.exploitant.meteoSeuilVent ?? 15
+    let meteo = undefined
+
+    if (vol.exploitant.meteoLatitude && vol.exploitant.meteoLongitude) {
+      try {
+        const dateStr = vol.date.toISOString().slice(0, 10)
+        const forecast = await getWeather({
+          exploitantId: vol.exploitantId,
+          latitude: vol.exploitant.meteoLatitude,
+          longitude: vol.exploitant.meteoLongitude,
+          date: dateStr,
+        })
+        const hours = extractCreneauHours(forecast, vol.creneau as 'MATIN' | 'SOIR')
+        const summary = summarizeWeather(hours, seuilVent)
+        meteo = { hours, summary, seuilVent }
+      } catch {
+        // Weather not available
+      }
+    }
 
     const equipierDisplay = vol.equipierEntity
       ? `${vol.equipierEntity.prenom} ${vol.equipierEntity.nom}`
@@ -276,9 +307,10 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
         poids: pilotePoids,
       },
       passagers,
-      temperatureCelsius: 20,
+      temperatureCelsius: meteo?.summary.avgTemperature ?? 20,
       isPve: true,
       archivedAt: now,
+      meteo,
     })
 
     const pvePath = await uploadPve(ctx.exploitantId, volId, buffer)
