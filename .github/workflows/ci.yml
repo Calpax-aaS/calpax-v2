@@ -191,14 +191,21 @@ jobs:
 
       - name: Check if seed files changed
         id: seed-check
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- prisma/ 2>/dev/null || echo "prisma/seed.ts")
-          if [ -n "$CHANGED" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "Prisma files changed: $CHANGED"
-          else
+          if [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "No previous SHA (first push?) — skipping seed"
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No prisma changes — skipping seed"
+          else
+            CHANGED=$(git diff --name-only "$BEFORE_SHA" HEAD -- prisma/)
+            if [ -n "$CHANGED" ]; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+              echo "Prisma files changed: $CHANGED"
+            else
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+              echo "No prisma changes — skipping seed"
+            fi
           fi
 
       - name: Seed production database (only when prisma/ files changed)
