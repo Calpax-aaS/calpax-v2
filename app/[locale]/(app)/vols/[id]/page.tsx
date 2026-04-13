@@ -96,6 +96,7 @@ export default async function VolDetailPage({ params }: Props) {
 
     let weatherHours = null
     let weatherSummary = null
+    let weatherFetchedAt: Date | null = null
 
     if (vol.exploitant.meteoLatitude && vol.exploitant.meteoLongitude) {
       try {
@@ -108,6 +109,17 @@ export default async function VolDetailPage({ params }: Props) {
         })
         weatherHours = extractCreneauHours(forecast, vol.creneau as 'MATIN' | 'SOIR')
         weatherSummary = summarizeWeather(weatherHours, seuilVent)
+
+        const cached = await db.weatherCache.findUnique({
+          where: {
+            exploitantId_date: {
+              exploitantId: vol.exploitantId,
+              date: new Date(dateStr + 'T00:00:00Z'),
+            },
+          },
+          select: { fetchedAt: true },
+        })
+        weatherFetchedAt = cached?.fetchedAt ?? null
       } catch {
         // Weather fetch failed silently — show no data message
       }
@@ -302,7 +314,14 @@ export default async function VolDetailPage({ params }: Props) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center justify-between">
-              <span>{tMeteo('title')}</span>
+              <span>
+                {tMeteo('title')} —{' '}
+                {vol.date.toLocaleDateString('fr-FR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })}
+              </span>
               {vol.exploitant.meteoLatitude && (
                 <form
                   action={async () => {
@@ -319,6 +338,18 @@ export default async function VolDetailPage({ params }: Props) {
                 </form>
               )}
             </CardTitle>
+            {weatherFetchedAt && (
+              <p className="text-xs text-muted-foreground">
+                Source : Open-Meteo (best match) — maj{' '}
+                {weatherFetchedAt.toLocaleString('fr-FR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </p>
+            )}
           </CardHeader>
           <CardContent>
             {!vol.exploitant.meteoLatitude || !vol.exploitant.meteoLongitude ? (
