@@ -189,7 +189,8 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
 
-      - name: Seed production database (uses pooled connection)
+      - name: Seed production database (only when RUN_SEED secret is set)
+        if: ${{ secrets.RUN_SEED == 'true' }}
         run: pnpm exec tsx prisma/seed.ts
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
