@@ -52,6 +52,7 @@
       "email": "Email",
       "website": "Website",
       "contactName": "Contact name",
+      "billetPrefix": "Ticket reference prefix",
       "meteoLatitude": "Latitude",
       "meteoLongitude": "Longitude",
       "meteoSeuilVent": "Wind threshold (km/h)"

@@ -74,7 +74,11 @@ export async function createBillet(
 
     const { passagers, ...billetData } = result.data
     const year = new Date().getFullYear()
-    const prefix = 'CBF' // TODO P-SaaS: make configurable per exploitant
+    const exploitant = await db.exploitant.findUniqueOrThrow({
+      where: { id: ctx.exploitantId },
+      select: { billetPrefix: true, name: true },
+    })
+    const prefix = exploitant.billetPrefix ?? exploitant.name.slice(0, 3).toUpperCase()
     const seq = await nextSequence(ctx.exploitantId, year)
     const reference = formatReference(prefix, year, seq)
     const checksum = computeLuhnChecksum(reference)

@@ -52,6 +52,7 @@
       "email": "Email",
       "website": "Site web",
       "contactName": "Nom du contact",
+      "billetPrefix": "Prefixe references billets",
       "meteoLatitude": "Latitude",
       "meteoLongitude": "Longitude",
       "meteoSeuilVent": "Seuil vent (km/h)"

@@ -127,6 +127,16 @@ export default async function SettingsPage() {
                   defaultValue={exploitant.contactName ?? ''}
                 />
               </div>
+              <div className="space-y-1">
+                <Label htmlFor="billetPrefix">{t('fields.billetPrefix')}</Label>
+                <Input
+                  id="billetPrefix"
+                  name="billetPrefix"
+                  maxLength={5}
+                  placeholder="ex: CBF"
+                  defaultValue={exploitant.billetPrefix ?? ''}
+                />
+              </div>
             </CardContent>
           </Card>
 

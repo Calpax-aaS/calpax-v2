@@ -22,6 +22,7 @@ model Exploitant {
   website     String?
   contactName String?
   logoUrl     String?
+  billetPrefix String?  @default("BIL")
   users       User[]
   ballons     Ballon[]
   pilotes     Pilote[]
