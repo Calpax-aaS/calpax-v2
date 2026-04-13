@@ -16,7 +16,7 @@ export default async function PostVolPage({ params }: Props) {
 
     const vol = await db.vol.findUnique({
       where: { id },
-      select: { id: true, statut: true },
+      select: { id: true, statut: true, exploitantId: true },
     })
 
     if (!vol || vol.statut === 'ARCHIVE' || vol.statut === 'ANNULE') {
