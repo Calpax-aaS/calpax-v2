@@ -1,10 +1,10 @@
 import type { Alert, AlertSeverity } from '@/lib/regulatory/alerts'
 
 const SEVERITY_STYLES: Record<AlertSeverity, string> = {
-  EXPIRED: 'bg-red-50 border-red-200 text-red-800',
-  CRITICAL: 'bg-orange-50 border-orange-200 text-orange-800',
-  WARNING: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-  OK: '',
+  EXPIRED: 'bg-destructive/10 text-destructive border-destructive/20',
+  CRITICAL: 'bg-warning/10 text-warning border-warning/20',
+  WARNING: 'bg-accent text-accent-foreground border-accent-foreground/20',
+  OK: 'hidden',
 }
 
 function formatDaysRemaining(daysRemaining: number): string {

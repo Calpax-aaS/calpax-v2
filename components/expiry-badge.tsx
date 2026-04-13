@@ -6,16 +6,22 @@ interface ExpiryBadgeProps {
   type: 'CAMO' | 'BFCL'
 }
 
-const severityConfig = {
-  OK: { label: 'Valide', className: 'bg-green-100 text-green-800 border-green-200' },
-  WARNING: { label: 'Attention', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  CRITICAL: { label: 'Critique', className: 'bg-orange-100 text-orange-800 border-orange-200' },
-  EXPIRED: { label: 'Expiré', className: 'bg-red-100 text-red-800 border-red-200' },
+const severityConfig: Record<
+  string,
+  { label: string; variant: 'success' | 'warning' | 'destructive' | 'outline' }
+> = {
+  OK: { label: 'Valide', variant: 'success' },
+  WARNING: { label: 'Attention', variant: 'warning' },
+  CRITICAL: { label: 'Critique', variant: 'destructive' },
+  EXPIRED: { label: 'Expiré', variant: 'destructive' },
 }
 
 export function ExpiryBadge({ date, type }: ExpiryBadgeProps) {
   const severity = computeAlertSeverity(date, type)
-  const { label, className } = severityConfig[severity]
+  const { label, variant } = severityConfig[severity] ?? {
+    label: severity,
+    variant: 'outline' as const,
+  }
   const dateStr = date.toLocaleDateString('fr-FR', {
     day: '2-digit',
     month: '2-digit',
@@ -23,7 +29,7 @@ export function ExpiryBadge({ date, type }: ExpiryBadgeProps) {
   })
 
   return (
-    <Badge variant="outline" className={className}>
+    <Badge variant={variant}>
       {label} — {dateStr}
     </Badge>
   )

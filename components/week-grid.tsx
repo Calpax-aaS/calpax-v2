@@ -23,10 +23,11 @@ type WeekGridProps = {
 }
 
 const STATUT_BORDER: Record<string, string> = {
-  PLANIFIE: 'border-l-4 border-blue-500',
-  CONFIRME: 'border-l-4 border-green-500',
-  TERMINE: 'border-l-4 border-amber-500',
-  ANNULE: 'border-l-4 border-gray-400',
+  PLANIFIE: 'border-l-4 border-l-primary',
+  CONFIRME: 'border-l-4 border-l-success',
+  EN_VOL: 'border-l-4 border-l-info',
+  TERMINE: 'border-l-4 border-l-muted-foreground',
+  ANNULE: 'border-l-4 border-l-destructive',
 }
 
 const DAY_SHORT = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
@@ -55,7 +56,7 @@ type VolCardProps = {
 }
 
 function VolCard({ vol, locale }: VolCardProps) {
-  const borderClass = STATUT_BORDER[vol.statut] ?? 'border-l-4 border-gray-300'
+  const borderClass = STATUT_BORDER[vol.statut] ?? 'border-l-4 border-l-border'
   return (
     <Link href={`/${locale}/vols/${vol.id}`} className="block">
       <div
