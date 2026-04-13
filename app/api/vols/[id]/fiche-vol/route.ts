@@ -105,7 +105,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         poids: pilotePoids,
       },
       passagers,
-      temperatureCelsius: 20,
+      temperatureCelsius: meteo?.summary.avgTemperature ?? 20,
       isPve: false,
       archivedAt: null,
       meteo,
