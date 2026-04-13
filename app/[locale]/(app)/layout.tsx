@@ -50,7 +50,7 @@ export default async function AppLayout({ children, params }: Props) {
 
   return (
     <SidebarProvider>
-      <AppSidebar alertCount={alerts.length} />
+      <AppSidebar />
       <SidebarInset>
         <AlertsBanner alerts={criticalAlerts} />
         <main className="flex-1 p-6">{children}</main>
