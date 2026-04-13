@@ -35,8 +35,8 @@
     "pilotes": "Pilotes",
     "settings": "Paramètres",
     "billets": "Billets",
-    "equipiers": "Equipiers",
-    "vehicules": "Vehicules",
+    "equipiers": "Équipiers",
+    "vehicules": "Véhicules",
     "sites": "Sites",
     "vols": "Vols",
     "rgpd": "RGPD",
@@ -66,17 +66,17 @@
       "email": "Email",
       "website": "Site web",
       "contactName": "Nom du contact",
-      "billetPrefix": "Prefixe references billets",
+      "billetPrefix": "Préfixe références billets",
       "meteoLatitude": "Latitude",
       "meteoLongitude": "Longitude",
       "meteoSeuilVent": "Seuil vent (km/h)"
     }
   },
   "meteo": {
-    "title": "Meteo",
-    "refresh": "Rafraichir meteo",
-    "noGps": "Configurez les coordonnees GPS dans Parametres",
-    "noData": "Donnees meteo non disponibles",
+    "title": "Météo",
+    "refresh": "Rafraîchir météo",
+    "noGps": "Configurez les coordonnées GPS dans Paramètres",
+    "noData": "Données météo non disponibles",
     "maxWind": "Vent max",
     "avgTemp": "OAT moy",
     "source": "Source: Open-Meteo.com",
@@ -87,16 +87,16 @@
       "vent120m": "Vent 120m",
       "vent180m": "Vent 180m",
       "temperature": "OAT",
-      "cloudCover": "Nebulosite",
-      "precipitation": "Precip."
+      "cloudCover": "Nébulosité",
+      "precipitation": "Précip."
     },
     "level": {
       "OK": "OK",
       "WARNING": "Prudence",
-      "DANGER": "Defavorable"
+      "DANGER": "Défavorable"
     },
     "settings": {
-      "title": "Meteo",
+      "title": "Météo",
       "latitude": "Latitude",
       "longitude": "Longitude",
       "seuilVent": "Seuil vent (km/h)",
@@ -141,7 +141,7 @@
       "camoOrganisme": "Organisme CAMO",
       "camoExpiryDate": "Date expiration CAMO",
       "certificatNavigabilite": "Certificat de navigabilité",
-      "performanceChart": "Devis de chargement — charge utile maximale (kg) par temperature"
+      "performanceChart": "Devis de chargement — charge utile maximale (kg) par température"
     }
   },
   "pilotes": {
@@ -203,36 +203,36 @@
   "billets": {
     "title": "Billets de vol",
     "new": "Nouveau billet",
-    "backToList": "Retour a la liste",
+    "backToList": "Retour à la liste",
     "edit": "Modifier",
     "save": "Enregistrer",
-    "saveSuccess": "Billet enregistre",
-    "detail": "Detail du billet",
+    "saveSuccess": "Billet enregistré",
+    "detail": "Détail du billet",
     "noPassengers": "Aucun passager",
     "addPassenger": "Ajouter un passager",
     "removePassenger": "Retirer",
     "payeurIsPassenger": "Le payeur est aussi passager",
     "noBillets": "Aucun billet",
     "fields": {
-      "reference": "Reference",
-      "checksum": "Code verification",
+      "reference": "Référence",
+      "checksum": "Code vérification",
       "typePlannif": "Type de planification",
-      "dateVolDeb": "Date debut fenetre",
-      "dateVolFin": "Date fin fenetre",
-      "dateValidite": "Date validite",
-      "payeurPrenom": "Prenom payeur",
+      "dateVolDeb": "Date début fenêtre",
+      "dateVolFin": "Date fin fenêtre",
+      "dateValidite": "Date validité",
+      "payeurPrenom": "Prénom payeur",
       "payeurNom": "Nom payeur",
       "payeurEmail": "Email payeur",
-      "payeurTelephone": "Telephone payeur",
+      "payeurTelephone": "Téléphone payeur",
       "payeurAdresse": "Adresse",
       "payeurCp": "Code postal",
       "payeurVille": "Ville",
-      "payeurCiv": "Civilite",
+      "payeurCiv": "Civilité",
       "montantTtc": "Montant TTC (EUR)",
-      "categorie": "Categorie",
+      "categorie": "Catégorie",
       "provenance": "Provenance",
-      "lieuDecollage": "Lieu de decollage souhaite",
-      "survol": "Zone de survol souhaitee",
+      "lieuDecollage": "Lieu de décollage souhaité",
+      "survol": "Zone de survol souhaitée",
       "commentaire": "Commentaire",
       "dateRappel": "Date de rappel",
       "statut": "Statut",
@@ -242,33 +242,33 @@
     "typePlannif": {
       "MATIN": "Matin",
       "SOIR": "Soir",
-      "TOUTE_LA_JOURNEE": "Toute la journee",
+      "TOUTE_LA_JOURNEE": "Toute la journée",
       "AU_PLUS_VITE": "Au plus vite",
       "AUTRE": "Autre",
-      "A_DEFINIR": "A definir"
+      "A_DEFINIR": "À définir"
     },
     "statut": {
       "EN_ATTENTE": "En attente",
-      "PLANIFIE": "Planifie",
-      "VOLE": "Vole",
-      "ANNULE": "Annule",
-      "REMBOURSE": "Rembourse",
-      "EXPIRE": "Expire"
+      "PLANIFIE": "Planifié",
+      "VOLE": "Volé",
+      "ANNULE": "Annulé",
+      "REMBOURSE": "Remboursé",
+      "EXPIRE": "Expiré"
     },
     "statutPaiement": {
       "EN_ATTENTE": "En attente",
       "PARTIEL": "Partiel",
-      "SOLDE": "Solde",
-      "REMBOURSE": "Rembourse"
+      "SOLDE": "Soldé",
+      "REMBOURSE": "Remboursé"
     }
   },
   "vols": {
     "title": "Planning des vols",
     "new": "Nouveau vol",
     "backToList": "Retour au planning",
-    "detail": "Detail du vol",
+    "detail": "Détail du vol",
     "cancel": "Annuler le vol",
-    "confirmCancel": "Annuler ce vol ? Les passagers seront desaffectes.",
+    "confirmCancel": "Annuler ce vol ? Les passagers seront désaffectés.",
     "organiser": "Organiser",
     "confirmer": "Confirmer le vol",
     "save": "Enregistrer",
@@ -278,14 +278,14 @@
     "today": "Aujourd'hui",
     "fields": {
       "date": "Date",
-      "creneau": "Creneau",
+      "creneau": "Créneau",
       "ballon": "Ballon",
       "pilote": "Pilote",
-      "equipier": "Equipier",
-      "vehicule": "Vehicule",
-      "lieuDecollage": "Lieu de decollage",
+      "equipier": "Équipier",
+      "vehicule": "Véhicule",
+      "lieuDecollage": "Lieu de décollage",
       "configGaz": "Configuration gaz",
-      "qteGaz": "Quantite gaz (kg)",
+      "qteGaz": "Quantité gaz (kg)",
       "statut": "Statut"
     },
     "creneau": {
@@ -293,22 +293,22 @@
       "SOIR": "Soir"
     },
     "statut": {
-      "PLANIFIE": "Planifie",
-      "CONFIRME": "Confirme",
-      "TERMINE": "Termine",
-      "ARCHIVE": "Archive",
-      "ANNULE": "Annule"
+      "PLANIFIE": "Planifié",
+      "CONFIRME": "Confirmé",
+      "TERMINE": "Terminé",
+      "ARCHIVE": "Archivé",
+      "ANNULE": "Annulé"
     },
     "devis": {
       "title": "Devis de masse",
-      "temperature": "Temperature (C)",
-      "poidsAVide": "Pesee a vide",
-      "poidsGaz": "Gaz embarque",
+      "temperature": "Température (C)",
+      "poidsAVide": "Pesée à vide",
+      "poidsGaz": "Gaz embarqué",
       "poidsPilote": "Pilote",
       "poidsPassagers": "Passagers",
-      "poidsEquipement": "Equipement",
-      "poidsTotal": "Charge embarquee",
-      "chargeEmbarquee": "Charge embarquee",
+      "poidsEquipement": "Équipement",
+      "poidsTotal": "Charge embarquée",
+      "chargeEmbarquee": "Charge embarquée",
       "chargeUtileMax": "Charge utile max",
       "margeRestante": "Marge restante",
       "conforme": "CONFORME",
@@ -320,14 +320,14 @@
       "noBillets": "Aucun billet compatible",
       "affecter": "Affecter",
       "desaffecter": "Retirer",
-      "passagersAffectes": "Passagers affectes",
-      "noPassagers": "Aucun passager affecte",
-      "capacite": "Capacite"
+      "passagersAffectes": "Passagers affectés",
+      "noPassagers": "Aucun passager affecté",
+      "capacite": "Capacité"
     },
     "postVol": {
       "title": "Compte-rendu post-vol",
-      "decoLieu": "Lieu de decollage",
-      "decoHeure": "Heure de decollage",
+      "decoLieu": "Lieu de décollage",
+      "decoHeure": "Heure de décollage",
       "atterLieu": "Lieu d'atterrissage",
       "atterHeure": "Heure d'atterrissage",
       "gasConso": "Consommation gaz (kg)",
@@ -336,19 +336,19 @@
       "noteDansCarnet": "Note dans le carnet de bord",
       "save": "Enregistrer et terminer le vol"
     },
-    "downloadFiche": "Telecharger PVE",
-    "downloadPve": "Telecharger PVE",
+    "downloadFiche": "Télécharger PVE",
+    "downloadPve": "Télécharger PVE",
     "archivePve": "Archiver comme PVE",
-    "confirmArchive": "Generer le PVE final et archiver ce vol ?",
+    "confirmArchive": "Générer le PVE final et archiver ce vol ?",
     "postVolLink": "Saisie post-vol"
   },
   "passagers": {
     "fields": {
-      "prenom": "Prenom",
+      "prenom": "Prénom",
       "nom": "Nom",
       "email": "Email",
-      "telephone": "Telephone",
-      "age": "Age",
+      "telephone": "Téléphone",
+      "age": "Âge",
       "poids": "Poids (kg)",
       "pmr": "PMR"
     }
@@ -368,67 +368,67 @@
       "commentaire": "Commentaire"
     },
     "modes": {
-      "ESPECES": "Especes",
-      "CHEQUE": "Cheque",
+      "ESPECES": "Espèces",
+      "CHEQUE": "Chèque",
       "CB": "Carte bancaire",
       "VIREMENT": "Virement",
-      "CHEQUE_VACANCES": "Cheque-vacances",
+      "CHEQUE_VACANCES": "Chèque-vacances",
       "AVOIR": "Avoir"
     }
   },
   "journal": {
     "title": "Journal de bord",
-    "noVols": "Aucun vol enregistre",
+    "noVols": "Aucun vol enregistré",
     "stats": {
       "totalVols": "Vols total",
-      "totalGaz": "Gaz consomme (kg)",
-      "volsArchives": "PVE archives"
+      "totalGaz": "Gaz consommé (kg)",
+      "volsArchives": "PVE archivés"
     },
     "viewJournal": "Voir le journal de bord"
   },
   "audit": {
     "title": "Journal des modifications",
-    "noEntries": "Aucune modification enregistree",
+    "noEntries": "Aucune modification enregistrée",
     "filters": {
-      "entityType": "Type d'entite",
-      "entityId": "ID entite",
+      "entityType": "Type d'entité",
+      "entityId": "ID entité",
       "action": "Action",
-      "dateFrom": "Date debut",
+      "dateFrom": "Date début",
       "dateTo": "Date fin",
       "all": "Tous"
     },
     "fields": {
       "date": "Date",
       "user": "Utilisateur",
-      "entity": "Entite",
+      "entity": "Entité",
       "action": "Action",
       "field": "Champ",
       "before": "Avant",
-      "after": "Apres"
+      "after": "Après"
     }
   },
   "equipiers": {
-    "title": "Equipiers",
-    "new": "Nouvel equipier",
+    "title": "Équipiers",
+    "new": "Nouvel équipier",
     "add": "Ajouter",
-    "noEntries": "Aucun equipier enregistre.",
+    "noEntries": "Aucun équipier enregistré.",
     "status": {
       "actif": "Actif",
       "inactif": "Inactif"
     },
     "fields": {
-      "prenom": "Prenom",
+      "prenom": "Prénom",
       "nom": "Nom",
-      "telephone": "Telephone",
+      "telephone": "Téléphone",
       "statut": "Statut",
       "actions": "Actions"
     }
   },
   "vehicules": {
-    "title": "Vehicules",
-    "new": "Nouveau vehicule",
+    "title": "Véhicules",
+    "new": "Nouveau véhicule",
     "add": "Ajouter",
-    "noEntries": "Aucun vehicule enregistre.",
+    "noEntries": "Aucun véhicule enregistré.",
     "status": {
       "actif": "Actif",
       "inactif": "Inactif"
@@ -441,10 +441,10 @@
     }
   },
   "sites": {
-    "title": "Sites de decollage",
+    "title": "Sites de décollage",
     "new": "Nouveau site",
     "add": "Ajouter",
-    "noEntries": "Aucun site enregistre.",
+    "noEntries": "Aucun site enregistré.",
     "status": {
       "actif": "Actif",
       "inactif": "Inactif"
@@ -463,14 +463,14 @@
   "rgpd": {
     "title": "RGPD - Droits des passagers",
     "search": "Rechercher un passager",
-    "searchPlaceholder": "Nom, email ou telephone",
-    "noResults": "Aucun passager trouve",
+    "searchPlaceholder": "Nom, email ou téléphone",
+    "noResults": "Aucun passager trouvé",
     "actions": {
       "view": "Consulter",
       "export": "Exporter (JSON)",
       "anonymise": "Anonymiser",
-      "confirmAnonymise": "Cette action est irreversible. Les donnees personnelles seront supprimees. Confirmer ?"
+      "confirmAnonymise": "Cette action est irréversible. Les données personnelles seront supprimées. Confirmer ?"
     },
-    "anonymised": "Donnees anonymisees"
+    "anonymised": "Données anonymisées"
   }
 }

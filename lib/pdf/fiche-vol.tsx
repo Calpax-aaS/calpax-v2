@@ -347,7 +347,7 @@ function pdfWindBg(speed: number, seuil: number): string {
 function PageFooter({ exploitant }: { exploitant: FicheVolData['exploitant'] }) {
   return (
     <Text style={styles.footer} fixed>
-      {exploitant.name} — {exploitant.frDecNumber} — Document genere par Calpax
+      {exploitant.name} — {exploitant.frDecNumber} — Document généré par Calpax
     </Text>
   )
 }
@@ -384,7 +384,7 @@ function Page1({ data }: { data: FicheVolData }) {
     qteGaz: vol.qteGaz ?? 0,
   })
 
-  const docTitle = "PROCES-VERBAL D'ENVOL (PVE)"
+  const docTitle = "PROCÈS-VERBAL D'ENVOL (PVE)"
 
   return (
     <Page size="A4" style={styles.page}>
@@ -409,7 +409,7 @@ function Page1({ data }: { data: FicheVolData }) {
       {/* Ballon */}
       <View style={styles.section}>
         <SectionTitle>BALLON</SectionTitle>
-        <KV label="Designation" value={ballon.nom} />
+        <KV label="Désignation" value={ballon.nom} />
         <KV label="Immatriculation" value={ballon.immatriculation} />
         <KV label="Volume" value={`${ballon.volumeM3} m³`} />
         <KV label="Config gaz" value={ballon.configGaz} />
@@ -417,22 +417,22 @@ function Page1({ data }: { data: FicheVolData }) {
 
       {/* Equipage */}
       <View style={styles.section}>
-        <SectionTitle>EQUIPAGE ET LOGISTIQUE</SectionTitle>
+        <SectionTitle>ÉQUIPAGE ET LOGISTIQUE</SectionTitle>
         <KV
           label="Commandant de bord"
           value={`${pilote.prenom} ${pilote.nom} — ${pilote.licenceBfcl}`}
         />
-        <KV label="Equipier" value={vol.equipier ?? '—'} />
-        <KV label="Vehicule" value={vol.vehicule ?? '—'} />
-        <KV label="Lieu de decollage" value={vol.lieuDecollage ?? '—'} />
-        <KV label="Gaz embarques" value={vol.qteGaz !== null ? `${vol.qteGaz} kg` : '—'} />
+        <KV label="Équipier" value={vol.equipier ?? '—'} />
+        <KV label="Véhicule" value={vol.vehicule ?? '—'} />
+        <KV label="Lieu de décollage" value={vol.lieuDecollage ?? '—'} />
+        <KV label="Gaz embarqués" value={vol.qteGaz !== null ? `${vol.qteGaz} kg` : '—'} />
       </View>
 
       {/* Passagers */}
       <View style={styles.section}>
         <SectionTitle>{`PASSAGERS (${passagers.length})`}</SectionTitle>
         {passagers.length === 0 ? (
-          <Text style={{ color: '#888', fontSize: 8 }}>Aucun passager enregistre</Text>
+          <Text style={{ color: '#888', fontSize: 8 }}>Aucun passager enregistré</Text>
         ) : (
           <View style={styles.table}>
             <View style={styles.tableHeader}>
@@ -465,7 +465,7 @@ function Page1({ data }: { data: FicheVolData }) {
         <SectionTitle>{`DEVIS DE MASSE — Temp. ref. ${devis.temperatureUtilisee}\u00B0C`}</SectionTitle>
         <View style={styles.devisTable}>
           <View style={styles.devisRow}>
-            <Text style={styles.devisLabel}>Pesee a vide ballon</Text>
+            <Text style={styles.devisLabel}>Pesée à vide ballon</Text>
             <Text style={styles.devisValue}>{devis.poidsAVide} kg</Text>
           </View>
           <View style={styles.devisRow}>
@@ -526,9 +526,9 @@ function Page2({ data }: { data: FicheVolData }) {
 
       {/* Decollage */}
       <View style={styles.section}>
-        <SectionTitle>DECOLLAGE</SectionTitle>
+        <SectionTitle>DÉCOLLAGE</SectionTitle>
         <View style={styles.postVolRow}>
-          <Text style={styles.postVolLabel}>Lieu de decollage :</Text>
+          <Text style={styles.postVolLabel}>Lieu de décollage :</Text>
           {isPve && vol.decoLieu ? (
             <Text style={styles.filledValue}>{vol.decoLieu}</Text>
           ) : (
@@ -536,7 +536,7 @@ function Page2({ data }: { data: FicheVolData }) {
           )}
         </View>
         <View style={styles.postVolRow}>
-          <Text style={styles.postVolLabel}>Heure de decollage :</Text>
+          <Text style={styles.postVolLabel}>Heure de décollage :</Text>
           {isPve && vol.decoHeure ? (
             <Text style={styles.filledValue}>{formatTime(vol.decoHeure)}</Text>
           ) : (
@@ -568,9 +568,9 @@ function Page2({ data }: { data: FicheVolData }) {
 
       {/* Gaz consommes */}
       <View style={styles.section}>
-        <SectionTitle>GAZ CONSOMMES</SectionTitle>
+        <SectionTitle>GAZ CONSOMMÉS</SectionTitle>
         <View style={styles.postVolRow}>
-          <Text style={styles.postVolLabel}>Quantite consommee (kg) :</Text>
+          <Text style={styles.postVolLabel}>Quantité consommée (kg) :</Text>
           {isPve && vol.gasConso !== null ? (
             <Text style={styles.filledValue}>{vol.gasConso} kg</Text>
           ) : (
@@ -617,7 +617,7 @@ function Page2({ data }: { data: FicheVolData }) {
       ) : (
         <View style={{ marginTop: 8 }}>
           <Text style={{ fontSize: 8, color: '#888', fontFamily: 'Helvetica-Oblique' }}>
-            A remplir par le CDB apres le vol
+            À remplir par le CDB après le vol
           </Text>
         </View>
       )}
@@ -637,7 +637,7 @@ function Page3({ data }: { data: FicheVolData }) {
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>METEO</Text>
+        <Text style={styles.headerTitle}>MÉTÉO</Text>
         <View style={styles.headerSubRow}>
           <Text style={styles.headerMeta}>
             {exploitant.name} — {exploitant.frDecNumber}
@@ -651,7 +651,7 @@ function Page3({ data }: { data: FicheVolData }) {
           {/* Banner */}
           <View style={styles.meteoBanner}>
             <Text style={styles.meteoBannerTitle}>
-              METEO — {formatDate(vol.date)} — {vol.creneau}
+              MÉTÉO — {formatDate(vol.date)} — {vol.creneau}
             </Text>
             <View style={styles.meteoBannerRow}>
               <Text style={styles.meteoBannerMeta}>
@@ -671,8 +671,8 @@ function Page3({ data }: { data: FicheVolData }) {
               <Text style={[styles.tableHeaderCell, styles.colMeteoWind]}>Vent 120m</Text>
               <Text style={[styles.tableHeaderCell, styles.colMeteoWind]}>Vent 180m</Text>
               <Text style={[styles.tableHeaderCell, styles.colMeteoOat]}>OAT</Text>
-              <Text style={[styles.tableHeaderCell, styles.colMeteoCloud]}>Nebulosite</Text>
-              <Text style={[styles.tableHeaderCell, styles.colMeteoPrec]}>Precip.</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoCloud]}>Nébulosité</Text>
+              <Text style={[styles.tableHeaderCell, styles.colMeteoPrec]}>Précip.</Text>
             </View>
             {meteo.hours.map((h, i) => (
               <View key={h.time} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
@@ -724,7 +724,7 @@ function Page3({ data }: { data: FicheVolData }) {
         </>
       ) : (
         <View style={styles.meteoPlaceholder}>
-          <Text>Page meteo — sera generee par le module meteo (Pw)</Text>
+          <Text>Page météo — sera générée par le module météo (Pw)</Text>
         </View>
       )}
 
@@ -740,7 +740,7 @@ function Page3({ data }: { data: FicheVolData }) {
 export function FicheVolDocument({ data }: { data: FicheVolData }) {
   return (
     <Document
-      title={`Proces-Verbal d'Envol — ${data.ballon.immatriculation} — ${data.vol.date.toISOString().slice(0, 10)}`}
+      title={`Procès-Verbal d'Envol — ${data.ballon.immatriculation} — ${data.vol.date.toISOString().slice(0, 10)}`}
       author={data.exploitant.name}
       creator="Calpax"
       producer="Calpax"

@@ -184,7 +184,7 @@ export function VolCreateForm({
               <SelectContent>
                 {ballons.map((b) => {
                   const camoValid = b.camoExpiryDate !== null && new Date(b.camoExpiryDate) > today
-                  const label = `${b.nom} (${b.immatriculation})${!camoValid ? ` — CAMO ${b.camoExpiryDate ? 'expire' : 'manquant'}` : ''}`
+                  const label = `${b.nom} (${b.immatriculation})${!camoValid ? ` — CAMO ${b.camoExpiryDate ? 'expiré' : 'manquant'}` : ''}`
                   return (
                     <SelectItem
                       key={b.id}
@@ -209,7 +209,7 @@ export function VolCreateForm({
               <SelectContent>
                 {pilotes.map((p) => {
                   const licenceValid = new Date(p.dateExpirationLicence) > today
-                  const label = `${p.prenom} ${p.nom}${!licenceValid ? ' — BFCL expire' : ''}`
+                  const label = `${p.prenom} ${p.nom}${!licenceValid ? ' — BFCL expiré' : ''}`
                   return (
                     <SelectItem
                       key={p.id}
@@ -252,7 +252,7 @@ export function VolCreateForm({
               {selectedEquipierId === 'AUTRE' && (
                 <Input
                   name="equipierAutre"
-                  placeholder="Nom de l'equipier"
+                  placeholder="Nom de l'équipier"
                   defaultValue={defaultEquipierAutre ?? ''}
                   className="mt-1"
                 />
@@ -278,7 +278,7 @@ export function VolCreateForm({
               {selectedVehiculeId === 'AUTRE' && (
                 <Input
                   name="vehiculeAutre"
-                  placeholder="Nom du vehicule"
+                  placeholder="Nom du véhicule"
                   defaultValue={defaultVehiculeAutre ?? ''}
                   className="mt-1"
                 />
@@ -305,7 +305,7 @@ export function VolCreateForm({
             {selectedSiteId === 'AUTRE' && (
               <Input
                 name="lieuDecollageAutre"
-                placeholder="Lieu de decollage"
+                placeholder="Lieu de décollage"
                 defaultValue={defaultLieuDecollageAutre ?? ''}
                 className="mt-1"
               />

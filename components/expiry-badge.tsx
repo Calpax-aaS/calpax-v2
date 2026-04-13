@@ -13,7 +13,7 @@ const severityConfig: Record<
   OK: { label: 'Valide', variant: 'success' },
   WARNING: { label: 'Attention', variant: 'warning' },
   CRITICAL: { label: 'Critique', variant: 'critical' },
-  EXPIRED: { label: 'Expire', variant: 'destructive' },
+  EXPIRED: { label: 'Expiré', variant: 'destructive' },
 }
 
 export function ExpiryBadge({ date, type }: ExpiryBadgeProps) {

@@ -15,7 +15,7 @@ const SEVERITY_VARIANT: Record<AlertSeverity, 'destructive' | 'critical' | 'warn
   }
 
 function formatDaysRemaining(daysRemaining: number): string {
-  if (daysRemaining <= 0) return 'Expire'
+  if (daysRemaining <= 0) return 'Expiré'
   if (daysRemaining === 1) return '1 jour'
   return `${daysRemaining} jours`
 }
@@ -25,10 +25,10 @@ function summaryLabel(alerts: Alert[]): string {
   const critical = alerts.filter((a) => a.severity === 'CRITICAL').length
 
   const parts: string[] = []
-  if (expired > 0) parts.push(`${expired} expiree${expired > 1 ? 's' : ''}`)
+  if (expired > 0) parts.push(`${expired} expirée${expired > 1 ? 's' : ''}`)
   if (critical > 0) parts.push(`${critical} critique${critical > 1 ? 's' : ''}`)
 
-  return `${alerts.length} alerte${alerts.length > 1 ? 's' : ''} reglementaire${alerts.length > 1 ? 's' : ''}`
+  return `${alerts.length} alerte${alerts.length > 1 ? 's' : ''} réglementaire${alerts.length > 1 ? 's' : ''}`
 }
 
 /**
@@ -62,7 +62,7 @@ export function AlertsBanner({ alerts }: { alerts: Alert[] }) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Alertes reglementaires</SheetTitle>
+            <SheetTitle>Alertes réglementaires</SheetTitle>
           </SheetHeader>
           <div className="mt-4 flex flex-col gap-3">
             {alerts.map((alert) => (
@@ -78,7 +78,7 @@ export function AlertsBanner({ alerts }: { alerts: Alert[] }) {
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <Badge variant={SEVERITY_VARIANT[alert.severity]}>
-                    {alert.severity === 'EXPIRED' ? 'Expire' : 'Critique'}
+                    {alert.severity === 'EXPIRED' ? 'Expiré' : 'Critique'}
                   </Badge>
                   <span className="text-xs text-muted-foreground">
                     {formatDaysRemaining(alert.daysRemaining)}

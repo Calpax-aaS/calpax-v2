@@ -50,7 +50,7 @@ export function AppSidebar() {
       items: [{ key: 'home', href: `/${locale}`, icon: Home }],
     },
     {
-      label: 'Activite',
+      label: 'Activité',
       items: [
         { key: 'billets', href: `/${locale}/billets`, icon: Ticket },
         { key: 'vols', href: `/${locale}/vols`, icon: Plane },
