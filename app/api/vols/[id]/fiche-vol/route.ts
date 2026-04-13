@@ -111,7 +111,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       meteo,
     })
 
-    const filename = `fiche-vol-${vol.ballon.immatriculation}-${vol.date.toISOString().slice(0, 10)}.pdf`
+    const dateStr = vol.date.toISOString().slice(0, 10)
+    const creneau = vol.creneau.toLowerCase()
+    const filename = `${dateStr}-${creneau}-${vol.ballon.immatriculation}-PVE.pdf`
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {

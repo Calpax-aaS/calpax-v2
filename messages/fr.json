@@ -1,7 +1,18 @@
 {
   "home": {
     "signedInAs": "Connecté en tant que {name} — Exploitant {exploitant}",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "dashboard": "Tableau de bord",
+    "billetsEnAttente": "Billets en attente",
+    "volsCetteSemaine": "Vols cette semaine",
+    "alertes": "Alertes",
+    "prochainsVols": "Prochains vols",
+    "date": "Date",
+    "creneau": "Créneau",
+    "ballon": "Ballon",
+    "pilote": "Pilote",
+    "passagers": "Passagers",
+    "aucunVol": "Aucun vol à venir"
   },
   "signin": {
     "title": "Connexion à Calpax",
@@ -325,7 +336,7 @@
       "noteDansCarnet": "Note dans le carnet de bord",
       "save": "Enregistrer et terminer le vol"
     },
-    "downloadFiche": "Telecharger fiche de vol",
+    "downloadFiche": "Telecharger PVE",
     "downloadPve": "Telecharger PVE",
     "archivePve": "Archiver comme PVE",
     "confirmArchive": "Generer le PVE final et archiver ce vol ?",

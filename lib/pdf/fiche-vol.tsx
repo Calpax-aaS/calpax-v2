@@ -1,5 +1,5 @@
 import React from 'react'
-import { Document, Page, View, Text, StyleSheet } from '@react-pdf/renderer'
+import { Document, Image, Page, View, Text, StyleSheet } from '@react-pdf/renderer'
 import { calculerDevisMasse } from '@/lib/vol/devis-masse'
 
 // ---------------------------------------------------------------------------
@@ -107,6 +107,14 @@ const styles = StyleSheet.create({
   headerMeta: {
     fontSize: 9,
     color: '#555',
+  },
+  headerLogo: {
+    width: 60,
+    height: 60,
+    objectFit: 'contain' as const,
+  },
+  headerLeft: {
+    flex: 1,
   },
   // Sections
   section: {
@@ -376,20 +384,25 @@ function Page1({ data }: { data: FicheVolData }) {
     qteGaz: vol.qteGaz ?? 0,
   })
 
-  const docTitle = isPve ? "PROCES-VERBAL D'ENVOL (PVE)" : 'FICHE DE VOL'
+  const docTitle = "PROCES-VERBAL D'ENVOL (PVE)"
 
   return (
     <Page size="A4" style={styles.page}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{docTitle}</Text>
-        <View style={styles.headerSubRow}>
-          <Text style={styles.headerMeta}>
-            {exploitant.name} — {exploitant.frDecNumber}
-          </Text>
-          <Text style={styles.headerMeta}>
-            {formatDate(vol.date)} — {vol.creneau}
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          {exploitant.logoUrl && <Image src={exploitant.logoUrl} style={styles.headerLogo} />}
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerTitle}>{docTitle}</Text>
+            <View style={styles.headerSubRow}>
+              <Text style={styles.headerMeta}>
+                {exploitant.name} — {exploitant.frDecNumber}
+              </Text>
+              <Text style={styles.headerMeta}>
+                {formatDate(vol.date)} — {vol.creneau}
+              </Text>
+            </View>
+          </View>
         </View>
       </View>
 
@@ -725,11 +738,9 @@ function Page3({ data }: { data: FicheVolData }) {
 // ---------------------------------------------------------------------------
 
 export function FicheVolDocument({ data }: { data: FicheVolData }) {
-  const docTitle = data.isPve ? "Proces-Verbal d'Envol" : 'Fiche de Vol'
-
   return (
     <Document
-      title={`${docTitle} — ${data.ballon.immatriculation} — ${data.vol.date.toISOString().slice(0, 10)}`}
+      title={`Proces-Verbal d'Envol — ${data.ballon.immatriculation} — ${data.vol.date.toISOString().slice(0, 10)}`}
       author={data.exploitant.name}
       creator="Calpax"
       producer="Calpax"
