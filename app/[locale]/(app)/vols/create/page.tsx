@@ -20,7 +20,7 @@ export default async function VolCreatePage({ params, searchParams }: Props) {
     const t = await getTranslations('vols')
     const ctx = getContext()
 
-    const [ballons, pilotes] = await Promise.all([
+    const [ballons, pilotes, equipiers, vehicules, sites] = await Promise.all([
       db.ballon.findMany({
         where: { actif: true, exploitantId: ctx.exploitantId },
         orderBy: { nom: 'asc' },
@@ -30,6 +30,21 @@ export default async function VolCreatePage({ params, searchParams }: Props) {
         where: { actif: true, exploitantId: ctx.exploitantId },
         orderBy: { nom: 'asc' },
         select: { id: true, prenom: true, nom: true },
+      }),
+      db.equipier.findMany({
+        where: { actif: true, exploitantId: ctx.exploitantId },
+        orderBy: { nom: 'asc' },
+        select: { id: true, prenom: true, nom: true },
+      }),
+      db.vehicule.findMany({
+        where: { actif: true, exploitantId: ctx.exploitantId },
+        orderBy: { nom: 'asc' },
+        select: { id: true, nom: true },
+      }),
+      db.siteDecollage.findMany({
+        where: { actif: true, exploitantId: ctx.exploitantId },
+        orderBy: { nom: 'asc' },
+        select: { id: true, nom: true },
       }),
     ])
 
@@ -49,6 +64,9 @@ export default async function VolCreatePage({ params, searchParams }: Props) {
           locale={locale}
           ballons={ballons}
           pilotes={pilotes}
+          equipiers={equipiers}
+          vehicules={vehicules}
+          sites={sites}
           defaultDate={date ?? ''}
           defaultCreneau={creneau ?? 'MATIN'}
         />

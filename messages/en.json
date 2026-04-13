@@ -24,6 +24,9 @@
     "pilotes": "Pilots",
     "settings": "Settings",
     "billets": "Tickets",
+    "equipiers": "Crew",
+    "vehicules": "Vehicles",
+    "sites": "Sites",
     "vols": "Flights",
     "rgpd": "GDPR",
     "audit": "Audit"
@@ -391,6 +394,59 @@
       "field": "Field",
       "before": "Before",
       "after": "After"
+    }
+  },
+  "equipiers": {
+    "title": "Crew Members",
+    "new": "New crew member",
+    "add": "Add",
+    "noEntries": "No crew members registered.",
+    "status": {
+      "actif": "Active",
+      "inactif": "Inactive"
+    },
+    "fields": {
+      "prenom": "First name",
+      "nom": "Last name",
+      "telephone": "Phone",
+      "statut": "Status",
+      "actions": "Actions"
+    }
+  },
+  "vehicules": {
+    "title": "Vehicles",
+    "new": "New vehicle",
+    "add": "Add",
+    "noEntries": "No vehicles registered.",
+    "status": {
+      "actif": "Active",
+      "inactif": "Inactive"
+    },
+    "fields": {
+      "nom": "Name",
+      "immatriculation": "Registration",
+      "statut": "Status",
+      "actions": "Actions"
+    }
+  },
+  "sites": {
+    "title": "Takeoff Sites",
+    "new": "New site",
+    "add": "Add",
+    "noEntries": "No sites registered.",
+    "status": {
+      "actif": "Active",
+      "inactif": "Inactive"
+    },
+    "fields": {
+      "nom": "Name",
+      "adresse": "Address",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "gps": "GPS",
+      "notes": "Notes",
+      "statut": "Status",
+      "actions": "Actions"
     }
   },
   "rgpd": {

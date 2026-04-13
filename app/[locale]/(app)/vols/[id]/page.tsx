@@ -76,6 +76,9 @@ export default async function VolDetailPage({ params }: Props) {
       include: {
         ballon: true,
         pilote: true,
+        equipierEntity: { select: { prenom: true, nom: true } },
+        vehiculeEntity: { select: { nom: true } },
+        siteDecollageEntity: { select: { nom: true } },
         passagers: { include: { billet: { select: { reference: true } } } },
         exploitant: { select: { meteoLatitude: true, meteoLongitude: true, meteoSeuilVent: true } },
       },
@@ -184,22 +187,28 @@ export default async function VolDetailPage({ params }: Props) {
                 {vol.pilote.prenom} {vol.pilote.nom}
               </p>
             </div>
-            {vol.equipier && (
+            {(vol.equipierEntity || vol.equipierAutre) && (
               <div>
                 <p className="text-muted-foreground">{t('fields.equipier')}</p>
-                <p className="font-medium">{vol.equipier}</p>
+                <p className="font-medium">
+                  {vol.equipierEntity
+                    ? `${vol.equipierEntity.prenom} ${vol.equipierEntity.nom}`
+                    : vol.equipierAutre}
+                </p>
               </div>
             )}
-            {vol.vehicule && (
+            {(vol.vehiculeEntity || vol.vehiculeAutre) && (
               <div>
                 <p className="text-muted-foreground">{t('fields.vehicule')}</p>
-                <p className="font-medium">{vol.vehicule}</p>
+                <p className="font-medium">{vol.vehiculeEntity?.nom ?? vol.vehiculeAutre}</p>
               </div>
             )}
-            {vol.lieuDecollage && (
+            {(vol.siteDecollageEntity || vol.lieuDecollageAutre) && (
               <div>
                 <p className="text-muted-foreground">{t('fields.lieuDecollage')}</p>
-                <p className="font-medium">{vol.lieuDecollage}</p>
+                <p className="font-medium">
+                  {vol.siteDecollageEntity?.nom ?? vol.lieuDecollageAutre}
+                </p>
               </div>
             )}
             {vol.configGaz && (

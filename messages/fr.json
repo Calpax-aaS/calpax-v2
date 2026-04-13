@@ -24,6 +24,9 @@
     "pilotes": "Pilotes",
     "settings": "Paramètres",
     "billets": "Billets",
+    "equipiers": "Equipiers",
+    "vehicules": "Vehicules",
+    "sites": "Sites",
     "vols": "Vols",
     "rgpd": "RGPD",
     "audit": "Audit"
@@ -391,6 +394,59 @@
       "field": "Champ",
       "before": "Avant",
       "after": "Apres"
+    }
+  },
+  "equipiers": {
+    "title": "Equipiers",
+    "new": "Nouvel equipier",
+    "add": "Ajouter",
+    "noEntries": "Aucun equipier enregistre.",
+    "status": {
+      "actif": "Actif",
+      "inactif": "Inactif"
+    },
+    "fields": {
+      "prenom": "Prenom",
+      "nom": "Nom",
+      "telephone": "Telephone",
+      "statut": "Statut",
+      "actions": "Actions"
+    }
+  },
+  "vehicules": {
+    "title": "Vehicules",
+    "new": "Nouveau vehicule",
+    "add": "Ajouter",
+    "noEntries": "Aucun vehicule enregistre.",
+    "status": {
+      "actif": "Actif",
+      "inactif": "Inactif"
+    },
+    "fields": {
+      "nom": "Nom",
+      "immatriculation": "Immatriculation",
+      "statut": "Statut",
+      "actions": "Actions"
+    }
+  },
+  "sites": {
+    "title": "Sites de decollage",
+    "new": "Nouveau site",
+    "add": "Ajouter",
+    "noEntries": "Aucun site enregistre.",
+    "status": {
+      "actif": "Actif",
+      "inactif": "Inactif"
+    },
+    "fields": {
+      "nom": "Nom",
+      "adresse": "Adresse",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "gps": "GPS",
+      "notes": "Notes",
+      "statut": "Statut",
+      "actions": "Actions"
     }
   },
   "rgpd": {

@@ -77,6 +77,7 @@ export default async function OrganiserVolPage({ params }: Props) {
       include: {
         ballon: true,
         pilote: true,
+        equipierEntity: { select: { prenom: true, nom: true } },
         passagers: {
           include: {
             billet: { select: { id: true, reference: true } },
@@ -207,7 +208,11 @@ export default async function OrganiserVolPage({ params }: Props) {
                       </h3>
                       <p className="text-sm text-muted-foreground">
                         {sv.pilote.prenom} {sv.pilote.nom}
-                        {sv.equipier ? ` + ${sv.equipier}` : ''}
+                        {sv.equipierEntity
+                          ? ` + ${sv.equipierEntity.prenom} ${sv.equipierEntity.nom}`
+                          : sv.equipierAutre
+                            ? ` + ${sv.equipierAutre}`
+                            : ''}
                       </p>
                     </div>
                     <Badge

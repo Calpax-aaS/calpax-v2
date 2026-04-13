@@ -3,7 +3,19 @@
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { Home, Wind, User2, Settings, Ticket, Shield, Plane, History } from 'lucide-react'
+import {
+  Home,
+  Wind,
+  User2,
+  Users,
+  Truck,
+  MapPin,
+  Settings,
+  Ticket,
+  Shield,
+  Plane,
+  History,
+} from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -35,6 +47,21 @@ export function AppSidebar({ alertCount = 0 }: { alertCount?: number }) {
       key: 'pilotes' as const,
       href: `/${locale}/pilotes`,
       icon: User2,
+    },
+    {
+      key: 'equipiers' as const,
+      href: `/${locale}/equipiers`,
+      icon: Users,
+    },
+    {
+      key: 'vehicules' as const,
+      href: `/${locale}/vehicules`,
+      icon: Truck,
+    },
+    {
+      key: 'sites' as const,
+      href: `/${locale}/sites`,
+      icon: MapPin,
     },
     {
       key: 'billets' as const,

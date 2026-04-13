@@ -31,6 +31,9 @@ model Exploitant {
   passagers   Passager[]
   paiements    Paiement[]
   weatherCache WeatherCache[]
+  equipiers      Equipier[]
+  vehicules      Vehicule[]
+  sitesDecollage SiteDecollage[]
   meteoLatitude  Float?
   meteoLongitude Float?
   meteoSeuilVent Int?     @default(28)
@@ -368,13 +371,21 @@ model Vol {
   ballon          Ballon     @relation(fields: [ballonId], references: [id])
   piloteId        String
   pilote          Pilote     @relation(fields: [piloteId], references: [id])
-  equipier        String?
-  vehicule        String?
+
+  equipierId      String?
+  equipierEntity  Equipier?  @relation(fields: [equipierId], references: [id])
+  equipierAutre   String?
+
+  vehiculeId      String?
+  vehiculeEntity  Vehicule?  @relation(fields: [vehiculeId], references: [id])
+  vehiculeAutre   String?
+
+  siteDecollageId    String?
+  siteDecollageEntity SiteDecollage? @relation(fields: [siteDecollageId], references: [id])
+  lieuDecollageAutre String?
 
   configGaz       String?
   qteGaz          Int?
-
-  lieuDecollage   String?
 
   decoLieu        String?
   decoHeure       DateTime?
@@ -397,6 +408,55 @@ model Vol {
   @@index([exploitantId])
   @@index([exploitantId, date])
   @@map("vol")
+}
+
+model Equipier {
+  id             String     @id @default(cuid())
+  exploitantId   String
+  exploitant     Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  prenom         String
+  nom            String
+  telephone      String?
+  actif          Boolean    @default(true)
+  vols           Vol[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([exploitantId])
+  @@map("equipier")
+}
+
+model Vehicule {
+  id             String     @id @default(cuid())
+  exploitantId   String
+  exploitant     Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  nom            String
+  immatriculation String?
+  actif          Boolean    @default(true)
+  vols           Vol[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([exploitantId])
+  @@map("vehicule")
+}
+
+model SiteDecollage {
+  id             String     @id @default(cuid())
+  exploitantId   String
+  exploitant     Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  nom            String
+  adresse        String?
+  latitude       Float?
+  longitude      Float?
+  notes          String?
+  actif          Boolean    @default(true)
+  vols           Vol[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([exploitantId])
+  @@map("site_decollage")
 }
 
 model WeatherCache {

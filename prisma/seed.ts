@@ -538,6 +538,76 @@ async function main() {
     }
   }
 
+  // Seed equipiers for Cameron Balloons France
+  const equipiersData = [
+    { prenom: 'Marie', nom: 'Cuenot', telephone: '0612345678' },
+    { prenom: 'Lucas', nom: 'Martin', telephone: null },
+  ]
+
+  for (const eq of equipiersData) {
+    const existing = await prisma.equipier.findFirst({
+      where: { exploitantId: cameronBalloons.id, prenom: eq.prenom, nom: eq.nom },
+    })
+    if (!existing) {
+      await prisma.equipier.create({
+        data: { ...eq, exploitantId: cameronBalloons.id },
+      })
+    }
+  }
+
+  // Seed vehicules for Cameron Balloons France
+  const vehiculesData = [
+    { nom: 'Renault Master', immatriculation: 'AB-123-CD' },
+    { nom: 'Citroen Jumper', immatriculation: 'EF-456-GH' },
+  ]
+
+  for (const veh of vehiculesData) {
+    const existing = await prisma.vehicule.findFirst({
+      where: { exploitantId: cameronBalloons.id, nom: veh.nom },
+    })
+    if (!existing) {
+      await prisma.vehicule.create({
+        data: { ...veh, exploitantId: cameronBalloons.id },
+      })
+    }
+  }
+
+  // Seed sites de decollage for Cameron Balloons France (Jura/Dole area)
+  const sitesData = [
+    {
+      nom: 'Dole-Tavaux',
+      adresse: 'Route de Tavaux, 39100 Dole',
+      latitude: 47.0389,
+      longitude: 5.4275,
+      notes: 'Terrain habituel',
+    },
+    {
+      nom: 'Parcey',
+      adresse: 'Parcey, 39100',
+      latitude: 47.0567,
+      longitude: 5.4833,
+      notes: 'Terrain de secours',
+    },
+    {
+      nom: 'Brevans',
+      adresse: 'Brevans, 39100',
+      latitude: 47.0722,
+      longitude: 5.4611,
+      notes: null,
+    },
+  ]
+
+  for (const site of sitesData) {
+    const existing = await prisma.siteDecollage.findFirst({
+      where: { exploitantId: cameronBalloons.id, nom: site.nom },
+    })
+    if (!existing) {
+      await prisma.siteDecollage.create({
+        data: { ...site, exploitantId: cameronBalloons.id },
+      })
+    }
+  }
+
   console.log('Seed complete:')
   console.log('  - Exploitant: Calpax SAS (INTERNAL.CALPAX)')
   console.log(
@@ -547,6 +617,9 @@ async function main() {
   console.log(`  - User: ${ownerEmail} (GERANT)`)
   console.log('  - 9 ballons seeded for Cameron Balloons France')
   console.log('  - 4 pilotes seeded for Cameron Balloons France')
+  console.log('  - 2 equipiers seeded for Cameron Balloons France')
+  console.log('  - 2 vehicules seeded for Cameron Balloons France')
+  console.log('  - 3 sites de decollage seeded for Cameron Balloons France')
 
   // ---------------------------------------------------------------------------
   // Seed 15 billets with passengers and payments for testing

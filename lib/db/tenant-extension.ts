@@ -11,6 +11,9 @@ export const TENANT_FILTER: Record<string, string> = {
   Passager: 'exploitantId',
   Paiement: 'exploitantId',
   Vol: 'exploitantId',
+  Equipier: 'exploitantId',
+  Vehicule: 'exploitantId',
+  SiteDecollage: 'exploitantId',
   WeatherCache: 'exploitantId',
 }
 

@@ -26,7 +26,7 @@ export default async function VolEditPage({ params }: Props) {
       redirect(`/${locale}/vols/${id}`)
     }
 
-    const [ballons, pilotes] = await Promise.all([
+    const [ballons, pilotes, equipiers, vehicules, sites] = await Promise.all([
       db.ballon.findMany({
         where: { actif: true, exploitantId: ctx.exploitantId },
         orderBy: { nom: 'asc' },
@@ -36,6 +36,21 @@ export default async function VolEditPage({ params }: Props) {
         where: { actif: true, exploitantId: ctx.exploitantId },
         orderBy: { nom: 'asc' },
         select: { id: true, prenom: true, nom: true },
+      }),
+      db.equipier.findMany({
+        where: { actif: true, exploitantId: ctx.exploitantId },
+        orderBy: { nom: 'asc' },
+        select: { id: true, prenom: true, nom: true },
+      }),
+      db.vehicule.findMany({
+        where: { actif: true, exploitantId: ctx.exploitantId },
+        orderBy: { nom: 'asc' },
+        select: { id: true, nom: true },
+      }),
+      db.siteDecollage.findMany({
+        where: { actif: true, exploitantId: ctx.exploitantId },
+        orderBy: { nom: 'asc' },
+        select: { id: true, nom: true },
       }),
     ])
 
@@ -55,14 +70,20 @@ export default async function VolEditPage({ params }: Props) {
           locale={locale}
           ballons={ballons}
           pilotes={pilotes}
+          equipiers={equipiers}
+          vehicules={vehicules}
+          sites={sites}
           volId={id}
           defaultDate={vol.date.toISOString().slice(0, 10)}
           defaultCreneau={vol.creneau}
           defaultBallonId={vol.ballonId}
           defaultPiloteId={vol.piloteId}
-          defaultEquipier={vol.equipier ?? ''}
-          defaultVehicule={vol.vehicule ?? ''}
-          defaultLieuDecollage={vol.lieuDecollage ?? ''}
+          defaultEquipierId={vol.equipierId ?? undefined}
+          defaultEquipierAutre={vol.equipierAutre ?? undefined}
+          defaultVehiculeId={vol.vehiculeId ?? undefined}
+          defaultVehiculeAutre={vol.vehiculeAutre ?? undefined}
+          defaultSiteDecollageId={vol.siteDecollageId ?? undefined}
+          defaultLieuDecollageAutre={vol.lieuDecollageAutre ?? undefined}
           defaultConfigGaz={vol.configGaz ?? ''}
           defaultQteGaz={vol.qteGaz != null ? String(vol.qteGaz) : ''}
         />

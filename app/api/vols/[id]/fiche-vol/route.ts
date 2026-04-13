@@ -27,6 +27,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         },
         ballon: true,
         pilote: true,
+        equipierEntity: { select: { prenom: true, nom: true } },
+        vehiculeEntity: { select: { nom: true } },
+        siteDecollageEntity: { select: { nom: true } },
         passagers: { include: { billet: { select: { reference: true } } } },
       },
     })
@@ -64,14 +67,20 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       }
     }
 
+    const equipierDisplay = vol.equipierEntity
+      ? `${vol.equipierEntity.prenom} ${vol.equipierEntity.nom}`
+      : (vol.equipierAutre ?? null)
+    const vehiculeDisplay = vol.vehiculeEntity?.nom ?? vol.vehiculeAutre ?? null
+    const lieuDecollageDisplay = vol.siteDecollageEntity?.nom ?? vol.lieuDecollageAutre ?? null
+
     const buffer = await generateFicheVolBuffer({
       exploitant: vol.exploitant,
       vol: {
         date: vol.date,
         creneau: vol.creneau,
-        lieuDecollage: vol.lieuDecollage,
-        equipier: vol.equipier,
-        vehicule: vol.vehicule,
+        lieuDecollage: lieuDecollageDisplay,
+        equipier: equipierDisplay,
+        vehicule: vehiculeDisplay,
         configGaz: vol.configGaz ?? vol.ballon.configGaz,
         qteGaz: vol.qteGaz,
         decoLieu: vol.decoLieu,

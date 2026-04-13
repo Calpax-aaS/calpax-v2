@@ -20,9 +20,12 @@ export async function createVol(locale: string, formData: FormData): Promise<{ e
       creneau: formData.get('creneau'),
       ballonId: formData.get('ballonId'),
       piloteId: formData.get('piloteId'),
-      equipier: formData.get('equipier') || undefined,
-      vehicule: formData.get('vehicule') || undefined,
-      lieuDecollage: formData.get('lieuDecollage') || undefined,
+      equipierId: formData.get('equipierId') || undefined,
+      equipierAutre: formData.get('equipierAutre') || undefined,
+      vehiculeId: formData.get('vehiculeId') || undefined,
+      vehiculeAutre: formData.get('vehiculeAutre') || undefined,
+      siteDecollageId: formData.get('siteDecollageId') || undefined,
+      lieuDecollageAutre: formData.get('lieuDecollageAutre') || undefined,
       configGaz: formData.get('configGaz') || undefined,
       qteGaz: formData.get('qteGaz') || undefined,
     }
@@ -60,17 +63,24 @@ export async function createVol(locale: string, formData: FormData): Promise<{ e
       return { error: validation.errors.join('. ') }
     }
 
-    const vol = await db.vol.create({
-      data: {
-        ...rest,
-        date,
-        creneau,
-        ballonId,
-        piloteId,
-        exploitantId: ctx.exploitantId,
-        configGaz: rest.configGaz || ballon.configGaz,
-      },
-    })
+    const volData = {
+      date,
+      creneau,
+      ballonId,
+      piloteId,
+      exploitantId: ctx.exploitantId,
+      configGaz: rest.configGaz || ballon.configGaz,
+      qteGaz: rest.qteGaz,
+      equipierId: rest.equipierId && rest.equipierId !== 'AUTRE' ? rest.equipierId : null,
+      equipierAutre: rest.equipierId === 'AUTRE' ? rest.equipierAutre || null : null,
+      vehiculeId: rest.vehiculeId && rest.vehiculeId !== 'AUTRE' ? rest.vehiculeId : null,
+      vehiculeAutre: rest.vehiculeId === 'AUTRE' ? rest.vehiculeAutre || null : null,
+      siteDecollageId:
+        rest.siteDecollageId && rest.siteDecollageId !== 'AUTRE' ? rest.siteDecollageId : null,
+      lieuDecollageAutre: rest.siteDecollageId === 'AUTRE' ? rest.lieuDecollageAutre || null : null,
+    }
+
+    const vol = await db.vol.create({ data: volData })
 
     redirect(`/${locale}/vols/${vol.id}`)
   })
@@ -92,9 +102,12 @@ export async function updateVol(
       creneau: formData.get('creneau'),
       ballonId: formData.get('ballonId'),
       piloteId: formData.get('piloteId'),
-      equipier: formData.get('equipier') || undefined,
-      vehicule: formData.get('vehicule') || undefined,
-      lieuDecollage: formData.get('lieuDecollage') || undefined,
+      equipierId: formData.get('equipierId') || undefined,
+      equipierAutre: formData.get('equipierAutre') || undefined,
+      vehiculeId: formData.get('vehiculeId') || undefined,
+      vehiculeAutre: formData.get('vehiculeAutre') || undefined,
+      siteDecollageId: formData.get('siteDecollageId') || undefined,
+      lieuDecollageAutre: formData.get('lieuDecollageAutre') || undefined,
       configGaz: formData.get('configGaz') || undefined,
       qteGaz: formData.get('qteGaz') || undefined,
     }
@@ -135,12 +148,20 @@ export async function updateVol(
     await db.vol.update({
       where: { id: volId },
       data: {
-        ...rest,
         date,
         creneau,
         ballonId,
         piloteId,
         configGaz: rest.configGaz || ballon.configGaz,
+        qteGaz: rest.qteGaz,
+        equipierId: rest.equipierId && rest.equipierId !== 'AUTRE' ? rest.equipierId : null,
+        equipierAutre: rest.equipierId === 'AUTRE' ? rest.equipierAutre || null : null,
+        vehiculeId: rest.vehiculeId && rest.vehiculeId !== 'AUTRE' ? rest.vehiculeId : null,
+        vehiculeAutre: rest.vehiculeId === 'AUTRE' ? rest.vehiculeAutre || null : null,
+        siteDecollageId:
+          rest.siteDecollageId && rest.siteDecollageId !== 'AUTRE' ? rest.siteDecollageId : null,
+        lieuDecollageAutre:
+          rest.siteDecollageId === 'AUTRE' ? rest.lieuDecollageAutre || null : null,
       },
     })
 
@@ -191,6 +212,9 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
         exploitant: { select: { name: true, frDecNumber: true, logoUrl: true } },
         ballon: true,
         pilote: true,
+        equipierEntity: { select: { prenom: true, nom: true } },
+        vehiculeEntity: { select: { nom: true } },
+        siteDecollageEntity: { select: { nom: true } },
         passagers: { include: { billet: { select: { id: true, reference: true } } } },
       },
     })
@@ -214,14 +238,20 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
 
     const now = new Date()
 
+    const equipierDisplay = vol.equipierEntity
+      ? `${vol.equipierEntity.prenom} ${vol.equipierEntity.nom}`
+      : (vol.equipierAutre ?? null)
+    const vehiculeDisplay = vol.vehiculeEntity?.nom ?? vol.vehiculeAutre ?? null
+    const lieuDecollageDisplay = vol.siteDecollageEntity?.nom ?? vol.lieuDecollageAutre ?? null
+
     const buffer = await generateFicheVolBuffer({
       exploitant: vol.exploitant,
       vol: {
         date: vol.date,
         creneau: vol.creneau,
-        lieuDecollage: vol.lieuDecollage,
-        equipier: vol.equipier,
-        vehicule: vol.vehicule,
+        lieuDecollage: lieuDecollageDisplay,
+        equipier: equipierDisplay,
+        vehicule: vehiculeDisplay,
         configGaz: vol.configGaz ?? vol.ballon.configGaz,
         qteGaz: vol.qteGaz,
         decoLieu: vol.decoLieu,
