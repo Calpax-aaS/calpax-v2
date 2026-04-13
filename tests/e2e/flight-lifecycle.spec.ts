@@ -89,7 +89,7 @@ test.describe.serial('Flight lifecycle E2E', () => {
   test('RGPD page loads', async ({ page }) => {
     await signIn(page)
     await page.goto('/fr/rgpd')
-    await expect(page.getByText(/RGPD/)).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByRole('heading', { name: /RGPD|GDPR/ })).toBeVisible({ timeout: 10_000 })
     await expect(page.getByRole('button', { name: /rechercher/i })).toBeVisible()
   })
 
