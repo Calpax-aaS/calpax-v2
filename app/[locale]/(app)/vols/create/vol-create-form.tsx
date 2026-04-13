@@ -184,16 +184,15 @@ export function VolCreateForm({
               <SelectContent>
                 {ballons.map((b) => {
                   const camoValid = b.camoExpiryDate !== null && new Date(b.camoExpiryDate) > today
+                  const label = `${b.nom} (${b.immatriculation})${!camoValid ? ` — CAMO ${b.camoExpiryDate ? 'expire' : 'manquant'}` : ''}`
                   return (
-                    <SelectItem key={b.id} value={b.id} disabled={!camoValid}>
-                      <span className={camoValid ? '' : 'line-through opacity-50'}>
-                        {b.nom} ({b.immatriculation})
-                      </span>
-                      {!camoValid && (
-                        <span className="ml-2 text-xs text-destructive">
-                          CAMO {b.camoExpiryDate ? 'expire' : 'manquant'}
-                        </span>
-                      )}
+                    <SelectItem
+                      key={b.id}
+                      value={b.id}
+                      disabled={!camoValid}
+                      className={camoValid ? '' : 'line-through'}
+                    >
+                      {label}
                     </SelectItem>
                   )
                 })}
@@ -210,14 +209,15 @@ export function VolCreateForm({
               <SelectContent>
                 {pilotes.map((p) => {
                   const licenceValid = new Date(p.dateExpirationLicence) > today
+                  const label = `${p.prenom} ${p.nom}${!licenceValid ? ' — BFCL expire' : ''}`
                   return (
-                    <SelectItem key={p.id} value={p.id} disabled={!licenceValid}>
-                      <span className={licenceValid ? '' : 'line-through opacity-50'}>
-                        {p.prenom} {p.nom}
-                      </span>
-                      {!licenceValid && (
-                        <span className="ml-2 text-xs text-destructive">BFCL expire</span>
-                      )}
+                    <SelectItem
+                      key={p.id}
+                      value={p.id}
+                      disabled={!licenceValid}
+                      className={licenceValid ? '' : 'line-through'}
+                    >
+                      {label}
                     </SelectItem>
                   )
                 })}
