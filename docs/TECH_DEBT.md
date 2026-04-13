@@ -67,3 +67,70 @@ Open-Meteo data now renders on PDF page 3 with colored wind table + summary bann
 Added `billetPrefix` field to Exploitant model. Reference generator reads from exploitant settings with fallback to first 3 chars of name. Configurable in Settings page.
 
 **Added:** 2026-04-11
+
+---
+
+## TD-007: Pas de RBAC -- tous les roles ont acces a tout
+
+**Severity:** MEDIUM -- pas bloquant pour le client zero (Olivier = GERANT) mais requis avant ouverture multi-utilisateur.
+
+**Context:** 4 roles existent dans le schema Prisma (`ADMIN_CALPAX`, `GERANT`, `PILOTE`, `EQUIPIER`) et le role est propage via `RequestContext` (AsyncLocalStorage). Cependant `requireAuth()` verifie uniquement que l'utilisateur est connecte, sans jamais controler le role. Toutes les pages, actions serveur et API sont accessibles a tous les roles. Un EQUIPIER voit exactement les memes ecrans qu'un GERANT (billets, paiements, parametres, RGPD, audit).
+
+**Proposed fix:**
+
+- Ajouter un helper `requireRole(...roles: UserRole[])` qui s'appuie sur `getContext().role`
+- Proteger les pages et server actions sensibles (billets, paiements, parametres, RGPD, audit)
+- Adapter la sidebar pour masquer les items inaccessibles selon le role
+- Definir la matrice d'acces par role avec Olivier
+
+**When:** Avant ouverture a d'autres utilisateurs que le gerant (P3/P4).
+
+**Added:** 2026-04-13
+
+---
+
+## TD-008: Utiliser le modele Meteo-France (AROME HD) au lieu de best_match
+
+**Severity:** LOW -- fonctionne avec best_match, mais la precision serait meilleure.
+
+**Context:** L'appel Open-Meteo utilise `api.open-meteo.com/v1/forecast` sans parametre `models=`, ce qui selectionne automatiquement un modele (ICON, MeteoBlue, etc.). Pour des vols en montgolfiere en France, le modele **Meteo-France AROME HD** (resolution 1.3km) serait bien plus adapte, surtout pour le vent en basse altitude. Open-Meteo expose ce modele via `https://api.open-meteo.com/v1/meteofrance` avec `models=arome_france_hd`.
+
+**Reference :** https://open-meteo.com/en/docs/meteofrance-api?hourly=temperature_2m,wind_speed_1000hPa,wind_speed_900hPa,wind_speed_925hPa,wind_speed_950hPa,wind_speed_850hPa,wind_direction_1000hPa,wind_direction_950hPa,wind_direction_925hPa,wind_direction_900hPa,wind_direction_850hPa&models=arome_france_hd,arome_france&minutely_15=wind_speed_10m,wind_speed_20m,wind_speed_50m,wind_speed_100m,wind_direction_10m,wind_direction_20m,wind_direction_50m,wind_direction_100m
+
+**Observations cles :**
+
+- AROME HD supporte les niveaux de pression (1000/950/925/900/850 hPa) en hourly -- ce qui correspond a ~0m/500m/750m/1000m/1500m d'altitude
+- AROME HD supporte aussi le vent en minutely_15 a 10m/20m/50m/100m -- resolution 15 min
+- Possibilite de combiner `arome_france_hd` + `arome_france` pour fallback
+- Cela change notre approche : au lieu de vent a hauteur fixe (80m/120m/180m), on passerait a des niveaux de pression isobariques, plus pertinents pour l'aeronautique
+
+**A explorer avant migration :**
+
+- Mapper les niveaux de pression aux altitudes pertinentes pour la montgolfiere (~0-1500m)
+- Evaluer si la resolution 15 min est utile (plus precis pour le creneau matin/soir)
+- Verifier la couverture temporelle (forecast horizon -- AROME est ~48h vs 7+ jours pour best_match)
+- Tester avec les coordonnees de Dole-Tavaux
+
+**Proposed fix :**
+
+- Changer l'endpoint vers `/v1/meteofrance` avec `models=arome_france_hd`
+- Fallback sur best_match si les variables haute altitude ne sont pas disponibles
+- Mettre a jour l'affichage source dans l'UI ("Meteo-France AROME HD" au lieu de "Open-Meteo best match")
+
+**When:** P3 (ameliorations meteo).
+
+**Added:** 2026-04-13
+
+---
+
+## TD-009: Tenant extension silently fails when findUnique uses select without exploitantId
+
+**Severity:** HIGH -- cause des bugs silencieux (page blanche, donnees introuvables).
+
+**Context:** Le post-filter du tenant extension pour `findUnique` compare `result[field]` avec `ctx.exploitantId`. Si le `select` ne contient pas le champ tenant (`exploitantId`), `result[field]` est `undefined` et le filtre retourne `null` silencieusement, comme si l'entite n'existait pas. Bug decouvert sur la page post-vol (2026-04-13).
+
+**Proposed fix:** Dans le tenant extension, pour les `UNIQUE_READ_OPS`, forcer l'inclusion du champ tenant dans le `select` si un `select` est present. Ou a defaut, throw une erreur explicite si `result[field]` est `undefined` (ce qui signifie que le select a omis le champ tenant).
+
+**When:** Prioritaire -- a corriger rapidement.
+
+**Added:** 2026-04-13
