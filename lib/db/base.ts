@@ -15,7 +15,7 @@ function createClient(): PrismaClient {
     !connectionString.includes('127.0.0.1') && !connectionString.includes('localhost')
   const pool = new Pool({
     connectionString,
-    ssl: isRemote ? { rejectUnauthorized: false } : false,
+    ssl: isRemote ? { rejectUnauthorized: true } : false,
     max: isRemote ? 2 : 10,
   })
   const adapter = new PrismaPg(pool)
