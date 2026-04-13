@@ -21,72 +21,58 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 
+type NavItem = {
+  key: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+}
+
+type NavGroup = {
+  label: string | null
+  items: NavItem[]
+}
+
 export function AppSidebar() {
   const t = useTranslations('nav')
   const locale = useLocale()
   const pathname = usePathname()
 
-  const navItems = [
+  const groups: NavGroup[] = [
     {
-      key: 'home' as const,
-      href: `/${locale}`,
-      icon: Home,
+      label: null,
+      items: [{ key: 'home', href: `/${locale}`, icon: Home }],
     },
     {
-      key: 'ballons' as const,
-      href: `/${locale}/ballons`,
-      icon: Wind,
+      label: 'Activite',
+      items: [
+        { key: 'billets', href: `/${locale}/billets`, icon: Ticket },
+        { key: 'vols', href: `/${locale}/vols`, icon: Plane },
+      ],
     },
     {
-      key: 'pilotes' as const,
-      href: `/${locale}/pilotes`,
-      icon: User2,
+      label: 'Flotte',
+      items: [
+        { key: 'ballons', href: `/${locale}/ballons`, icon: Wind },
+        { key: 'pilotes', href: `/${locale}/pilotes`, icon: User2 },
+        { key: 'equipiers', href: `/${locale}/equipiers`, icon: Users },
+        { key: 'vehicules', href: `/${locale}/vehicules`, icon: Truck },
+        { key: 'sites', href: `/${locale}/sites`, icon: MapPin },
+      ],
     },
     {
-      key: 'equipiers' as const,
-      href: `/${locale}/equipiers`,
-      icon: Users,
-    },
-    {
-      key: 'vehicules' as const,
-      href: `/${locale}/vehicules`,
-      icon: Truck,
-    },
-    {
-      key: 'sites' as const,
-      href: `/${locale}/sites`,
-      icon: MapPin,
-    },
-    {
-      key: 'billets' as const,
-      href: `/${locale}/billets`,
-      icon: Ticket,
-    },
-    {
-      key: 'vols' as const,
-      href: `/${locale}/vols`,
-      icon: Plane,
-    },
-    {
-      key: 'settings' as const,
-      href: `/${locale}/settings`,
-      icon: Settings,
-    },
-    {
-      key: 'rgpd' as const,
-      href: `/${locale}/rgpd`,
-      icon: Shield,
-    },
-    {
-      key: 'audit' as const,
-      href: `/${locale}/audit`,
-      icon: History,
+      label: 'Administration',
+      items: [
+        { key: 'settings', href: `/${locale}/settings`, icon: Settings },
+        { key: 'rgpd', href: `/${locale}/rgpd`, icon: Shield },
+        { key: 'audit', href: `/${locale}/audit`, icon: History },
+      ],
     },
   ]
 
@@ -98,26 +84,33 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map(({ key, href, icon: Icon }) => {
-                const isActive =
-                  pathname === href || (href !== `/${locale}` && pathname.startsWith(href))
-                return (
-                  <SidebarMenuItem key={key}>
-                    <SidebarMenuButton isActive={isActive} asChild>
-                      <Link href={href}>
-                        <Icon className="h-4 w-4" />
-                        <span className="flex-1">{t(key)}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {groups.map((group, i) => (
+          <SidebarGroup key={group.label ?? 'top'}>
+            {group.label && (
+              <SidebarGroupLabel className="text-sidebar-muted-foreground">
+                {group.label}
+              </SidebarGroupLabel>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map(({ key, href, icon: Icon }) => {
+                  const isActive =
+                    pathname === href || (href !== `/${locale}` && pathname.startsWith(href))
+                  return (
+                    <SidebarMenuItem key={key}>
+                      <SidebarMenuButton isActive={isActive} asChild>
+                        <Link href={href}>
+                          <Icon className="h-4 w-4" />
+                          <span>{t(key)}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
     </Sidebar>
   )
