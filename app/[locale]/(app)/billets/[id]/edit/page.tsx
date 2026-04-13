@@ -48,7 +48,7 @@ export default async function BilletEditPage({ params }: Props) {
         <BilletForm
           locale={locale}
           billetId={isNew ? undefined : id}
-          defaultValues={billet}
+          defaultValues={billet ? { ...billet, montantTtc: Number(billet.montantTtc) } : null}
           defaultPassagers={passagers}
         />
       </main>

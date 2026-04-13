@@ -91,8 +91,8 @@ export default async function BilletDetailPage({ params }: Props) {
     })
     if (!billet) notFound()
 
-    const totalPaye = billet.paiements.reduce((sum, p) => sum + p.montantTtc, 0)
-    const soldeRestant = billet.montantTtc - totalPaye
+    const totalPaye = billet.paiements.reduce((sum, p) => sum + Number(p.montantTtc), 0)
+    const soldeRestant = Number(billet.montantTtc) - totalPaye
 
     return (
       <main className="container mx-auto max-w-3xl px-4 py-8 space-y-6">
@@ -172,7 +172,7 @@ export default async function BilletDetailPage({ params }: Props) {
             </div>
             <div>
               <p className="text-muted-foreground">{tBillets('fields.montantTtc')}</p>
-              <p className="font-medium">{formatEuros(billet.montantTtc)}</p>
+              <p className="font-medium">{formatEuros(Number(billet.montantTtc))}</p>
             </div>
             {billet.dateVolDeb && (
               <div>
@@ -287,7 +287,7 @@ export default async function BilletDetailPage({ params }: Props) {
                       <TableCell>{formatDate(paiement.datePaiement)}</TableCell>
                       <TableCell>{tPaiements(`modes.${paiement.modePaiement}`)}</TableCell>
                       <TableCell className="font-medium">
-                        {formatEuros(paiement.montantTtc)}
+                        {formatEuros(Number(paiement.montantTtc))}
                       </TableCell>
                       <TableCell className="text-muted-foreground">
                         {paiement.commentaire ?? '—'}

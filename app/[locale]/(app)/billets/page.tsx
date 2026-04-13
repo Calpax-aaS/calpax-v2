@@ -109,7 +109,7 @@ export default async function BilletsPage({ params }: Props) {
                     {billet.payeurPrenom} {billet.payeurNom}
                   </TableCell>
                   <TableCell>{billet._count.passagers}</TableCell>
-                  <TableCell>{formatEuros(billet.montantTtc)}</TableCell>
+                  <TableCell>{formatEuros(Number(billet.montantTtc))}</TableCell>
                   <TableCell>
                     <Badge variant={statutVariant(billet.statut)}>
                       {t(`statut.${billet.statut}`)}

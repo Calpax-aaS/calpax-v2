@@ -14,8 +14,8 @@ async function recalcStatutPaiement(billetId: string): Promise<void> {
     select: { montantTtc: true },
   })
   const statut = computeStatutPaiement(
-    billet.montantTtc,
-    paiements.map((p) => p.montantTtc),
+    Number(billet.montantTtc),
+    paiements.map((p) => Number(p.montantTtc)),
   )
   await db.billet.update({
     where: { id: billetId },
