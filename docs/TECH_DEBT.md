@@ -40,17 +40,13 @@ Supabase CA cert stored in `SUPABASE_CA_CERT` env var. Pool uses `rejectUnauthor
 
 ---
 
-## TD-004: Equipier and Vehicule are free-text fields on Vol
+## TD-004: Equipier, Vehicule, SiteDecollage as entities
 
-**Severity:** LOW — sufficient for Olivier's current workflow but not scalable.
+**Status:** RESOLVED (2026-04-13)
 
-**Context:** The `Vol` model stores `equipier` and `vehicule` as plain strings. If Olivier needs to track crew assignments across multiple vols, manage availability, or generate crew-facing documents, these need to be proper entities with their own profiles.
-
-**Proposed fix:** Create `Equipier` and `Vehicule` entities linked to `Exploitant`, and replace the string fields on `Vol` with foreign keys. Gate behind a feature flag if not immediately needed.
-
-**When:** P3 or when Olivier explicitly requests crew management.
-
-**Added:** 2026-04-11
+Created 3 formal entities (Equipier, Vehicule, SiteDecollage) with CRUD pages.
+Vol now uses FK references + "Autre" free-text fallback for each.
+Seeded with Cameron Balloons data (2 equipiers, 2 vehicules, 3 sites).
 
 ---
 
