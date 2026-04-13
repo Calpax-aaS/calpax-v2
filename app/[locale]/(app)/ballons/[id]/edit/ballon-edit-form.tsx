@@ -40,7 +40,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
   async function handleUpdate(formData: FormData) {
     const result = await updateBallon(ballonId, locale, formData)
     if (result?.error) {
-      toast.error('Erreur lors de la sauvegarde')
+      toast.error(result.error)
     } else {
       toast.success('Ballon enregistre')
     }

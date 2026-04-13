@@ -46,7 +46,7 @@ export function PiloteEditForm({ locale, piloteId, pilote }: Props) {
   async function handleUpdate(formData: FormData) {
     const result = await updatePilote(piloteId, locale, formData)
     if (result?.error) {
-      toast.error('Erreur lors de la sauvegarde')
+      toast.error(result.error)
     } else {
       toast.success('Pilote enregistre')
     }

@@ -132,7 +132,7 @@ export function VolCreateForm({
       : await createVol(locale, formData)
     if (result?.error) {
       setError(result.error)
-      toast.error('Erreur lors de la sauvegarde')
+      toast.error(result.error)
     } else {
       toast.success('Vol enregistre')
     }

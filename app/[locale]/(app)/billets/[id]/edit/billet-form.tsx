@@ -83,7 +83,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       : await createBillet(locale, formData)
     if (result?.error) {
       setError(result.error)
-      toast.error('Erreur lors de la sauvegarde')
+      toast.error(result.error)
     } else {
       toast.success('Billet enregistre')
     }

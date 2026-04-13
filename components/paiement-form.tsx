@@ -40,7 +40,7 @@ export function PaiementForm({ billetId, locale }: Props) {
     const result = await addPaiement(billetId, locale, formData)
     if (result?.error) {
       setError(result.error)
-      toast.error('Erreur lors de la sauvegarde')
+      toast.error(result.error)
     } else {
       setOpen(false)
       setError(null)
