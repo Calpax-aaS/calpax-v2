@@ -1,7 +1,7 @@
-import { Geist } from 'next/font/google'
+import { DM_Sans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
+const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' })
 
 /**
  * Root layout: thin shell required by Next.js App Router.
@@ -11,7 +11,7 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={cn('font-sans', geist.variable)}>
+    <html className={cn('font-sans', dmSans.variable)}>
       <body>{children}</body>
     </html>
   )
