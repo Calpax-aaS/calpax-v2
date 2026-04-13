@@ -189,8 +189,20 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
 
-      - name: Seed production database (only when RUN_SEED secret is set)
-        if: ${{ secrets.RUN_SEED == 'true' }}
+      - name: Check if seed files changed
+        id: seed-check
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- prisma/ 2>/dev/null || echo "prisma/seed.ts")
+          if [ -n "$CHANGED" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Prisma files changed: $CHANGED"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No prisma changes — skipping seed"
+          fi
+
+      - name: Seed production database (only when prisma/ files changed)
+        if: steps.seed-check.outputs.changed == 'true'
         run: pnpm exec tsx prisma/seed.ts
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
