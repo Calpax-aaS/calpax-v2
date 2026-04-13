@@ -104,14 +104,16 @@ export function AppSidebar({ alertCount = 0 }: { alertCount?: number }) {
                   pathname === href || (href !== `/${locale}` && pathname.startsWith(href))
                 return (
                   <SidebarMenuItem key={key}>
-                    <SidebarMenuButton isActive={isActive} render={<Link href={href} />}>
-                      <Icon className="h-4 w-4" />
-                      <span className="flex-1">{t(key)}</span>
-                      {key === 'home' && alertCount > 0 && (
-                        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
-                          {alertCount}
-                        </span>
-                      )}
+                    <SidebarMenuButton isActive={isActive} asChild>
+                      <Link href={href}>
+                        <Icon className="h-4 w-4" />
+                        <span className="flex-1">{t(key)}</span>
+                        {key === 'home' && alertCount > 0 && (
+                          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
+                            {alertCount}
+                          </span>
+                        )}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )

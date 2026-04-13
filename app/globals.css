@@ -97,6 +97,7 @@
     --chart-3: oklch(0.554 0.135 66.44);
     --chart-4: oklch(0.424 0.161 265.87);
     --chart-5: oklch(0.553 0.013 58.07);
+    --sidebar: hsl(0 0% 98%);
 }
 
 .dark {
@@ -139,6 +140,7 @@
     --chart-3: oklch(0.681 0.162 75.83);
     --chart-4: oklch(0.588 0.158 254.13);
     --chart-5: oklch(0.709 0.01 56.26);
+    --sidebar: hsl(240 5.9% 10%);
 }
 
 @layer base {
