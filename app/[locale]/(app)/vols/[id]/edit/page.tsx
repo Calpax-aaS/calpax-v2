@@ -30,12 +30,18 @@ export default async function VolEditPage({ params }: Props) {
       db.ballon.findMany({
         where: { actif: true, exploitantId: ctx.exploitantId },
         orderBy: { nom: 'asc' },
-        select: { id: true, nom: true, immatriculation: true, configGaz: true },
+        select: {
+          id: true,
+          nom: true,
+          immatriculation: true,
+          configGaz: true,
+          camoExpiryDate: true,
+        },
       }),
       db.pilote.findMany({
         where: { actif: true, exploitantId: ctx.exploitantId },
         orderBy: { nom: 'asc' },
-        select: { id: true, prenom: true, nom: true },
+        select: { id: true, prenom: true, nom: true, dateExpirationLicence: true },
       }),
       db.equipier.findMany({
         where: { actif: true, exploitantId: ctx.exploitantId },
@@ -68,8 +74,14 @@ export default async function VolEditPage({ params }: Props) {
 
         <VolCreateForm
           locale={locale}
-          ballons={ballons}
-          pilotes={pilotes}
+          ballons={ballons.map((b) => ({
+            ...b,
+            camoExpiryDate: b.camoExpiryDate?.toISOString() ?? null,
+          }))}
+          pilotes={pilotes.map((p) => ({
+            ...p,
+            dateExpirationLicence: p.dateExpirationLicence.toISOString(),
+          }))}
           equipiers={equipiers}
           vehicules={vehicules}
           sites={sites}

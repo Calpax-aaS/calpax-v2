@@ -23,12 +23,14 @@ type BallonOption = {
   nom: string
   immatriculation: string
   configGaz: string
+  camoExpiryDate: string | null
 }
 
 type PiloteOption = {
   id: string
   prenom: string
   nom: string
+  dateExpirationLicence: string
 }
 
 type EquipierOption = {
@@ -113,6 +115,9 @@ export function VolCreateForm({
 
   const isEdit = !!volId
 
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
   const selectedBallon = ballons.find((b) => b.id === selectedBallonId)
 
   async function handleSubmit(formData: FormData) {
@@ -177,11 +182,21 @@ export function VolCreateForm({
                 <SelectValue placeholder="-- Choisir un ballon" />
               </SelectTrigger>
               <SelectContent>
-                {ballons.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>
-                    {b.nom} ({b.immatriculation})
-                  </SelectItem>
-                ))}
+                {ballons.map((b) => {
+                  const camoValid = b.camoExpiryDate !== null && new Date(b.camoExpiryDate) > today
+                  return (
+                    <SelectItem key={b.id} value={b.id} disabled={!camoValid}>
+                      <span className={camoValid ? '' : 'line-through opacity-50'}>
+                        {b.nom} ({b.immatriculation})
+                      </span>
+                      {!camoValid && (
+                        <span className="ml-2 text-xs text-destructive">
+                          CAMO {b.camoExpiryDate ? 'expire' : 'manquant'}
+                        </span>
+                      )}
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -193,11 +208,19 @@ export function VolCreateForm({
                 <SelectValue placeholder="-- Choisir un pilote" />
               </SelectTrigger>
               <SelectContent>
-                {pilotes.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.prenom} {p.nom}
-                  </SelectItem>
-                ))}
+                {pilotes.map((p) => {
+                  const licenceValid = new Date(p.dateExpirationLicence) > today
+                  return (
+                    <SelectItem key={p.id} value={p.id} disabled={!licenceValid}>
+                      <span className={licenceValid ? '' : 'line-through opacity-50'}>
+                        {p.prenom} {p.nom}
+                      </span>
+                      {!licenceValid && (
+                        <span className="ml-2 text-xs text-destructive">BFCL expire</span>
+                      )}
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
           </div>
