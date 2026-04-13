@@ -38,13 +38,13 @@ Items to address before or during P1. Each entry has a severity and a proposed f
 
 ## TD-003: Paiement.montant stored as Float
 
-**Severity:** MEDIUM — floating-point arithmetic is unsuitable for financial calculations (rounding errors accumulate).
+**Severity:** LOW (downgraded) — acceptable for current scale.
 
-**Context:** The `Paiement` model stores `montant` as a Prisma `Float` (PostgreSQL `double precision`). All current amounts are in EUR cents represented as decimals, but Float cannot represent all decimal values exactly.
+**Context:** The `Paiement` and `Billet` models store `montantTtc` as Prisma `Float` (PostgreSQL `double precision`). Amounts are in EUR (not centimes). For balloon operator transactions (150-1200 EUR), Float64 precision (15 significant digits) means rounding errors only appear above ~10M EUR — well beyond our scale.
 
-**Proposed fix:** Migrate `montant` to `Decimal` (PostgreSQL `numeric`) and use the Prisma `Decimal` scalar. Update all arithmetic in business logic to use a decimal library (e.g., `decimal.js`).
+**Decision:** Keep Float for now. Migrate to `Decimal` before Mollie integration (P3) where precise payment reconciliation matters. The migration is mechanical (schema + cast all arithmetic to Decimal) but invasive (every file that does montant arithmetic needs updating).
 
-**When:** Before any real financial transactions flow through the system (before Mollie integration).
+**When:** Before Mollie integration (P3).
 
 **Added:** 2026-04-11
 
@@ -66,13 +66,9 @@ Items to address before or during P1. Each entry has a severity and a proposed f
 
 ## TD-005: PDF meteo page is a placeholder
 
-**Severity:** LOW — PVE is functional without it; meteo data is a nice-to-have on the PDF.
+**Status:** RESOLVED (Pw — 2026-04-12)
 
-**Context:** The meteo section of the PVE PDF renders a static placeholder. It needs to be connected to the Open-Meteo / AVWX data fetched at flight time and archived alongside the PVE.
-
-**Proposed fix:** At vol validation time, fetch and snapshot the relevant meteo data (wind profile, METAR, go/no-go status) and store it on the `Vol` record. The PVE PDF generator then reads from that snapshot.
-
-**When:** After meteo integration (P3 weather feature).
+Open-Meteo data now renders on PDF page 3 with colored wind table + summary banner.
 
 **Added:** 2026-04-11
 
@@ -80,12 +76,8 @@ Items to address before or during P1. Each entry has a severity and a proposed f
 
 ## TD-006: Billet reference prefix "CBF" is hardcoded
 
-**Severity:** MEDIUM — blocks multi-tenant correctness; all exploitants would share the same prefix.
+**Status:** RESOLVED (2026-04-13)
 
-**Context:** The reference generator in `BilletSequence` uses the hardcoded prefix `CBF` (Cameron Balloons France). This is fine for the single-tenant pilot phase with Olivier but will produce incorrect references for any other exploitant.
-
-**Proposed fix:** Add a `referencePrefix` field (3-4 chars) to the `Exploitant` model, defaulting to a derivation of the company name. Use it in the reference generator instead of the hardcoded value.
-
-**When:** Before onboarding a second exploitant (P-SaaS).
+Added `billetPrefix` field to Exploitant model. Reference generator reads from exploitant settings with fallback to first 3 chars of name. Configurable in Settings page.
 
 **Added:** 2026-04-11
