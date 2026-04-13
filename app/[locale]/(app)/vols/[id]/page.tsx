@@ -61,7 +61,7 @@ function statutVariant(statut: StatutVol): 'outline' | 'default' | 'secondary' |
 }
 
 function statutClassName(statut: StatutVol): string {
-  if (statut === 'CONFIRME') return 'bg-green-600 text-white hover:bg-green-700'
+  if (statut === 'CONFIRME') return 'bg-success text-success-foreground hover:bg-success/90'
   return ''
 }
 
@@ -131,41 +131,45 @@ export default async function VolDetailPage({ params }: Props) {
         : null
 
     return (
-      <main className="container mx-auto max-w-3xl px-4 py-8 space-y-6">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4 flex-wrap">
-          <Link
-            href={`/${locale}/vols`}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
-          >
-            {t('backToList')}
-          </Link>
-          <h1 className="text-2xl font-bold">
-            {formatDate(vol.date)} — {t(`creneau.${vol.creneau}`)}
-          </h1>
-          <Badge variant={statutVariant(vol.statut)} className={cn(statutClassName(vol.statut))}>
-            {t(`statut.${vol.statut}`)}
-          </Badge>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/${locale}/vols`}
+              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+            >
+              {t('backToList')}
+            </Link>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {formatDate(vol.date)} — {t(`creneau.${vol.creneau}`)}
+            </h1>
+            <Badge variant={statutVariant(vol.statut)} className={cn(statutClassName(vol.statut))}>
+              {t(`statut.${vol.statut}`)}
+            </Badge>
+          </div>
+          <div className="flex gap-2">
+            {(vol.statut === 'PLANIFIE' || vol.statut === 'CONFIRME') && (
+              <Link
+                href={`/${locale}/vols/${id}/edit`}
+                className={buttonVariants({ variant: 'outline' })}
+              >
+                {t('edit')}
+              </Link>
+            )}
+            {vol.statut === 'PLANIFIE' && (
+              <Link
+                href={`/${locale}/vols/${id}/organiser`}
+                className={buttonVariants({ variant: 'outline' })}
+              >
+                {t('organiser')}
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Action buttons */}
         <div className="flex items-center gap-3 flex-wrap">
-          {(vol.statut === 'PLANIFIE' || vol.statut === 'CONFIRME') && (
-            <Link
-              href={`/${locale}/vols/${id}/edit`}
-              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-            >
-              {t('edit')}
-            </Link>
-          )}
-          {vol.statut === 'PLANIFIE' && (
-            <Link
-              href={`/${locale}/vols/${id}/organiser`}
-              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-            >
-              {t('organiser')}
-            </Link>
-          )}
           <VolActions volId={id} locale={locale} statut={vol.statut} />
         </div>
 
@@ -176,20 +180,26 @@ export default async function VolDetailPage({ params }: Props) {
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <p className="text-muted-foreground">{t('fields.ballon')}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                {t('fields.ballon')}
+              </p>
               <p className="font-medium">
                 {vol.ballon.nom} ({vol.ballon.immatriculation})
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground">{t('fields.pilote')}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                {t('fields.pilote')}
+              </p>
               <p className="font-medium">
                 {vol.pilote.prenom} {vol.pilote.nom}
               </p>
             </div>
             {(vol.equipierEntity || vol.equipierAutre) && (
               <div>
-                <p className="text-muted-foreground">{t('fields.equipier')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {t('fields.equipier')}
+                </p>
                 <p className="font-medium">
                   {vol.equipierEntity
                     ? `${vol.equipierEntity.prenom} ${vol.equipierEntity.nom}`
@@ -199,13 +209,17 @@ export default async function VolDetailPage({ params }: Props) {
             )}
             {(vol.vehiculeEntity || vol.vehiculeAutre) && (
               <div>
-                <p className="text-muted-foreground">{t('fields.vehicule')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {t('fields.vehicule')}
+                </p>
                 <p className="font-medium">{vol.vehiculeEntity?.nom ?? vol.vehiculeAutre}</p>
               </div>
             )}
             {(vol.siteDecollageEntity || vol.lieuDecollageAutre) && (
               <div>
-                <p className="text-muted-foreground">{t('fields.lieuDecollage')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {t('fields.lieuDecollage')}
+                </p>
                 <p className="font-medium">
                   {vol.siteDecollageEntity?.nom ?? vol.lieuDecollageAutre}
                 </p>
@@ -213,13 +227,17 @@ export default async function VolDetailPage({ params }: Props) {
             )}
             {vol.configGaz && (
               <div>
-                <p className="text-muted-foreground">{t('fields.configGaz')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {t('fields.configGaz')}
+                </p>
                 <p className="font-medium">{vol.configGaz}</p>
               </div>
             )}
             {vol.qteGaz !== null && (
               <div>
-                <p className="text-muted-foreground">{t('fields.qteGaz')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {t('fields.qteGaz')}
+                </p>
                 <p className="font-medium">{vol.qteGaz} kg</p>
               </div>
             )}
@@ -238,19 +256,31 @@ export default async function VolDetailPage({ params }: Props) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{tPassagers('fields.prenom')}</TableHead>
-                    <TableHead>{tPassagers('fields.nom')}</TableHead>
-                    <TableHead>{tPassagers('fields.age')}</TableHead>
-                    <TableHead>{tPassagers('fields.poids')}</TableHead>
-                    <TableHead>{tPassagers('fields.pmr')}</TableHead>
-                    <TableHead>Billet</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.prenom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.nom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.age')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.poids')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.pmr')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      Billet
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {vol.passagers.map((p) => {
                     const poids = safeDecrypt(p.poidsEncrypted)
                     return (
-                      <TableRow key={p.id}>
+                      <TableRow key={p.id} className="hover:bg-muted/50">
                         <TableCell>{p.prenom}</TableCell>
                         <TableCell>{p.nom}</TableCell>
                         <TableCell>{p.age ?? '—'}</TableCell>
@@ -320,35 +350,49 @@ export default async function VolDetailPage({ params }: Props) {
                 </p>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
                   <div>
-                    <p className="text-muted-foreground">{t('devis.poidsAVide')}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('devis.poidsAVide')}
+                    </p>
                     <p className="font-medium">{devis.poidsAVide} kg</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">{t('devis.poidsGaz')}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('devis.poidsGaz')}
+                    </p>
                     <p className="font-medium">{devis.poidsGaz} kg</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">{t('devis.poidsPilote')}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('devis.poidsPilote')}
+                    </p>
                     <p className="font-medium">{devis.poidsPilote} kg</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">{t('devis.poidsPassagers')}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('devis.poidsPassagers')}
+                    </p>
                     <p className="font-medium">{devis.poidsPassagers} kg</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">{t('devis.chargeEmbarquee')}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('devis.chargeEmbarquee')}
+                    </p>
                     <p className="font-bold text-base">{devis.chargeEmbarquee} kg</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">{t('devis.chargeUtileMax')}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('devis.chargeUtileMax')}
+                    </p>
                     <p className="font-medium">{devis.chargeUtileMax} kg</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">{t('devis.margeRestante')}</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('devis.margeRestante')}
+                    </p>
                     <p
                       className={cn(
                         'font-semibold',
-                        devis.margeRestante < 0 ? 'text-destructive' : 'text-green-600',
+                        devis.margeRestante < 0 ? 'text-destructive' : 'text-success',
                       )}
                     >
                       {devis.margeRestante} kg
@@ -364,7 +408,7 @@ export default async function VolDetailPage({ params }: Props) {
             )}
           </CardContent>
         </Card>
-      </main>
+      </div>
     )
   })
 }

@@ -95,31 +95,32 @@ export default async function BilletDetailPage({ params }: Props) {
     const soldeRestant = Number(billet.montantTtc) - totalPaye
 
     return (
-      <main className="container mx-auto max-w-3xl px-4 py-8 space-y-6">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4 flex-wrap">
-          <Link
-            href={`/${locale}/billets`}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
-          >
-            {tBillets('backToList')}
-          </Link>
-          <h1 className="text-2xl font-bold">{billet.reference}</h1>
-          <Badge variant={statutVariant(billet.statut)}>
-            {tBillets(`statut.${billet.statut}`)}
-          </Badge>
-          <Badge variant={statutPaiementVariant(billet.statutPaiement)}>
-            {tBillets(`statutPaiement.${billet.statutPaiement}`)}
-          </Badge>
-        </div>
-
-        <div className="flex justify-end">
-          <Link
-            href={`/${locale}/billets/${id}/edit`}
-            className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
-          >
-            {tBillets('edit')}
-          </Link>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/${locale}/billets`}
+              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+            >
+              {tBillets('backToList')}
+            </Link>
+            <h1 className="text-3xl font-bold tracking-tight">{billet.reference}</h1>
+            <Badge variant={statutVariant(billet.statut)}>
+              {tBillets(`statut.${billet.statut}`)}
+            </Badge>
+            <Badge variant={statutPaiementVariant(billet.statutPaiement)}>
+              {tBillets(`statutPaiement.${billet.statutPaiement}`)}
+            </Badge>
+          </div>
+          <div className="flex gap-2">
+            <Link
+              href={`/${locale}/billets/${id}/edit`}
+              className={buttonVariants({ variant: 'outline' })}
+            >
+              {tBillets('edit')}
+            </Link>
+          </div>
         </div>
 
         {/* Payeur card */}
@@ -129,7 +130,9 @@ export default async function BilletDetailPage({ params }: Props) {
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <p className="text-muted-foreground">{tBillets('fields.payeurPrenom')}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                {tBillets('fields.payeurPrenom')}
+              </p>
               <p className="font-medium">
                 {billet.payeurCiv ? `${billet.payeurCiv} ` : ''}
                 {billet.payeurPrenom} {billet.payeurNom}
@@ -137,19 +140,25 @@ export default async function BilletDetailPage({ params }: Props) {
             </div>
             {billet.payeurEmail && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.payeurEmail')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.payeurEmail')}
+                </p>
                 <p className="font-medium">{billet.payeurEmail}</p>
               </div>
             )}
             {billet.payeurTelephone && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.payeurTelephone')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.payeurTelephone')}
+                </p>
                 <p className="font-medium">{billet.payeurTelephone}</p>
               </div>
             )}
             {(billet.payeurAdresse || billet.payeurCp || billet.payeurVille) && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.payeurAdresse')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.payeurAdresse')}
+                </p>
                 <p className="font-medium">
                   {[billet.payeurAdresse, billet.payeurCp, billet.payeurVille]
                     .filter(Boolean)
@@ -167,58 +176,78 @@ export default async function BilletDetailPage({ params }: Props) {
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
-              <p className="text-muted-foreground">{tBillets('fields.typePlannif')}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                {tBillets('fields.typePlannif')}
+              </p>
               <p className="font-medium">{tBillets(`typePlannif.${billet.typePlannif}`)}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">{tBillets('fields.montantTtc')}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                {tBillets('fields.montantTtc')}
+              </p>
               <p className="font-medium">{formatEuros(Number(billet.montantTtc))}</p>
             </div>
             {billet.dateVolDeb && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.dateVolDeb')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.dateVolDeb')}
+                </p>
                 <p className="font-medium">{formatDate(billet.dateVolDeb)}</p>
               </div>
             )}
             {billet.dateVolFin && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.dateVolFin')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.dateVolFin')}
+                </p>
                 <p className="font-medium">{formatDate(billet.dateVolFin)}</p>
               </div>
             )}
             {billet.dateValidite && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.dateValidite')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.dateValidite')}
+                </p>
                 <p className="font-medium">{formatDate(billet.dateValidite)}</p>
               </div>
             )}
             {billet.lieuDecollage && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.lieuDecollage')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.lieuDecollage')}
+                </p>
                 <p className="font-medium">{billet.lieuDecollage}</p>
               </div>
             )}
             {billet.survol && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.survol')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.survol')}
+                </p>
                 <p className="font-medium">{billet.survol}</p>
               </div>
             )}
             {billet.categorie && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.categorie')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.categorie')}
+                </p>
                 <p className="font-medium">{billet.categorie}</p>
               </div>
             )}
             {billet.provenance && (
               <div>
-                <p className="text-muted-foreground">{tBillets('fields.provenance')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.provenance')}
+                </p>
                 <p className="font-medium">{billet.provenance}</p>
               </div>
             )}
             {billet.commentaire && (
               <div className="col-span-2">
-                <p className="text-muted-foreground">{tBillets('fields.commentaire')}</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {tBillets('fields.commentaire')}
+                </p>
                 <p className="font-medium">{billet.commentaire}</p>
               </div>
             )}
@@ -237,18 +266,28 @@ export default async function BilletDetailPage({ params }: Props) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{tPassagers('fields.prenom')}</TableHead>
-                    <TableHead>{tPassagers('fields.nom')}</TableHead>
-                    <TableHead>{tPassagers('fields.age')}</TableHead>
-                    <TableHead>{tPassagers('fields.poids')}</TableHead>
-                    <TableHead>{tPassagers('fields.pmr')}</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.prenom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.nom')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.age')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.poids')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPassagers('fields.pmr')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {billet.passagers.map((p) => {
                     const poids = safeDecrypt(p.poidsEncrypted)
                     return (
-                      <TableRow key={p.id}>
+                      <TableRow key={p.id} className="hover:bg-muted/50">
                         <TableCell>{p.prenom}</TableCell>
                         <TableCell>{p.nom}</TableCell>
                         <TableCell>{p.age ?? '—'}</TableCell>
@@ -275,15 +314,23 @@ export default async function BilletDetailPage({ params }: Props) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{tPaiements('fields.datePaiement')}</TableHead>
-                    <TableHead>{tPaiements('fields.modePaiement')}</TableHead>
-                    <TableHead>{tPaiements('fields.montantTtc')}</TableHead>
-                    <TableHead>{tPaiements('fields.commentaire')}</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPaiements('fields.datePaiement')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPaiements('fields.modePaiement')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPaiements('fields.montantTtc')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {tPaiements('fields.commentaire')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {billet.paiements.map((paiement) => (
-                    <TableRow key={paiement.id}>
+                    <TableRow key={paiement.id} className="hover:bg-muted/50">
                       <TableCell>{formatDate(paiement.datePaiement)}</TableCell>
                       <TableCell>{tPaiements(`modes.${paiement.modePaiement}`)}</TableCell>
                       <TableCell className="font-medium">
@@ -308,7 +355,7 @@ export default async function BilletDetailPage({ params }: Props) {
             <PaiementForm billetId={id} locale={locale} />
           </CardContent>
         </Card>
-      </main>
+      </div>
     )
   })
 }
