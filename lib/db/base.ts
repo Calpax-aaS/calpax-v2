@@ -13,12 +13,13 @@ function createClient(): PrismaClient {
   }
   const isRemote =
     !connectionString.includes('127.0.0.1') && !connectionString.includes('localhost')
+  const caCert = process.env.SUPABASE_CA_CERT?.replace(/\\n/g, '\n')
   const pool = new Pool({
     connectionString,
     ssl: isRemote
       ? {
-          rejectUnauthorized: !!process.env.SUPABASE_CA_CERT,
-          ...(process.env.SUPABASE_CA_CERT ? { ca: process.env.SUPABASE_CA_CERT } : {}),
+          rejectUnauthorized: !!caCert,
+          ...(caCert ? { ca: caCert } : {}),
         }
       : false,
     max: isRemote ? 2 : 10,
