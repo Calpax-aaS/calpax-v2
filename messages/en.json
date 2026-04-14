@@ -20,7 +20,13 @@
     "emailPlaceholder": "you@example.com",
     "submit": "Email me a sign-in link",
     "verifySent": "Check your inbox. A sign-in link has been sent.",
-    "verifyTitle": "Link sent"
+    "verifyTitle": "Link sent",
+    "tagline": "Fly with Calpax.\nYour fleet, your sky.",
+    "subtitle": "Flight management reinvented.",
+    "magicLinkHint": "A magic link will be sent to your email",
+    "connectTitle": "Sign in to your account",
+    "appDescription": "Hot air balloon flight management SaaS",
+    "footer": "Calpax 2026"
   },
   "admin": {
     "title": "Calpax — Administration",

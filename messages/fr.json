@@ -18,9 +18,15 @@
     "title": "Connexion à Calpax",
     "emailLabel": "Adresse email",
     "emailPlaceholder": "vous@exemple.com",
-    "submit": "Recevoir un lien de connexion",
+    "submit": "Recevoir le lien de connexion",
     "verifySent": "Vérifiez votre boîte email. Un lien de connexion vous a été envoyé.",
-    "verifyTitle": "Lien envoyé"
+    "verifyTitle": "Lien envoyé",
+    "tagline": "Volez avec Calpax.\nVotre flotte, votre ciel.",
+    "subtitle": "La gestion de vols réinventée.",
+    "magicLinkHint": "Un lien magique vous sera envoyé par email",
+    "connectTitle": "Connectez-vous à votre compte",
+    "appDescription": "SaaS de gestion de vols en montgolfière",
+    "footer": "Calpax 2026"
   },
   "admin": {
     "title": "Calpax — Administration",
