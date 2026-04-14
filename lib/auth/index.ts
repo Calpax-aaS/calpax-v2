@@ -61,7 +61,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           ...session.user,
           id: user.id,
           exploitantId: dbUser?.exploitantId ?? '',
-          role: (dbUser?.role ?? 'GERANT') as UserRole,
+          role: (dbUser?.role as UserRole) ?? '',
         },
       }
     },

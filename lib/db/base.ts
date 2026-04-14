@@ -18,6 +18,11 @@ function createClient(): PrismaClient {
     console.log(
       `[db] SSL mode: ${caCert ? 'CA cert verified (rejectUnauthorized: true)' : 'unverified (rejectUnauthorized: false)'}`,
     )
+    if (!caCert && process.env.NODE_ENV === 'production') {
+      console.warn(
+        '[db] WARNING: Remote DB connection without CA cert verification. Set SUPABASE_CA_CERT for secure connections.',
+      )
+    }
   }
   const pool = new Pool({
     connectionString,
