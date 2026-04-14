@@ -81,7 +81,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-3 px-2 py-2">
+        <div className="flex items-center gap-3 px-2 py-2 border-b border-sidebar-border pb-3 mb-1">
           <img src="/logo.svg" alt="Calpax" className="h-7 w-7" />
           <span className="text-lg font-bold text-sidebar-primary">Calpax</span>
         </div>
@@ -90,7 +90,7 @@ export function AppSidebar() {
         {groups.map((group, i) => (
           <SidebarGroup key={group.label ?? 'top'}>
             {group.label && (
-              <SidebarGroupLabel className="text-sidebar-muted-foreground">
+              <SidebarGroupLabel className="text-sidebar-primary/60 text-[10px] uppercase tracking-widest">
                 {group.label}
               </SidebarGroupLabel>
             )}
