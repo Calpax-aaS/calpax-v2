@@ -27,7 +27,7 @@ describe('audit extension', () => {
     expect(rows[0]?.action).toBe('CREATE')
     expect(rows[0]?.field).toBeNull()
     const afterVal = rows[0]?.afterValue as Record<string, unknown> | null
-    expect(afterVal?.['email']).toBe('created@test.local')
+    expect(afterVal?.['email']).toBe('[REDACTED]')
     expect(afterVal?.['name']).toBe('New')
     expect(rows[0]?.userId).toBe(A.userId)
     expect(rows[0]?.exploitantId).toBe(A.exploitantId)
@@ -62,7 +62,7 @@ describe('audit extension', () => {
     expect(delRow).toBeDefined()
     expect(delRow?.field).toBeNull()
     const beforeVal = delRow?.beforeValue as Record<string, unknown> | null
-    expect(beforeVal?.['email']).toBe('deletable@test.local')
+    expect(beforeVal?.['email']).toBe('[REDACTED]')
   })
 
   it('impersonation writes impersonatedBy on audit rows', async () => {
