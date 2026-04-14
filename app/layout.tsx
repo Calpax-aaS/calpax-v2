@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { DM_Sans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
+
+export const metadata: Metadata = {
+  title: 'Calpax',
+  description: 'Gestion de vols en montgolfiere',
+}
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' })
 

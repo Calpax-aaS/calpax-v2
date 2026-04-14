@@ -81,7 +81,8 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1">
+        <div className="flex items-center gap-3 px-2 py-2">
+          <img src="/logo.svg" alt="Calpax" className="h-7 w-7" />
           <span className="text-lg font-bold text-sidebar-primary">Calpax</span>
         </div>
       </SidebarHeader>
