@@ -12,7 +12,14 @@
     "ballon": "Balloon",
     "pilote": "Pilot",
     "passagers": "Passengers",
-    "aucunVol": "No upcoming flights"
+    "aucunVol": "No upcoming flights",
+    "meteoAujourdhui": "Today's weather",
+    "aucunVolAujourdhui": "No flights scheduled today",
+    "gpsNonConfigure": "GPS coordinates not configured",
+    "volsConcernes": "{count} flight(s) concerned",
+    "ventMax": "Max wind",
+    "tempMoy": "Avg temp.",
+    "meteoNonDisponible": "Weather data not available"
   },
   "signin": {
     "title": "Sign in to Calpax",
@@ -120,6 +127,7 @@
     "createButton": "Create",
     "backToList": "Back to list",
     "noResults": "No balloons registered.",
+    "createFirst": "Add a balloon",
     "status": {
       "actif": "Active",
       "inactif": "Inactive"
@@ -161,6 +169,7 @@
     "createButton": "Create",
     "backToList": "Back to list",
     "noResults": "No pilots registered.",
+    "createFirst": "Add a pilot",
     "status": {
       "actif": "Active",
       "inactif": "Inactive"
@@ -219,6 +228,7 @@
     "removePassenger": "Remove",
     "payeurIsPassenger": "Payer is also a passenger",
     "noBillets": "No tickets",
+    "createFirst": "Create a ticket",
     "fields": {
       "reference": "Reference",
       "checksum": "Verification code",
@@ -280,6 +290,7 @@
     "save": "Save",
     "edit": "Edit flight",
     "noVols": "No flights this week",
+    "createFirst": "Plan a flight",
     "week": "Week",
     "today": "Today",
     "fields": {

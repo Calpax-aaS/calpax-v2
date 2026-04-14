@@ -12,7 +12,14 @@
     "ballon": "Ballon",
     "pilote": "Pilote",
     "passagers": "Passagers",
-    "aucunVol": "Aucun vol à venir"
+    "aucunVol": "Aucun vol à venir",
+    "meteoAujourdhui": "Météo du jour",
+    "aucunVolAujourdhui": "Aucun vol prévu aujourd'hui",
+    "gpsNonConfigure": "Coordonnées GPS non configurées",
+    "volsConcernes": "{count} vol(s) concerné(s)",
+    "ventMax": "Vent max",
+    "tempMoy": "Temp. moy.",
+    "meteoNonDisponible": "Données météo non disponibles"
   },
   "signin": {
     "title": "Connexion à Calpax",
@@ -120,6 +127,7 @@
     "createButton": "Créer",
     "backToList": "Retour à la liste",
     "noResults": "Aucun ballon enregistré.",
+    "createFirst": "Ajouter un ballon",
     "status": {
       "actif": "Actif",
       "inactif": "Inactif"
@@ -161,6 +169,7 @@
     "createButton": "Créer",
     "backToList": "Retour à la liste",
     "noResults": "Aucun pilote enregistré.",
+    "createFirst": "Ajouter un pilote",
     "status": {
       "actif": "Actif",
       "inactif": "Inactif"
@@ -219,6 +228,7 @@
     "removePassenger": "Retirer",
     "payeurIsPassenger": "Le payeur est aussi passager",
     "noBillets": "Aucun billet",
+    "createFirst": "Créer un billet",
     "fields": {
       "reference": "Référence",
       "checksum": "Code vérification",
@@ -280,6 +290,7 @@
     "save": "Enregistrer",
     "edit": "Modifier le vol",
     "noVols": "Aucun vol sur cette semaine",
+    "createFirst": "Planifier un vol",
     "week": "Semaine",
     "today": "Aujourd'hui",
     "fields": {
