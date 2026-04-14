@@ -134,3 +134,156 @@ Added `billetPrefix` field to Exploitant model. Reference generator reads from e
 **When:** Prioritaire -- a corriger rapidement.
 
 **Added:** 2026-04-13
+
+---
+
+## TD-010: Securite -- pwd.log credential dans le repo
+
+**Severity:** CRITICAL
+**Status:** RESOLVED (2026-04-14)
+Fichier jamais committe (gitignored). Supprime du disque local.
+**Added:** 2026-04-14
+
+---
+
+## TD-011: Securite -- middleware sans auth guard
+
+**Severity:** CRITICAL
+**Context:** Le middleware ne fait que du routing i18n. Pas d'auth au edge -- toute la securite repose sur `requireAuth()` dans chaque page/action. Un oubli = page publique.
+**Proposed fix:** Ajouter un check auth dans middleware.ts pour les routes `/(app)/`.
+**When:** Avant ouverture multi-utilisateur.
+**Added:** 2026-04-14
+
+---
+
+## TD-012: Securite -- exploitantId fallback empty string
+
+**Severity:** CRITICAL
+**Status:** RESOLVED (2026-04-14)
+`requireAuth()` rejette maintenant les users sans `exploitantId` avant toute operation tenant-scoped.
+**Added:** 2026-04-14
+
+---
+
+## TD-013: Securite -- pas de rate limiting sur magic-link
+
+**Severity:** CRITICAL
+**Context:** Endpoint `/api/auth/signin/resend` sans rate limit. Risque d'email bombing et brute-force de tokens.
+**Proposed fix:** Rate limiting via Upstash Ratelimit ou middleware.
+**When:** Avant mise en production avec utilisateurs externes.
+**Added:** 2026-04-14
+
+---
+
+## TD-014: Securite -- pas de HTTP security headers
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+Ajoute X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, HSTS, X-DNS-Prefetch-Control dans `next.config.ts`. CSP reste a configurer (complexe, necessite tuning).
+**Added:** 2026-04-14
+
+---
+
+## TD-015: Securite -- rejectUnauthorized false sans cert
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+Ajout d'un `console.warn` en prod si cert absent. Le comportement existant est preserve (pas de throw) mais l'etat est visible dans les logs.
+**Added:** 2026-04-14
+
+---
+
+## TD-016: Securite -- HTML non sanitise dans emails
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+`escapeHtml()` ajoute dans `rappels.ts` et `digest.ts`. Toutes les donnees utilisateur sont echappees avant interpolation HTML.
+**Added:** 2026-04-14
+
+---
+
+## TD-017: Securite -- weatherCache.upsert bypass tenant extension
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+Remplace `basePrisma` par `db` dans `lib/weather/cache.ts`. Import `basePrisma` supprime.
+**Added:** 2026-04-14
+
+---
+
+## TD-018: Securite -- audit extension swallow errors + PII en clair
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+PII redactee dans les audit logs via `REDACT_FIELDS` set (email, telephone, adresse, poids). `console.error` remplace par `console.warn`.
+**Added:** 2026-04-14
+
+---
+
+## TD-019: Qualite -- savePostFlight et confirmerVol sans guard de statut
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+`savePostFlight` rejette ARCHIVE/ANNULE. `confirmerVol` n'accepte que PLANIFIE.
+**Added:** 2026-04-14
+
+---
+
+## TD-020: Qualite -- billet updates sans transaction dans archivePve/cancelVol
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+Remplace les boucles sequentielles par `db.billet.updateMany()` (operation atomique).
+**Added:** 2026-04-14
+
+---
+
+## TD-021: Qualite -- checkbox noteDansCarnet toujours true
+
+**Severity:** HIGH
+**Status:** RESOLVED (2026-04-14)
+Remplace `?? true` par `=== 'true'`.
+**Added:** 2026-04-14
+
+---
+
+## TD-022: Simplification -- formatDate et safeDecrypt dupliques
+
+**Severity:** MEDIUM
+**Status:** RESOLVED (2026-04-14)
+`formatDateFr()` dans `lib/format.ts`, `safeDecryptInt()` dans `lib/crypto.ts`. 6+3 definitions remplacees.
+**Added:** 2026-04-14
+
+---
+
+## TD-023: Simplification -- createVol/updateVol duplication 40+ lignes
+
+**Severity:** MEDIUM
+**Status:** RESOLVED (2026-04-14)
+Extrait `parseVolFormData()` et `resolveAutreEntities()` dans `lib/actions/vol.ts`.
+**Added:** 2026-04-14
+
+---
+
+## TD-024: Qualite -- i18n incomplet (toasts, sidebar labels, alerts hardcodes FR)
+
+**Severity:** MEDIUM
+**Context:** Toasts de succes, labels de groupes sidebar, textes du banner alertes sont en francais hardcode hors du systeme i18n.
+**Added:** 2026-04-14
+
+---
+
+## TD-025: Securite -- billetPrefix sans restriction de caracteres
+
+**Severity:** MEDIUM
+**Context:** `billetPrefix` valide uniquement sur max length, pas de regex. Risque CSV injection si export.
+**Proposed fix:** Ajouter `regex(/^[A-Z0-9]+$/i)` au schema Zod.
+**Added:** 2026-04-14
+
+---
+
+## TD-026: Securite -- retention RGPD 5 ans non implementee
+
+**Severity:** MEDIUM
+**Context:** CLAUDE.md specifie suppression auto apres 5 ans, aucun cron n'existe pour ca.
+**Added:** 2026-04-14
