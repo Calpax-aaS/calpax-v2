@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
-import { decrypt } from '@/lib/crypto'
+import { safeDecryptInt } from '@/lib/crypto'
 import { calculerDevisMasse } from '@/lib/vol/devis-masse'
 import { parseQteGazFromConfig } from '@/lib/vol/parse-config-gaz'
 import { DevisMasseLive } from '@/components/devis-masse-live'
@@ -26,17 +26,7 @@ type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-function safeDecryptInt(encrypted: string | null | undefined, fallback: number): number {
-  if (!encrypted) return fallback
-  try {
-    const parsed = parseInt(decrypt(encrypted))
-    return isNaN(parsed) ? fallback : parsed
-  } catch {
-    return fallback
-  }
-}
-
-function formatDate(date: Date): string {
+function formatDateLong(date: Date): string {
   return date.toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: '2-digit',
@@ -129,7 +119,7 @@ export default async function OrganiserVolPage({ params }: Props) {
 
         {/* Session info */}
         <p className="text-sm text-muted-foreground">
-          {formatDate(vol.date)} — {t(`creneau.${vol.creneau}`)}
+          {formatDateLong(vol.date)} — {t(`creneau.${vol.creneau}`)}
           {isMultiBallon && ` — ${sessionVols.length} ballons`}
         </p>
 

@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import type { Alert } from '@/lib/regulatory/alerts'
+import { formatDateFr } from '@/lib/format'
 
 function escapeHtml(str: string): string {
   return str
@@ -13,10 +14,6 @@ const SEVERITY_COLOR: Record<string, string> = {
   EXPIRED: '#b91c1c',
   CRITICAL: '#c2410c',
   WARNING: '#a16207',
-}
-
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
 function formatDaysRemaining(daysRemaining: number): string {
@@ -33,7 +30,7 @@ function buildAlertRow(alert: Alert): string {
     <tr>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(alert.entityName)}</td>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${certType}</td>
-      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${formatDate(alert.expiryDate)}</td>
+      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${formatDateFr(alert.expiryDate)}</td>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: ${color}; font-weight: 600;">${days}</td>
     </tr>`
 }
@@ -93,7 +90,7 @@ export async function sendDigestEmail(
   const resend = new Resend(apiKey)
 
   const today = new Date()
-  const weekLabel = `semaine du ${formatDate(today)}`
+  const weekLabel = `semaine du ${formatDateFr(today)}`
   const n = alerts.length
   const subject = `[Calpax] ${n} alerte${n > 1 ? 's' : ''} navigabilite \u2014 ${weekLabel}`
 

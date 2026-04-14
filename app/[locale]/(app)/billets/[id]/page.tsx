@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
-import { decrypt } from '@/lib/crypto'
+import { safeDecryptInt } from '@/lib/crypto'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/table'
 import { PaiementForm } from '@/components/paiement-form'
 import { cn } from '@/lib/utils'
+import { formatDateFr } from '@/lib/format'
 import type { StatutBillet, StatutPaiement } from '@prisma/client'
 
 type Props = {
@@ -29,16 +30,7 @@ function formatEuros(euros: number): string {
 
 function formatDate(date: Date | null | undefined): string {
   if (!date) return '—'
-  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-}
-
-function safeDecrypt(encrypted: string | null | undefined): number | null {
-  if (!encrypted) return null
-  try {
-    return parseInt(decrypt(encrypted))
-  } catch {
-    return null
-  }
+  return formatDateFr(date)
 }
 
 function statutVariant(statut: StatutBillet): 'outline' | 'default' | 'secondary' | 'destructive' {
@@ -285,7 +277,7 @@ export default async function BilletDetailPage({ params }: Props) {
                 </TableHeader>
                 <TableBody>
                   {billet.passagers.map((p) => {
-                    const poids = safeDecrypt(p.poidsEncrypted)
+                    const poids = p.poidsEncrypted ? safeDecryptInt(p.poidsEncrypted) : null
                     return (
                       <TableRow key={p.id} className="hover:bg-muted/50">
                         <TableCell>{p.prenom}</TableCell>

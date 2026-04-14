@@ -35,3 +35,13 @@ export function decrypt(ciphertext: string): string {
   decipher.setAuthTag(tag)
   return Buffer.concat([decipher.update(enc), decipher.final()]).toString('utf8')
 }
+
+export function safeDecryptInt(encrypted: string | null | undefined, fallback: number = 0): number {
+  if (!encrypted) return fallback
+  try {
+    const parsed = parseInt(decrypt(encrypted), 10)
+    return isNaN(parsed) ? fallback : parsed
+  } catch {
+    return fallback
+  }
+}

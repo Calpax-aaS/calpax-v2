@@ -28,7 +28,7 @@ function summaryLabel(alerts: Alert[]): string {
   if (expired > 0) parts.push(`${expired} expirée${expired > 1 ? 's' : ''}`)
   if (critical > 0) parts.push(`${critical} critique${critical > 1 ? 's' : ''}`)
 
-  return `${alerts.length} alerte${alerts.length > 1 ? 's' : ''} réglementaire${alerts.length > 1 ? 's' : ''}`
+  return `${alerts.length} alerte${alerts.length > 1 ? 's' : ''} réglementaire${alerts.length > 1 ? 's' : ''} (${parts.join(', ')})`
 }
 
 /**

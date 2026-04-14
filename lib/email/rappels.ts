@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { formatDateFr } from '@/lib/format'
 
 function escapeHtml(str: string): string {
   return str
@@ -27,10 +28,6 @@ function buildRow(b: BilletRappel): string {
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(b.payeurTelephone ?? '—')}</td>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(b.commentaire ?? '')}</td>
     </tr>`
-}
-
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
 function buildEmailHtml(
@@ -92,7 +89,7 @@ export async function sendRappelEmail(
   const resend = new Resend(apiKey)
 
   const today = new Date()
-  const dateLabel = formatDate(today)
+  const dateLabel = formatDateFr(today)
   const n = billets.length
   const subject = `[Calpax] ${n} billet${n > 1 ? 's' : ''} a recontacter \u2014 ${dateLabel}`
 

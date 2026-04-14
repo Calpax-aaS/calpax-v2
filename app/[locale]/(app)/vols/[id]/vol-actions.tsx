@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { cancelVol, archivePve } from '@/lib/actions/vol'
 import { confirmerVol } from '@/lib/actions/organisation'
 
@@ -51,7 +52,7 @@ export function VolActions({ volId, locale, statut }: Props) {
         <a
           href={`/api/vols/${volId}/fiche-vol`}
           download
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3"
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
         >
           {t('downloadFiche')}
         </a>
@@ -59,7 +60,7 @@ export function VolActions({ volId, locale, statut }: Props) {
       {(statut === 'PLANIFIE' || statut === 'CONFIRME') && (
         <Link
           href={`/${locale}/vols/${volId}/post-vol`}
-          className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
         >
           {t('postVolLink')}
         </Link>
@@ -78,7 +79,7 @@ export function VolActions({ volId, locale, statut }: Props) {
         <a
           href={`/api/vols/${volId}/pve`}
           download
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3"
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
         >
           {t('downloadPve')}
         </a>

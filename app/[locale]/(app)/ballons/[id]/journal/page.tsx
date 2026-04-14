@@ -15,14 +15,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
+import { formatDateFr } from '@/lib/format'
 import type { StatutVol } from '@prisma/client'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
-}
-
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
 function statutVariant(statut: StatutVol): 'outline' | 'default' | 'secondary' | 'destructive' {
@@ -158,7 +155,7 @@ export default async function BallonJournalPage({ params }: Props) {
                           href={`/${locale}/vols/${vol.id}`}
                           className="underline underline-offset-4 hover:text-primary"
                         >
-                          {formatDate(vol.date)}
+                          {formatDateFr(vol.date)}
                         </Link>
                       </TableCell>
                       <TableCell>{tVols(`creneau.${vol.creneau}`)}</TableCell>

@@ -11,24 +11,47 @@ import { buildFicheVolData } from '@/lib/pdf/build-data'
 import { uploadPve } from '@/lib/storage/pve'
 import { validateVolCreation } from '@/lib/vol/validation'
 
+function parseVolFormData(formData: FormData) {
+  return {
+    date: formData.get('date'),
+    creneau: formData.get('creneau'),
+    ballonId: formData.get('ballonId'),
+    piloteId: formData.get('piloteId'),
+    equipierId: formData.get('equipierId') || undefined,
+    equipierAutre: formData.get('equipierAutre') || undefined,
+    vehiculeId: formData.get('vehiculeId') || undefined,
+    vehiculeAutre: formData.get('vehiculeAutre') || undefined,
+    siteDecollageId: formData.get('siteDecollageId') || undefined,
+    lieuDecollageAutre: formData.get('lieuDecollageAutre') || undefined,
+    configGaz: formData.get('configGaz') || undefined,
+    qteGaz: formData.get('qteGaz') || undefined,
+  }
+}
+
+function resolveAutreEntities(rest: {
+  equipierId?: string
+  equipierAutre?: string
+  vehiculeId?: string
+  vehiculeAutre?: string
+  siteDecollageId?: string
+  lieuDecollageAutre?: string
+}) {
+  return {
+    equipierId: rest.equipierId && rest.equipierId !== 'AUTRE' ? rest.equipierId : null,
+    equipierAutre: rest.equipierId === 'AUTRE' ? rest.equipierAutre || null : null,
+    vehiculeId: rest.vehiculeId && rest.vehiculeId !== 'AUTRE' ? rest.vehiculeId : null,
+    vehiculeAutre: rest.vehiculeId === 'AUTRE' ? rest.vehiculeAutre || null : null,
+    siteDecollageId:
+      rest.siteDecollageId && rest.siteDecollageId !== 'AUTRE' ? rest.siteDecollageId : null,
+    lieuDecollageAutre: rest.siteDecollageId === 'AUTRE' ? rest.lieuDecollageAutre || null : null,
+  }
+}
+
 export async function createVol(locale: string, formData: FormData): Promise<{ error?: string }> {
   return requireAuth(async () => {
     const ctx = getContext()
 
-    const raw = {
-      date: formData.get('date'),
-      creneau: formData.get('creneau'),
-      ballonId: formData.get('ballonId'),
-      piloteId: formData.get('piloteId'),
-      equipierId: formData.get('equipierId') || undefined,
-      equipierAutre: formData.get('equipierAutre') || undefined,
-      vehiculeId: formData.get('vehiculeId') || undefined,
-      vehiculeAutre: formData.get('vehiculeAutre') || undefined,
-      siteDecollageId: formData.get('siteDecollageId') || undefined,
-      lieuDecollageAutre: formData.get('lieuDecollageAutre') || undefined,
-      configGaz: formData.get('configGaz') || undefined,
-      qteGaz: formData.get('qteGaz') || undefined,
-    }
+    const raw = parseVolFormData(formData)
 
     const result = volCreateSchema.safeParse(raw)
     if (!result.success) {
@@ -71,13 +94,7 @@ export async function createVol(locale: string, formData: FormData): Promise<{ e
       exploitantId: ctx.exploitantId,
       configGaz: rest.configGaz || ballon.configGaz,
       qteGaz: rest.qteGaz,
-      equipierId: rest.equipierId && rest.equipierId !== 'AUTRE' ? rest.equipierId : null,
-      equipierAutre: rest.equipierId === 'AUTRE' ? rest.equipierAutre || null : null,
-      vehiculeId: rest.vehiculeId && rest.vehiculeId !== 'AUTRE' ? rest.vehiculeId : null,
-      vehiculeAutre: rest.vehiculeId === 'AUTRE' ? rest.vehiculeAutre || null : null,
-      siteDecollageId:
-        rest.siteDecollageId && rest.siteDecollageId !== 'AUTRE' ? rest.siteDecollageId : null,
-      lieuDecollageAutre: rest.siteDecollageId === 'AUTRE' ? rest.lieuDecollageAutre || null : null,
+      ...resolveAutreEntities(rest),
     }
 
     const vol = await db.vol.create({ data: volData })
@@ -97,20 +114,7 @@ export async function updateVol(
       return { error: 'Impossible de modifier un vol termine ou archive' }
     }
 
-    const raw = {
-      date: formData.get('date'),
-      creneau: formData.get('creneau'),
-      ballonId: formData.get('ballonId'),
-      piloteId: formData.get('piloteId'),
-      equipierId: formData.get('equipierId') || undefined,
-      equipierAutre: formData.get('equipierAutre') || undefined,
-      vehiculeId: formData.get('vehiculeId') || undefined,
-      vehiculeAutre: formData.get('vehiculeAutre') || undefined,
-      siteDecollageId: formData.get('siteDecollageId') || undefined,
-      lieuDecollageAutre: formData.get('lieuDecollageAutre') || undefined,
-      configGaz: formData.get('configGaz') || undefined,
-      qteGaz: formData.get('qteGaz') || undefined,
-    }
+    const raw = parseVolFormData(formData)
 
     const result = volCreateSchema.safeParse(raw)
     if (!result.success) {
@@ -154,14 +158,7 @@ export async function updateVol(
         piloteId,
         configGaz: rest.configGaz || ballon.configGaz,
         qteGaz: rest.qteGaz,
-        equipierId: rest.equipierId && rest.equipierId !== 'AUTRE' ? rest.equipierId : null,
-        equipierAutre: rest.equipierId === 'AUTRE' ? rest.equipierAutre || null : null,
-        vehiculeId: rest.vehiculeId && rest.vehiculeId !== 'AUTRE' ? rest.vehiculeId : null,
-        vehiculeAutre: rest.vehiculeId === 'AUTRE' ? rest.vehiculeAutre || null : null,
-        siteDecollageId:
-          rest.siteDecollageId && rest.siteDecollageId !== 'AUTRE' ? rest.siteDecollageId : null,
-        lieuDecollageAutre:
-          rest.siteDecollageId === 'AUTRE' ? rest.lieuDecollageAutre || null : null,
+        ...resolveAutreEntities(rest),
       },
     })
 

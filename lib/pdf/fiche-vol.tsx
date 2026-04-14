@@ -1,6 +1,7 @@
 import React from 'react'
 import { Document, Image, Page, View, Text, StyleSheet } from '@react-pdf/renderer'
 import { calculerDevisMasse } from '@/lib/vol/devis-masse'
+import { formatDateFr } from '@/lib/format'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -322,16 +323,12 @@ const styles = StyleSheet.create({
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatDate(d: Date): string {
-  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-}
-
 function formatTime(d: Date): string {
   return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 }
 
 function formatDatetime(d: Date): string {
-  return `${formatDate(d)} ${formatTime(d)}`
+  return `${formatDateFr(d)} ${formatTime(d)}`
 }
 
 function pdfWindBg(speed: number, seuil: number): string {
@@ -399,7 +396,7 @@ function Page1({ data }: { data: FicheVolData }) {
                 {exploitant.name} — {exploitant.frDecNumber}
               </Text>
               <Text style={styles.headerMeta}>
-                {formatDate(vol.date)} — {vol.creneau}
+                {formatDateFr(vol.date)} — {vol.creneau}
               </Text>
             </View>
           </View>
@@ -520,7 +517,7 @@ function Page2({ data }: { data: FicheVolData }) {
           <Text style={styles.headerMeta}>
             {exploitant.name} — {exploitant.frDecNumber}
           </Text>
-          <Text style={styles.headerMeta}>{formatDate(vol.date)}</Text>
+          <Text style={styles.headerMeta}>{formatDateFr(vol.date)}</Text>
         </View>
       </View>
 
@@ -642,7 +639,7 @@ function Page3({ data }: { data: FicheVolData }) {
           <Text style={styles.headerMeta}>
             {exploitant.name} — {exploitant.frDecNumber}
           </Text>
-          <Text style={styles.headerMeta}>{formatDate(vol.date)}</Text>
+          <Text style={styles.headerMeta}>{formatDateFr(vol.date)}</Text>
         </View>
       </View>
 
@@ -651,7 +648,7 @@ function Page3({ data }: { data: FicheVolData }) {
           {/* Banner */}
           <View style={styles.meteoBanner}>
             <Text style={styles.meteoBannerTitle}>
-              MÉTÉO — {formatDate(vol.date)} — {vol.creneau}
+              MÉTÉO — {formatDateFr(vol.date)} — {vol.creneau}
             </Text>
             <View style={styles.meteoBannerRow}>
               <Text style={styles.meteoBannerMeta}>
