@@ -176,6 +176,14 @@ export async function savePostFlight(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    const vol = await db.vol.findUniqueOrThrow({
+      where: { id: volId },
+      select: { statut: true, exploitantId: true },
+    })
+    if (vol.statut === 'ARCHIVE' || vol.statut === 'ANNULE') {
+      return { error: 'Ce vol ne peut pas être modifié' }
+    }
+
     const raw = {
       decoLieu: formData.get('decoLieu'),
       decoHeure: formData.get('decoHeure'),
@@ -184,7 +192,7 @@ export async function savePostFlight(
       gasConso: formData.get('gasConso') || undefined,
       distance: formData.get('distance') || undefined,
       anomalies: formData.get('anomalies') || undefined,
-      noteDansCarnet: formData.get('noteDansCarnet') ?? true,
+      noteDansCarnet: formData.get('noteDansCarnet') === 'true',
     }
 
     const result = volPostFlightSchema.safeParse(raw)
@@ -231,9 +239,10 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
       select: { billetId: true },
     })
     const billetIds = [...new Set(passagersWithBillet.map((p) => p.billetId))]
-    for (const billetId of billetIds) {
-      await db.billet.update({ where: { id: billetId }, data: { statut: 'VOLE' } })
-    }
+    await db.billet.updateMany({
+      where: { id: { in: billetIds } },
+      data: { statut: 'VOLE' },
+    })
 
     redirect(`/${locale}/vols/${volId}`)
   })
@@ -250,9 +259,10 @@ export async function cancelVol(volId: string, locale: string): Promise<{ error?
     const billetIds = [...new Set(passagers.map((p) => p.billetId))]
 
     await db.passager.updateMany({ where: { volId }, data: { volId: null } })
-    for (const billetId of billetIds) {
-      await db.billet.update({ where: { id: billetId }, data: { statut: 'EN_ATTENTE' } })
-    }
+    await db.billet.updateMany({
+      where: { id: { in: billetIds } },
+      data: { statut: 'EN_ATTENTE' },
+    })
 
     await db.vol.update({ where: { id: volId }, data: { statut: 'ANNULE' } })
 

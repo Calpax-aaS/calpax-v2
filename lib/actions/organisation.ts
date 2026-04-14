@@ -88,6 +88,14 @@ export async function desaffecterPassager(
 
 export async function confirmerVol(volId: string, locale: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    const vol = await db.vol.findUniqueOrThrow({
+      where: { id: volId },
+      select: { statut: true, exploitantId: true },
+    })
+    if (vol.statut !== 'PLANIFIE') {
+      return { error: 'Seul un vol planifié peut être confirmé' }
+    }
+
     await db.vol.update({
       where: { id: volId },
       data: { statut: 'CONFIRME' },
