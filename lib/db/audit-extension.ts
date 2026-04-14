@@ -8,6 +8,23 @@ function modelAccessor(model: string): string {
 
 const SKIP_FIELDS = new Set(['updatedAt', 'createdAt', 'id'])
 
+const REDACT_FIELDS = new Set([
+  'email',
+  'telephone',
+  'payeurEmail',
+  'payeurTelephone',
+  'payeurAdresse',
+  'payeurPrenom',
+  'payeurNom',
+  'poidsEncrypted',
+])
+
+function redactSensitive(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => [k, REDACT_FIELDS.has(k) ? '[REDACTED]' : v]),
+  )
+}
+
 function diffRows(
   before: Record<string, unknown>,
   after: Record<string, unknown>,
@@ -75,7 +92,7 @@ export const auditExtension = Prisma.defineExtension({
                 entityId: String(row['id']),
                 action: AuditAction.CREATE,
                 field: null,
-                afterValue: row as Prisma.InputJsonValue,
+                afterValue: redactSensitive(row) as Prisma.InputJsonValue,
               },
             })
           } else if (operation === 'update' && beforeRow) {
@@ -91,8 +108,12 @@ export const auditExtension = Prisma.defineExtension({
                   entityId: String(afterRow['id']),
                   action: AuditAction.UPDATE,
                   field: c.field,
-                  beforeValue: c.before as Prisma.InputJsonValue,
-                  afterValue: c.after as Prisma.InputJsonValue,
+                  beforeValue: (REDACT_FIELDS.has(c.field)
+                    ? '[REDACTED]'
+                    : c.before) as Prisma.InputJsonValue,
+                  afterValue: (REDACT_FIELDS.has(c.field)
+                    ? '[REDACTED]'
+                    : c.after) as Prisma.InputJsonValue,
                 })),
               })
             }
@@ -106,12 +127,12 @@ export const auditExtension = Prisma.defineExtension({
                 entityId: String(beforeRow['id']),
                 action: AuditAction.DELETE,
                 field: null,
-                beforeValue: beforeRow as Prisma.InputJsonValue,
+                beforeValue: redactSensitive(beforeRow) as Prisma.InputJsonValue,
               },
             })
           }
         } catch (err) {
-          console.error('audit-extension: failed to write audit row', err)
+          console.warn('audit-extension: failed to write audit row', err)
         }
 
         return result

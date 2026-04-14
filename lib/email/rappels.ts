@@ -1,5 +1,13 @@
 import { Resend } from 'resend'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 type BilletRappel = {
   reference: string
   payeurNom: string
@@ -15,9 +23,9 @@ function buildRow(b: BilletRappel): string {
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">
         <a href="${b.billetUrl}" style="color: #2563eb;">${b.reference}</a>
       </td>
-      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${b.payeurPrenom} ${b.payeurNom}</td>
-      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${b.payeurTelephone ?? '—'}</td>
-      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${b.commentaire ?? ''}</td>
+      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(b.payeurPrenom)} ${escapeHtml(b.payeurNom)}</td>
+      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(b.payeurTelephone ?? '—')}</td>
+      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(b.commentaire ?? '')}</td>
     </tr>`
 }
 
@@ -43,7 +51,7 @@ function buildEmailHtml(
   <div style="max-width: 640px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
     <div style="background: #1e40af; color: #fff; padding: 20px 24px;">
       <h1 style="margin: 0; font-size: 18px;">Calpax — Rappels billets</h1>
-      <p style="margin: 4px 0 0; font-size: 14px; opacity: 0.85;">${exploitantName} &middot; ${dateLabel}</p>
+      <p style="margin: 4px 0 0; font-size: 14px; opacity: 0.85;">${escapeHtml(exploitantName)} &middot; ${dateLabel}</p>
     </div>
     <div style="padding: 24px;">
       <p style="margin: 0 0 16px;">${n} billet${n > 1 ? 's' : ''} a recontacter aujourd'hui.</p>

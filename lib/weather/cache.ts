@@ -1,5 +1,4 @@
 import { db } from '@/lib/db'
-import { basePrisma } from '@/lib/db/base'
 import { fetchWeatherFromAPI } from './open-meteo'
 import { parseOpenMeteoResponse } from './parse'
 import type { WeatherForecast } from './types'
@@ -33,7 +32,7 @@ export async function getWeather(params: GetWeatherParams): Promise<WeatherForec
 
   const response = await fetchWeatherFromAPI({ latitude, longitude, date })
 
-  await basePrisma.weatherCache.upsert({
+  await db.weatherCache.upsert({
     where: { exploitantId_date: { exploitantId, date: new Date(date + 'T00:00:00Z') } },
     update: {
       data: response as object,

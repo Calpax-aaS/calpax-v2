@@ -1,6 +1,14 @@
 import { Resend } from 'resend'
 import type { Alert } from '@/lib/regulatory/alerts'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 const SEVERITY_COLOR: Record<string, string> = {
   EXPIRED: '#b91c1c',
   CRITICAL: '#c2410c',
@@ -23,7 +31,7 @@ function buildAlertRow(alert: Alert): string {
 
   return `
     <tr>
-      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${alert.entityName}</td>
+      <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${escapeHtml(alert.entityName)}</td>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${certType}</td>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb;">${formatDate(alert.expiryDate)}</td>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e5e7eb; color: ${color}; font-weight: 600;">${days}</td>
@@ -44,7 +52,7 @@ function buildEmailHtml(exploitantName: string, alerts: Alert[], weekLabel: stri
   <div style="max-width: 640px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
     <div style="background: #1e40af; color: #fff; padding: 20px 24px;">
       <h1 style="margin: 0; font-size: 18px;">Calpax — Digest navigabilite</h1>
-      <p style="margin: 4px 0 0; font-size: 14px; opacity: 0.85;">${exploitantName} &middot; ${weekLabel}</p>
+      <p style="margin: 4px 0 0; font-size: 14px; opacity: 0.85;">${escapeHtml(exploitantName)} &middot; ${weekLabel}</p>
     </div>
     <div style="padding: 24px;">
       <p style="margin: 0 0 16px;">${n} alerte${n > 1 ? 's' : ''} de navigabilite requiert${n > 1 ? 'ent' : ''} votre attention.</p>
