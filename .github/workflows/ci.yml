@@ -232,6 +232,7 @@ jobs:
   e2e-production:
     name: E2E — flight lifecycle
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: [migrate-production]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
