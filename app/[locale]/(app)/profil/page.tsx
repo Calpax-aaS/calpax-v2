@@ -16,7 +16,7 @@ export default async function ProfilPage() {
       }),
       db.exploitant.findUniqueOrThrow({
         where: { id: ctx.exploitantId },
-        select: { name: true, frDecNumber: true },
+        select: { id: true, name: true, frDecNumber: true },
       }),
     ])
 
