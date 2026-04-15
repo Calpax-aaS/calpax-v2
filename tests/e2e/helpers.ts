@@ -1,6 +1,7 @@
 import { Pool } from 'pg'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { hashPassword } from 'better-auth/crypto'
 
 // ---------------------------------------------------------------------------
 // Internal helpers
@@ -24,89 +25,24 @@ function createTestClient(): PrismaClient {
   return new PrismaClient({ adapter })
 }
 
-/**
- * SHA-256 hash as hex string — mirrors the algorithm used by @auth/core's
- * createHash utility (lib/utils/web.js).
- */
-async function sha256hex(message: string): Promise<string> {
-  const data = new TextEncoder().encode(message)
-  const hash = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-}
-
-/**
- * Insert a VerificationToken directly into the database and return the
- * callback URL that Auth.js expects.
- *
- * Auth.js stores SHA-256(rawToken + secret) in the DB and passes the raw
- * token in the callback URL.  By writing the row ourselves we bypass the
- * Resend email-send step entirely, which means the test works even when
- * RESEND_API_KEY is not set.
- *
- * @param email     The identifier / email to sign in as.
- * @param baseUrl   The base URL of the running dev server (e.g. http://localhost:3000).
- * @param secret    AUTH_SECRET — must match what the app uses at runtime.
- * @param ttlMs     How long the token should be valid (default 10 minutes).
- */
-export async function createMagicLink(
-  email: string,
-  baseUrl: string,
-  secret: string,
-  ttlMs = 10 * 60 * 1000,
-): Promise<string> {
-  const prisma = createTestClient()
-  try {
-    // Clean up any stale tokens for this email first
-    await prisma.verificationToken.deleteMany({ where: { identifier: email } })
-
-    // Generate a random 32-byte hex token (same algorithm as Auth.js randomString)
-    const rawTokenBytes = new Uint8Array(32)
-    crypto.getRandomValues(rawTokenBytes)
-    const rawToken = Array.from(rawTokenBytes)
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('')
-
-    // Hash the token exactly as Auth.js does before storing
-    const hashedToken = await sha256hex(`${rawToken}${secret}`)
-
-    const expires = new Date(Date.now() + ttlMs)
-
-    await prisma.verificationToken.create({
-      data: {
-        identifier: email,
-        token: hashedToken,
-        expires,
-      },
-    })
-
-    // Auth.js callback URL — provider id is 'resend', params are callbackUrl + token + email
-    const params = new URLSearchParams({
-      callbackUrl: `${baseUrl}/fr`,
-      token: rawToken,
-      email,
-    })
-    return `${baseUrl}/api/auth/callback/resend?${params.toString()}`
-  } finally {
-    await prisma.$disconnect()
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Exported helpers
 // ---------------------------------------------------------------------------
 
 /**
  * Ensure the seed data required by E2E tests is present in the database.
- * Uses upsert so it is idempotent — safe to call even when data already exists.
+ * Uses upsert so it is idempotent -- safe to call even when data already exists.
  *
  * Mirrors the minimal subset of prisma/seed.ts needed for auth E2E tests:
  *  - Cameron Balloons France (FR.DEC.059)
- *  - olivier@cameronfrance.com (GERANT)
+ *  - olivier@cameronfrance.com (GERANT) with password credential
+ *  - damien@calpax.fr (ADMIN_CALPAX) with password credential
  */
 export async function ensureSeedData(): Promise<void> {
   const prisma = createTestClient()
+  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD ?? 'calpax2026!'
+  const hashedPw = await hashPassword(defaultPassword)
+
   try {
     const cameronBalloons = await prisma.exploitant.upsert({
       where: { frDecNumber: 'FR.DEC.059' },
@@ -117,7 +53,6 @@ export async function ensureSeedData(): Promise<void> {
       },
     })
 
-    // Calpax SAS for the admin account
     const calpaxSas = await prisma.exploitant.upsert({
       where: { frDecNumber: 'INTERNAL.CALPAX' },
       update: {},
@@ -127,7 +62,7 @@ export async function ensureSeedData(): Promise<void> {
       },
     })
 
-    await prisma.user.upsert({
+    const ownerUser = await prisma.user.upsert({
       where: { email: 'olivier@cameronfrance.com' },
       update: {},
       create: {
@@ -138,7 +73,22 @@ export async function ensureSeedData(): Promise<void> {
       },
     })
 
-    await prisma.user.upsert({
+    // Ensure credential account exists for owner
+    const existingOwnerAccount = await prisma.account.findFirst({
+      where: { userId: ownerUser.id, providerId: 'credential' },
+    })
+    if (!existingOwnerAccount) {
+      await prisma.account.create({
+        data: {
+          userId: ownerUser.id,
+          accountId: ownerUser.id,
+          providerId: 'credential',
+          password: hashedPw,
+        },
+      })
+    }
+
+    const adminUser = await prisma.user.upsert({
       where: { email: 'damien@calpax.fr' },
       update: {},
       create: {
@@ -148,40 +98,52 @@ export async function ensureSeedData(): Promise<void> {
         exploitantId: calpaxSas.id,
       },
     })
+
+    // Ensure credential account exists for admin
+    const existingAdminAccount = await prisma.account.findFirst({
+      where: { userId: adminUser.id, providerId: 'credential' },
+    })
+    if (!existingAdminAccount) {
+      await prisma.account.create({
+        data: {
+          userId: adminUser.id,
+          accountId: adminUser.id,
+          providerId: 'credential',
+          password: hashedPw,
+        },
+      })
+    }
   } finally {
     await prisma.$disconnect()
   }
 }
 
 /**
- * Poll the VerificationToken table until a token for `email` appears, then
- * reconstruct the callback URL from the stored (hashed) token.
+ * Sign in via the Better Auth API and return the session cookie value.
+ * Useful for E2E tests that need an authenticated session without going
+ * through the UI login flow.
  *
- * NOTE: This approach only works when Auth.js successfully creates the token
- * (i.e., RESEND_API_KEY is set so the email send doesn't throw before the
- * DB write completes).  Prefer `createMagicLink` for local dev.
+ * @param email     The email to sign in with
+ * @param password  The password (defaults to seed password)
+ * @param baseUrl   The base URL of the running dev server
+ * @returns The session cookie string to attach to subsequent requests
  */
-export async function waitForMagicLink(
+export async function getAuthCookie(
   email: string,
-  baseUrl: string,
-  timeoutMs = 10_000,
+  password: string = 'calpax2026!',
+  baseUrl: string = 'http://localhost:3000',
 ): Promise<string> {
-  const prisma = createTestClient()
-  try {
-    const start = Date.now()
-    while (Date.now() - start < timeoutMs) {
-      const row = await prisma.verificationToken.findFirst({
-        where: { identifier: email },
-        orderBy: { expires: 'desc' },
-      })
-      if (row) {
-        const params = new URLSearchParams({ token: row.token, email })
-        return `${baseUrl}/api/auth/callback/resend?${params.toString()}`
-      }
-      await new Promise((r) => setTimeout(r, 250))
-    }
-    throw new Error(`no VerificationToken for ${email} within ${timeoutMs}ms`)
-  } finally {
-    await prisma.$disconnect()
+  const response = await fetch(`${baseUrl}/api/auth/sign-in/email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+    redirect: 'manual',
+  })
+
+  const setCookie = response.headers.get('set-cookie')
+  if (!setCookie) {
+    throw new Error(`Failed to get auth cookie for ${email}: ${response.status}`)
   }
+
+  return setCookie
 }
