@@ -15,6 +15,8 @@ import {
   Shield,
   Plane,
   History,
+  User,
+  LogOut,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -117,6 +119,22 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href={`/${locale}/profil`}>
+                <User className="h-4 w-4" />
+                <span>{t('profil')}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <form action={`/${locale}/signout`} method="POST">
+              <SidebarMenuButton type="submit" className="w-full text-sidebar-muted-foreground">
+                <LogOut className="h-4 w-4" />
+                <span>{t('signout')}</span>
+              </SidebarMenuButton>
+            </form>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="text-sidebar-muted-foreground">
               <Link href={pathname.replace(`/${locale}`, `/${locale === 'fr' ? 'en' : 'fr'}`)}>

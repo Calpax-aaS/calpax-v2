@@ -55,7 +55,9 @@
     "sites": "Sites",
     "vols": "Flights",
     "rgpd": "GDPR",
-    "audit": "Audit"
+    "audit": "Audit",
+    "profil": "My profile",
+    "signout": "Sign out"
   },
   "settings": {
     "title": "Operator Settings",
@@ -491,5 +493,15 @@
       "confirmAnonymise": "This action is irreversible. Personal data will be deleted. Confirm?"
     },
     "anonymised": "Data anonymised"
+  },
+  "profil": {
+    "title": "My profile",
+    "identity": "Identity",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "exploitant": "Operator",
+    "exploitantName": "Company name",
+    "frDec": "FR.DEC number"
   }
 }

@@ -55,7 +55,9 @@
     "sites": "Sites",
     "vols": "Vols",
     "rgpd": "RGPD",
-    "audit": "Audit"
+    "audit": "Audit",
+    "profil": "Mon profil",
+    "signout": "Déconnexion"
   },
   "settings": {
     "title": "Paramètres de l'exploitant",
@@ -491,5 +493,15 @@
       "confirmAnonymise": "Cette action est irréversible. Les données personnelles seront supprimées. Confirmer ?"
     },
     "anonymised": "Données anonymisées"
+  },
+  "profil": {
+    "title": "Mon profil",
+    "identity": "Identité",
+    "name": "Nom",
+    "email": "Email",
+    "role": "Rôle",
+    "exploitant": "Exploitant",
+    "exploitantName": "Raison sociale",
+    "frDec": "N° FR.DEC"
   }
 }
