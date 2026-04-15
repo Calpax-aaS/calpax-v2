@@ -152,9 +152,6 @@ export default function SignInPage() {
             </button>
           </form>
 
-          {/* Magic link hint */}
-          <p className="text-[11px] text-muted-foreground mt-4">{t('magicLinkHint')}</p>
-
           {/* Footer */}
           <p className="text-[10px] text-muted-foreground mt-auto pt-10">{t('footer')}</p>
         </div>
