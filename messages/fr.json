@@ -19,7 +19,9 @@
     "volsConcernes": "{count} vol(s) concerné(s)",
     "ventMax": "Vent max",
     "tempMoy": "Temp. moy.",
-    "meteoNonDisponible": "Données météo non disponibles"
+    "meteoNonDisponible": "Données météo non disponibles",
+    "activite": "Activité des 4 dernières semaines",
+    "cetteSemaine": "Cette sem."
   },
   "signin": {
     "title": "Connexion à Calpax",

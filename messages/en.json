@@ -19,7 +19,9 @@
     "volsConcernes": "{count} flight(s) concerned",
     "ventMax": "Max wind",
     "tempMoy": "Avg temp.",
-    "meteoNonDisponible": "Weather data not available"
+    "meteoNonDisponible": "Weather data not available",
+    "activite": "Activity over the last 4 weeks",
+    "cetteSemaine": "This week"
   },
   "signin": {
     "title": "Sign in to Calpax",

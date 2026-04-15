@@ -89,6 +89,43 @@ export default async function HomePage({ params }: Props) {
         }),
       ])
 
+    // Activity chart: vol counts by week (last 4 weeks)
+    const fourWeeksAgo = new Date(today)
+    fourWeeksAgo.setDate(today.getDate() - 28)
+
+    const recentVols = await db.vol.findMany({
+      where: {
+        exploitantId,
+        date: { gte: fourWeeksAgo },
+        statut: { not: 'ANNULE' },
+      },
+      select: { date: true, statut: true },
+    })
+
+    function getWeekStart(d: Date): string {
+      const date = new Date(d)
+      const day = date.getDay()
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1)
+      date.setDate(diff)
+      return date.toISOString().slice(0, 10)
+    }
+
+    const weekMap = new Map<string, { done: number; planned: number }>()
+    for (const vol of recentVols) {
+      const week = getWeekStart(vol.date)
+      const entry = weekMap.get(week) ?? { done: 0, planned: 0 }
+      if (vol.statut === 'TERMINE' || vol.statut === 'ARCHIVE') {
+        entry.done++
+      } else {
+        entry.planned++
+      }
+      weekMap.set(week, entry)
+    }
+
+    const weeks = [...weekMap.entries()].sort(([a], [b]) => a.localeCompare(b)).slice(-4)
+
+    const maxVols = Math.max(1, ...weeks.map(([, w]) => w.done + w.planned))
+
     const alerts = sortAlerts([
       ...buildBallonAlerts(ballons, today),
       ...buildPiloteAlerts(pilotes, today),
@@ -251,6 +288,49 @@ export default async function HomePage({ params }: Props) {
                 )}
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+
+        {/* Activite des 4 dernieres semaines */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{t('activite')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end justify-around gap-4 pt-4" style={{ height: 180 }}>
+              {weeks.map(([weekStart, data], i) => {
+                const total = data.done + data.planned
+                const height = Math.round((total / maxVols) * 120)
+                const doneHeight = Math.round((data.done / maxVols) * 120)
+                const plannedHeight = height - doneHeight
+                const label =
+                  i === weeks.length - 1 ? t('cetteSemaine') : `S-${weeks.length - 1 - i}`
+                return (
+                  <div key={weekStart} className="flex flex-col items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground">{total}</span>
+                    <div className="flex w-12 flex-col items-stretch" style={{ height: 120 }}>
+                      <div className="flex-1" />
+                      {plannedHeight > 0 && (
+                        <div
+                          className="rounded-t bg-primary/30"
+                          style={{ height: plannedHeight }}
+                        />
+                      )}
+                      {doneHeight > 0 && (
+                        <div
+                          className={`bg-primary ${plannedHeight > 0 ? '' : 'rounded-t'} rounded-b`}
+                          style={{ height: doneHeight }}
+                        />
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground">{label}</span>
+                  </div>
+                )
+              })}
+              {weeks.length === 0 && (
+                <p className="py-8 text-sm text-muted-foreground">Aucune activité</p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
