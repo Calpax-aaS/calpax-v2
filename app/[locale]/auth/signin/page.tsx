@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { signIn } from '@/lib/auth-client'
+import { authClient, signIn } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+
+type Mode = 'signin' | 'forgot'
 
 export default function SignInPage() {
   const t = useTranslations('signin')
@@ -12,6 +14,8 @@ export default function SignInPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [mode, setMode] = useState<Mode>('signin')
+  const [resetSent, setResetSent] = useState(false)
 
   async function handleEmailPassword(e: React.FormEvent) {
     e.preventDefault()
@@ -27,6 +31,23 @@ export default function SignInPage() {
       }
     } catch {
       setError('Erreur de connexion')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    try {
+      await authClient.requestPasswordReset({
+        email,
+        redirectTo: '/auth/reset-password',
+      })
+      setResetSent(true)
+    } catch {
+      setError(t('resetError'))
     } finally {
       setLoading(false)
     }
@@ -97,7 +118,9 @@ export default function SignInPage() {
           </div>
 
           {/* Connect title */}
-          <h2 className="text-[18px] font-semibold text-foreground mb-6">{t('connectTitle')}</h2>
+          <h2 className="text-[18px] font-semibold text-foreground mb-6">
+            {mode === 'signin' ? t('connectTitle') : t('forgotPasswordTitle')}
+          </h2>
 
           {error && (
             <div className="mb-4 w-full max-w-xs rounded-lg bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
@@ -105,52 +128,126 @@ export default function SignInPage() {
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleEmailPassword} className="w-full max-w-xs space-y-4">
-            <div className="space-y-1.5">
-              <label
-                htmlFor="email"
-                className="block text-xs font-medium uppercase tracking-wide text-foreground"
+          {resetSent ? (
+            <div className="w-full max-w-xs text-center space-y-4">
+              <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
+                {t('resetSent')}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('signin')
+                  setResetSent(false)
+                  setError(null)
+                }}
+                className="text-sm text-primary hover:underline"
               >
-                {t('emailLabel')}
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('emailPlaceholder')}
-                className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
+                {t('backToSignin')}
+              </button>
             </div>
-            <div className="space-y-1.5">
-              <label
-                htmlFor="password"
-                className="block text-xs font-medium uppercase tracking-wide text-foreground"
+          ) : mode === 'signin' ? (
+            <>
+              {/* Sign-in form */}
+              <form onSubmit={handleEmailPassword} className="w-full max-w-xs space-y-4">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="email"
+                    className="block text-xs font-medium uppercase tracking-wide text-foreground"
+                  >
+                    {t('emailLabel')}
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t('emailPlaceholder')}
+                    className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="password"
+                    className="block text-xs font-medium uppercase tracking-wide text-foreground"
+                  >
+                    {t('passwordLabel')}
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={t('passwordPlaceholder')}
+                    className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  />
+                </div>
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('forgot')
+                      setError(null)
+                    }}
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {t('forgotPassword')}
+                  </button>
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {loading ? '...' : t('submit')}
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              {/* Forgot password form */}
+              <form onSubmit={handleForgotPassword} className="w-full max-w-xs space-y-4">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="forgot-email"
+                    className="block text-xs font-medium uppercase tracking-wide text-foreground"
+                  >
+                    {t('emailLabel')}
+                  </label>
+                  <input
+                    id="forgot-email"
+                    name="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t('emailPlaceholder')}
+                    className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {loading ? '...' : t('sendResetLink')}
+                </button>
+              </form>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('signin')
+                  setError(null)
+                }}
+                className="mt-4 text-sm text-muted-foreground hover:text-primary transition-colors"
               >
-                {t('passwordLabel')}
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t('passwordPlaceholder')}
-                className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {loading ? '...' : t('submit')}
-            </button>
-          </form>
+                {t('backToSignin')}
+              </button>
+            </>
+          )}
 
           {/* Footer */}
           <p className="text-[10px] text-muted-foreground mt-auto pt-10">{t('footer')}</p>

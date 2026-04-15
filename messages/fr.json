@@ -37,11 +37,86 @@
     "magicLinkHint": "Un lien magique vous sera envoyé par email",
     "connectTitle": "Connectez-vous à votre compte",
     "appDescription": "SaaS de gestion de vols en montgolfière",
-    "footer": "Calpax 2026"
+    "footer": "Calpax 2026",
+    "forgotPassword": "Mot de passe oublie ?",
+    "forgotPasswordTitle": "Reinitialiser votre mot de passe",
+    "sendResetLink": "Envoyer un lien de reinitialisation",
+    "resetSent": "Si cette adresse existe dans notre systeme, un lien de reinitialisation vous a ete envoye par email.",
+    "resetError": "Erreur lors de l'envoi du lien",
+    "backToSignin": "Retour a la connexion",
+    "resetPasswordTitle": "Nouveau mot de passe",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "newPasswordPlaceholder": "Minimum 8 caracteres",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Retapez le mot de passe",
+    "resetPasswordButton": "Reinitialiser le mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordResetSuccess": "Mot de passe reinitialise avec succes. Vous pouvez maintenant vous connecter."
   },
   "admin": {
     "title": "Calpax — Administration",
-    "unauthorized": "Accès réservé"
+    "unauthorized": "Acces reserve",
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "users": "Utilisateurs",
+      "sessions": "Sessions",
+      "audit": "Audit",
+      "invitations": "Invitations",
+      "backToApp": "Retour a l'app"
+    },
+    "dashboard": {
+      "title": "Super Admin",
+      "totalExploitants": "Exploitants",
+      "totalUsers": "Utilisateurs",
+      "totalVols": "Vols",
+      "exploitants": "Exploitants",
+      "nom": "Nom",
+      "frDec": "FR.DEC",
+      "nbUsers": "Utilisateurs",
+      "nbVols": "Vols",
+      "actions": "Actions",
+      "impersonate": "Impersonner",
+      "noExploitants": "Aucun exploitant"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "nom": "Nom",
+      "email": "Email",
+      "role": "Role",
+      "exploitant": "Exploitant",
+      "lastLogin": "Derniere connexion",
+      "actions": "Actions",
+      "noUsers": "Aucun utilisateur"
+    },
+    "sessions": {
+      "title": "Sessions actives",
+      "user": "Utilisateur",
+      "email": "Email",
+      "ip": "Adresse IP",
+      "userAgent": "Navigateur",
+      "start": "Debut",
+      "expires": "Expire",
+      "actions": "Actions",
+      "revoke": "Revoquer",
+      "noSessions": "Aucune session active",
+      "revoked": "Session revoquee"
+    },
+    "audit": {
+      "title": "Audit (toutes tenants)",
+      "exploitant": "Exploitant",
+      "all": "Tous",
+      "noEntries": "Aucune modification"
+    },
+    "invitations": {
+      "title": "Inviter un utilisateur",
+      "email": "Email",
+      "exploitant": "Exploitant",
+      "role": "Role",
+      "name": "Nom",
+      "submit": "Creer l'utilisateur",
+      "success": "Utilisateur cree",
+      "recentUsers": "Utilisateurs recents"
+    }
   },
   "errors": {
     "unauthorized": "Vous devez être connecté pour accéder à cette page."
@@ -59,7 +134,8 @@
     "rgpd": "RGPD",
     "audit": "Audit",
     "profil": "Mon profil",
-    "signout": "Déconnexion"
+    "signout": "Déconnexion",
+    "superAdmin": "Super Admin"
   },
   "settings": {
     "title": "Paramètres de l'exploitant",
@@ -504,6 +580,14 @@
     "role": "Rôle",
     "exploitant": "Exploitant",
     "exploitantName": "Raison sociale",
-    "frDec": "N° FR.DEC"
+    "frDec": "N° FR.DEC",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "changePasswordButton": "Mettre a jour",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordChanged": "Mot de passe mis a jour",
+    "passwordError": "Erreur lors du changement de mot de passe"
   }
 }

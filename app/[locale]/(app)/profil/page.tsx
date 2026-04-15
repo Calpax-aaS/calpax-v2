@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { getContext } from '@/lib/context'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { ChangePasswordForm } from '@/components/change-password-form'
 
 export default async function ProfilPage() {
   return requireAuth(async () => {
@@ -75,6 +76,8 @@ export default async function ProfilPage() {
             </div>
           </CardContent>
         </Card>
+
+        <ChangePasswordForm />
       </div>
     )
   })

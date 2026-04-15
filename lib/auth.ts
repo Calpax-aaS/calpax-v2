@@ -17,6 +17,18 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
+    sendResetPassword: async ({ user, url }) => {
+      if (!resend) {
+        console.warn('[auth] Resend not configured, reset password URL:', url)
+        return
+      }
+      await resend.emails.send({
+        from: process.env.EMAIL_FROM ?? 'Calpax <noreply@calpax.fr>',
+        to: user.email,
+        subject: 'Reinitialisation de votre mot de passe Calpax',
+        html: `<p>Cliquez sur ce lien pour reinitialiser votre mot de passe :</p><p><a href="${url}">${url}</a></p><p>Ce lien expire dans 1 heure.</p>`,
+      })
+    },
   },
   socialProviders: {
     google: {
