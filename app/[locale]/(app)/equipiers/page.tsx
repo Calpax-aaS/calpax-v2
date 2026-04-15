@@ -15,6 +15,7 @@ import {
 import { EquipierCreateForm } from './equipier-create-form'
 import { ToggleActifButton } from '@/components/toggle-actif-button'
 import { toggleEquipierActif } from '@/lib/actions/equipier'
+import { EmptyState } from '@/components/empty-state'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -38,7 +39,11 @@ export default async function EquipiersPage({ params }: Props) {
         <EquipierCreateForm locale={locale} />
 
         {equipiers.length === 0 ? (
-          <p className="text-muted-foreground">{t('noEntries')}</p>
+          <Card>
+            <CardContent className="p-0">
+              <EmptyState message={t('noEntries')} />
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardContent className="p-0">

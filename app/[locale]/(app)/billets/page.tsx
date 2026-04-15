@@ -15,6 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { EmptyState } from '@/components/empty-state'
 import type { StatutBillet, StatutPaiement } from '@prisma/client'
 
 type Props = {
@@ -84,7 +85,15 @@ export default async function BilletsPage({ params }: Props) {
         </div>
 
         {billets.length === 0 ? (
-          <p className="text-muted-foreground">{t('noBillets')}</p>
+          <Card>
+            <CardContent className="p-0">
+              <EmptyState
+                message={t('noBillets')}
+                actionLabel={t('createFirst')}
+                actionHref={`/${locale}/billets/new`}
+              />
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardContent className="p-0">

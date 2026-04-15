@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/empty-state'
 
 export type VolSummary = {
   id: string
@@ -20,6 +21,8 @@ type WeekGridProps = {
   vols: VolSummary[]
   locale: string
   todayMonday: string // YYYY-MM-DD, computed server-side to avoid hydration mismatch
+  emptyActionLabel?: string
+  emptyActionHref?: string
 }
 
 const STATUT_BORDER: Record<string, string> = {
@@ -100,7 +103,14 @@ function Cell({ date, creneau, vols, locale }: CellProps) {
   )
 }
 
-export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps) {
+export function WeekGrid({
+  weekStart,
+  vols,
+  locale,
+  todayMonday,
+  emptyActionLabel,
+  emptyActionHref,
+}: WeekGridProps) {
   const t = useTranslations('vols')
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
@@ -162,7 +172,11 @@ export function WeekGrid({ weekStart, vols, locale, todayMonday }: WeekGridProps
       </div>
 
       {vols.length === 0 && (
-        <p className="text-sm text-muted-foreground text-center py-4">{t('noVols')}</p>
+        <EmptyState
+          message={t('noVols')}
+          actionLabel={emptyActionLabel}
+          actionHref={emptyActionHref}
+        />
       )}
     </div>
   )

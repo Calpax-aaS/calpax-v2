@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { ExpiryBadge } from '@/components/expiry-badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { EmptyState } from '@/components/empty-state'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -45,7 +46,15 @@ export default async function PilotesPage({ params }: Props) {
         </div>
 
         {pilotes.length === 0 ? (
-          <p className="text-muted-foreground">{t('noResults')}</p>
+          <Card>
+            <CardContent className="p-0">
+              <EmptyState
+                message={t('noResults')}
+                actionLabel={t('createFirst')}
+                actionHref={`/${locale}/pilotes/new`}
+              />
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardContent className="p-0">

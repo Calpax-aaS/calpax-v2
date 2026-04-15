@@ -15,6 +15,7 @@ import {
 import { SiteCreateForm } from './site-create-form'
 import { ToggleActifButton } from '@/components/toggle-actif-button'
 import { toggleSiteActif } from '@/lib/actions/site-decollage'
+import { EmptyState } from '@/components/empty-state'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -38,7 +39,11 @@ export default async function SitesPage({ params }: Props) {
         <SiteCreateForm locale={locale} />
 
         {sites.length === 0 ? (
-          <p className="text-muted-foreground">{t('noEntries')}</p>
+          <Card>
+            <CardContent className="p-0">
+              <EmptyState message={t('noEntries')} />
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardContent className="p-0">

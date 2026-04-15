@@ -15,6 +15,7 @@ import {
 import { VehiculeCreateForm } from './vehicule-create-form'
 import { ToggleActifButton } from '@/components/toggle-actif-button'
 import { toggleVehiculeActif } from '@/lib/actions/vehicule'
+import { EmptyState } from '@/components/empty-state'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -38,7 +39,11 @@ export default async function VehiculesPage({ params }: Props) {
         <VehiculeCreateForm locale={locale} />
 
         {vehicules.length === 0 ? (
-          <p className="text-muted-foreground">{t('noEntries')}</p>
+          <Card>
+            <CardContent className="p-0">
+              <EmptyState message={t('noEntries')} />
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardContent className="p-0">

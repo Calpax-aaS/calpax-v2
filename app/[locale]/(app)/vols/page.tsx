@@ -89,6 +89,8 @@ export default async function VolsPage({ params, searchParams }: Props) {
               vols={vols}
               locale={locale}
               todayMonday={getMondayOfWeek(todayStr)}
+              emptyActionLabel={t('createFirst')}
+              emptyActionHref={`/${locale}/vols/create`}
             />
           </CardContent>
         </Card>
