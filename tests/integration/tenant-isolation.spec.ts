@@ -38,7 +38,9 @@ describe('tenant isolation', () => {
     const B = await seedTenant('B')
     await expect(
       asUser(A, 'GERANT', async () =>
-        db.user.create({ data: { email: 'hacker@test.local', exploitantId: B.exploitantId } }),
+        db.user.create({
+          data: { email: 'hacker@test.local', name: 'Hacker', exploitantId: B.exploitantId },
+        }),
       ),
     ).rejects.toThrow(/does not match current context/)
   })
@@ -48,7 +50,7 @@ describe('tenant isolation', () => {
     // The tenant extension injects exploitantId at runtime.
     // dbUnchecked bypasses the Prisma type constraint so we can omit it in data.
     const created = await asUser(A, 'GERANT', async () =>
-      dbUnchecked(db).user.create({ data: { email: 'new@test.local' } }),
+      dbUnchecked(db).user.create({ data: { email: 'new@test.local', name: 'New User' } }),
     )
     // Verify via basePrisma that the row was actually written with the correct exploitantId
     const row = await basePrisma.user.findUnique({ where: { id: created.id } })
