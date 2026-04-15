@@ -43,7 +43,7 @@ type NavGroup = {
   items: NavItem[]
 }
 
-export function AppSidebar() {
+export function AppSidebar({ userRole }: { userRole?: string }) {
   const t = useTranslations('nav')
   const locale = useLocale()
   const pathname = usePathname()
@@ -119,6 +119,16 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          {userRole === 'ADMIN_CALPAX' && (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href={`/${locale}/admin`}>
+                  <Shield className="h-4 w-4" />
+                  <span>{t('superAdmin')}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href={`/${locale}/profil`}>

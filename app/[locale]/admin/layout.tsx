@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
+import { AdminNav } from '@/components/admin-nav'
 
 type Props = {
   children: React.ReactNode
@@ -31,5 +32,10 @@ export default async function AdminLayout({ children, params }: Props) {
     )
   }
 
-  return <>{children}</>
+  return (
+    <div className="flex min-h-screen">
+      <AdminNav locale={locale} />
+      <main className="flex-1 p-6">{children}</main>
+    </div>
+  )
 }
