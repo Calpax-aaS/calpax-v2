@@ -140,8 +140,9 @@ jobs:
         run: pnpm build
         env:
           DATABASE_URL: postgresql://fake:fake@127.0.0.1:5432/fake
-          AUTH_SECRET: build-time-secret-not-real
-          AUTH_URL: http://localhost:3000
+          BETTER_AUTH_SECRET: build-time-secret-not-real
+          BETTER_AUTH_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
           ENCRYPTION_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
           SENTRY_DSN: ''
           SENTRY_AUTH_TOKEN: ''
@@ -278,7 +279,9 @@ jobs:
         env:
           E2E_BASE_URL: https://www.calpax.fr
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: https://www.calpax.fr
+          NEXT_PUBLIC_APP_URL: https://www.calpax.fr
 
       - name: Upload Playwright report
         if: failure()
