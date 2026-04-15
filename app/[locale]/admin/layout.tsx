@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
@@ -14,13 +15,14 @@ type Props = {
  */
 export default async function AdminLayout({ children, params }: Props) {
   const { locale } = await params
-  const session = await auth()
+  const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session?.user) {
     redirect(`/${locale}/auth/signin`)
   }
 
-  if (session.user.role !== 'ADMIN_CALPAX') {
+  const user = session.user as Record<string, unknown>
+  if (user.role !== 'ADMIN_CALPAX') {
     const t = await getTranslations('admin')
     return (
       <main className="min-h-screen flex items-center justify-center">

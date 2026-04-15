@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { basePrisma as prisma } from '../lib/db/base'
 import { encrypt } from '../lib/crypto'
+import { hashPassword } from 'better-auth/crypto'
 
 async function main() {
   const adminEmail = process.env.ADMIN_EMAIL ?? 'dcuenot@calpax.fr'
@@ -45,7 +46,10 @@ async function main() {
     },
   })
 
-  await prisma.user.upsert({
+  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD ?? 'calpax2026!'
+  const hashedPw = await hashPassword(defaultPassword)
+
+  const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {},
     create: {
@@ -56,7 +60,22 @@ async function main() {
     },
   })
 
-  await prisma.user.upsert({
+  // Create credential account for admin user (Better Auth stores passwords in account table)
+  const existingAdminAccount = await prisma.account.findFirst({
+    where: { userId: adminUser.id, providerId: 'credential' },
+  })
+  if (!existingAdminAccount) {
+    await prisma.account.create({
+      data: {
+        userId: adminUser.id,
+        accountId: adminUser.id,
+        providerId: 'credential',
+        password: hashedPw,
+      },
+    })
+  }
+
+  const ownerUser = await prisma.user.upsert({
     where: { email: ownerEmail },
     update: {},
     create: {
@@ -66,6 +85,21 @@ async function main() {
       exploitantId: cameronBalloons.id,
     },
   })
+
+  // Create credential account for owner user
+  const existingOwnerAccount = await prisma.account.findFirst({
+    where: { userId: ownerUser.id, providerId: 'credential' },
+  })
+  if (!existingOwnerAccount) {
+    await prisma.account.create({
+      data: {
+        userId: ownerUser.id,
+        accountId: ownerUser.id,
+        providerId: 'credential',
+        password: hashedPw,
+      },
+    })
+  }
 
   // Seed 9 ballons for Cameron Balloons France
   const ballonsData = [

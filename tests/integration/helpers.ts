@@ -11,7 +11,7 @@ export async function resetDb() {
   await basePrisma.auditLog.deleteMany({})
   await basePrisma.session.deleteMany({})
   await basePrisma.account.deleteMany({})
-  await basePrisma.verificationToken.deleteMany({})
+  await basePrisma.verification.deleteMany({})
   await basePrisma.pilote.deleteMany({})
   await basePrisma.ballon.deleteMany({})
   await basePrisma.equipier.deleteMany({})

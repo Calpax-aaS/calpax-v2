@@ -1,13 +1,36 @@
-import { getTranslations } from 'next-intl/server'
-import { signIn } from '@/lib/auth'
+'use client'
 
-type Props = {
-  params: Promise<{ locale: string }>
-}
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { signIn } from '@/lib/auth-client'
+import { useRouter } from 'next/navigation'
 
-export default async function SignInPage({ params }: Props) {
-  const { locale } = await params
-  const t = await getTranslations('signin')
+export default function SignInPage() {
+  const t = useTranslations('signin')
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  async function handleEmailPassword(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    try {
+      const result = await signIn.email({ email, password })
+      if (result.error) {
+        setError(result.error.message ?? 'Erreur de connexion')
+      } else {
+        router.push('/')
+        router.refresh()
+      }
+    } catch {
+      setError('Erreur de connexion')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#E8ECF0] p-4">
@@ -76,18 +99,14 @@ export default async function SignInPage({ params }: Props) {
           {/* Connect title */}
           <h2 className="text-[18px] font-semibold text-foreground mb-6">{t('connectTitle')}</h2>
 
+          {error && (
+            <div className="mb-4 w-full max-w-xs rounded-lg bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+
           {/* Form */}
-          <form
-            action={async (formData: FormData) => {
-              'use server'
-              const email = formData.get('email') as string
-              await signIn('resend', {
-                email,
-                redirectTo: `/${locale}`,
-              })
-            }}
-            className="w-full max-w-xs space-y-4"
-          >
+          <form onSubmit={handleEmailPassword} className="w-full max-w-xs space-y-4">
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
@@ -100,15 +119,36 @@ export default async function SignInPage({ params }: Props) {
                 name="email"
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('emailPlaceholder')}
+                className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label
+                htmlFor="password"
+                className="block text-xs font-medium uppercase tracking-wide text-foreground"
+              >
+                {t('passwordLabel')}
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t('passwordPlaceholder')}
                 className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
+              disabled={loading}
+              className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {t('submit')}
+              {loading ? '...' : t('submit')}
             </button>
           </form>
 
