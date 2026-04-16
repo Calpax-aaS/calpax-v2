@@ -10,6 +10,7 @@ import {
   History,
   UserPlus,
   ArrowLeft,
+  LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -56,7 +57,7 @@ export function AdminNav({ locale }: { locale: string }) {
           </Link>
         )
       })}
-      <div className="mt-auto pt-4 border-t">
+      <div className="mt-auto pt-4 border-t space-y-1">
         <Link
           href={`/${locale}`}
           className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -64,6 +65,15 @@ export function AdminNav({ locale }: { locale: string }) {
           <ArrowLeft className="h-4 w-4" />
           <span>{t('backToApp')}</span>
         </Link>
+        <form action={`/${locale}/signout`} method="POST">
+          <button
+            type="submit"
+            className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>{t('signout')}</span>
+          </button>
+        </form>
       </div>
     </aside>
   )

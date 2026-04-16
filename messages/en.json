@@ -62,7 +62,8 @@
       "sessions": "Sessions",
       "audit": "Audit",
       "invitations": "Invitations",
-      "backToApp": "Back to app"
+      "backToApp": "Back to app",
+      "signout": "Sign out"
     },
     "dashboard": {
       "title": "Super Admin",
