@@ -24,11 +24,28 @@ export function LinkedAccounts({ linkedProviders, hasCredential }: Props) {
   async function handleLink(provider: 'google') {
     setLoading(provider)
     try {
-      await authClient.linkSocial({
+      const result = await authClient.linkSocial({
         provider,
         callbackURL: '/profil?linked=1',
       })
-    } catch {
+      console.log('[linkSocial] result:', result)
+
+      if (result.error) {
+        toast.error(result.error.message ?? t('linkError'))
+        setLoading(null)
+        return
+      }
+
+      // Better Auth may return a redirect URL that the client must follow manually
+      const url = (result.data as { url?: string; redirect?: boolean } | undefined)?.url
+      if (url) {
+        window.location.href = url
+      } else {
+        setLoading(null)
+        toast.error(t('linkError') + ' (no redirect URL)')
+      }
+    } catch (err) {
+      console.error('[linkSocial] error:', err)
       toast.error(t('linkError'))
       setLoading(null)
     }
