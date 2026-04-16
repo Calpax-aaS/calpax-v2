@@ -21,7 +21,9 @@ export const UNTENANTED = new Set<string>([
   'Account',
   'Session',
   'VerificationToken',
+  'Verification',
   'BilletSequence',
+  'FailedLoginAttempt',
 ])
 
 const COMPOSABLE_READ_OPS = new Set([

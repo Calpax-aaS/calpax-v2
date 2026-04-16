@@ -3,6 +3,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { magicLink } from 'better-auth/plugins/magic-link'
 import { admin } from 'better-auth/plugins/admin'
 import { basePrisma } from '@/lib/db/base'
+import { authBeforeHook, authAfterHook } from '@/lib/auth/hooks'
 import { Resend } from 'resend'
 
 const resendApiKey = process.env.RESEND_API_KEY
@@ -77,6 +78,12 @@ export const auth = betterAuth({
     }),
     admin(),
   ],
+  // Request lifecycle hooks for audit logging + account lockout.
+  // Defined in lib/auth/hooks.ts.
+  hooks: {
+    before: authBeforeHook,
+    after: authAfterHook,
+  },
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day

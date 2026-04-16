@@ -416,3 +416,34 @@ Flow complet :
 **Proposed fix:** Ajouter une colonne "Impersonne par" visible dans la page audit admin.
 
 **Added:** 2026-04-16
+
+---
+
+## TD-037: Auth -- audit log des evenements auth + lockout apres 5 echecs
+
+**Severity:** HIGH (resolu)
+**Status:** RESOLVED (2026-04-13)
+
+Evenements auth captures via `hooks.before/after` Better Auth (path-based) + `databaseHooks` non requis :
+
+- `SIGN_IN` (apres `/sign-in/*` succes, quand `newSession` est set)
+- `SIGN_IN_FAILED` (apres `/sign-in/email` sans `newSession`)
+- `SIGN_OUT` (apres `/sign-out`)
+- `PASSWORD_RESET` (apres `/reset-password` token flow)
+- `PASSWORD_CHANGED` (apres `/change-password` authentifie)
+- `ACCOUNT_LOCKED` (emis par le flow failed quand la cible est atteinte)
+
+Entries stockees dans `audit_log` avec `entityType='AUTH'` et `entityId = userId` (ou email pour les echecs). `exploitantId` resolu depuis le user quand connu, null sinon.
+
+Lockout :
+
+- Nouveau modele `FailedLoginAttempt` (email, ipAddress, userAgent, createdAt, index sur (email, createdAt))
+- Nouveau champ `User.lockedUntil DateTime?`
+- Policy : 5 echecs dans 15 min -> lock 30 min (`lib/auth/audit.ts` `LOCKOUT_POLICY`)
+- Hook `before /sign-in/email` rejette avec APIError FORBIDDEN + code `ACCOUNT_LOCKED` si `lockedUntil > now`
+- Compteur efface sur sign-in reussi
+- Lock stale (`lockedUntil < now`) auto-efface par `getActiveLock`
+
+Tests : 11 specs dans `tests/integration/auth-audit.spec.ts`.
+
+**Added:** 2026-04-13

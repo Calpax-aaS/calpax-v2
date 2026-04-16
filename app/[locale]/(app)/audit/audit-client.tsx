@@ -14,8 +14,18 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { fetchAuditLogs } from '@/lib/actions/audit'
 
-const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol']
-const ACTIONS = ['CREATE', 'UPDATE', 'DELETE']
+const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'AUTH']
+const ACTIONS = [
+  'CREATE',
+  'UPDATE',
+  'DELETE',
+  'SIGN_IN',
+  'SIGN_IN_FAILED',
+  'SIGN_OUT',
+  'PASSWORD_RESET',
+  'PASSWORD_CHANGED',
+  'ACCOUNT_LOCKED',
+]
 
 type AuditLog = {
   id: bigint
