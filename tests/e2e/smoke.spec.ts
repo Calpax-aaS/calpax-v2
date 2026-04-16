@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test'
 import { ensureSeedData } from './helpers'
 
 const TEST_EMAIL = 'olivier@cameronfrance.com'
-const TEST_PASSWORD = process.env.SEED_DEFAULT_PASSWORD ?? 'calpax2026!'
+const TEST_PASSWORD = process.env.SEED_DEFAULT_PASSWORD ?? 'Calpax-2026-Demo!'
 
 test.beforeAll(async () => {
   await ensureSeedData()

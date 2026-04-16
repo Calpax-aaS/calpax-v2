@@ -49,8 +49,8 @@ The seed creates:
 
 - `Calpax SAS` (frDecNumber: `INTERNAL.CALPAX`) — internal admin tenant
 - `Cameron Balloons France` (frDecNumber: `FR.DEC.059`) — first real tenant
-- `dcuenot@calpax.fr` — ADMIN_CALPAX with password `calpax2026!`
-- `olivier@cameronfrance.com` — GERANT for Cameron Balloons with password `calpax2026!`
+- `dcuenot@calpax.fr` — ADMIN_CALPAX with password `Calpax-2026-Demo!`
+- `olivier@cameronfrance.com` — GERANT for Cameron Balloons with password `Calpax-2026-Demo!`
 
 ---
 

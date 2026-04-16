@@ -46,7 +46,7 @@ async function main() {
     },
   })
 
-  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD ?? 'calpax2026!'
+  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD ?? 'Calpax-2026-Demo!'
   const hashedPw = await hashPassword(defaultPassword)
 
   const adminUser = await prisma.user.upsert({

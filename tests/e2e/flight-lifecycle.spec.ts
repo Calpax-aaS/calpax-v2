@@ -13,7 +13,7 @@ import { test, expect, type Page } from '@playwright/test'
 import { ensureSeedData } from './helpers'
 
 const TEST_EMAIL = 'olivier@cameronfrance.com'
-const TEST_PASSWORD = process.env.SEED_DEFAULT_PASSWORD ?? 'calpax2026!'
+const TEST_PASSWORD = process.env.SEED_DEFAULT_PASSWORD ?? 'Calpax-2026-Demo!'
 const BASE_URL = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
 
 async function signIn(page: Page) {

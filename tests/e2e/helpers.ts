@@ -40,7 +40,7 @@ function createTestClient(): PrismaClient {
  */
 export async function ensureSeedData(): Promise<void> {
   const prisma = createTestClient()
-  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD ?? 'calpax2026!'
+  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD ?? 'Calpax-2026-Demo!'
   const hashedPw = await hashPassword(defaultPassword)
 
   try {
@@ -130,7 +130,7 @@ export async function ensureSeedData(): Promise<void> {
  */
 export async function getAuthCookie(
   email: string,
-  password: string = 'calpax2026!',
+  password: string = 'Calpax-2026-Demo!',
   baseUrl: string = 'http://localhost:3000',
 ): Promise<string> {
   const response = await fetch(`${baseUrl}/api/auth/sign-in/email`, {
