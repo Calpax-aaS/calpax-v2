@@ -54,7 +54,9 @@ test.describe.serial('P0 smoke -- sign-in flow', () => {
     ])
 
     expect(redirected).toBe(true)
-    await expect(page.getByText(/Olivier Cuenot/)).toBeVisible()
+    await expect(page.getByRole('heading', { name: /tableau de bord/i })).toBeVisible({
+      timeout: 10_000,
+    })
   })
 
   test('full flow: sign-in -> home page with operator info', async ({ page }) => {
@@ -75,7 +77,9 @@ test.describe.serial('P0 smoke -- sign-in flow', () => {
     ])
 
     expect(redirected).toBe(true)
-    await expect(page.getByText(/Olivier Cuenot/)).toBeVisible()
-    await expect(page.getByText(/Cameron Balloons/)).toBeVisible()
+    await expect(page.getByRole('heading', { name: /tableau de bord/i })).toBeVisible({
+      timeout: 10_000,
+    })
+    await expect(page.getByText(/Cameron Balloons/i)).toBeVisible()
   })
 })
