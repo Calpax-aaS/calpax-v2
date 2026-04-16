@@ -19,7 +19,7 @@ export default async function ProfilPage() {
       }),
       db.exploitant.findUniqueOrThrow({
         where: { id: ctx.exploitantId },
-        select: { id: true, name: true, frDecNumber: true },
+        select: { name: true, frDecNumber: true },
       }),
       // Accounts is not tenant-scoped in the tenant extension (Better Auth managed)
       basePrisma.account.findMany({

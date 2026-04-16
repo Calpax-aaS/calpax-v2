@@ -385,11 +385,10 @@ Flow complet :
 
 ## TD-034: Auth -- Desactiver un user sans le supprimer
 
-**Severity:** MEDIUM -- utile pour gerer les departs.
+**Severity:** MEDIUM (resolu)
+**Status:** RESOLVED (2026-04-16)
 
-**Context:** Aujourd'hui on ne peut que supprimer un user. Pour un pilote qui quitte temporairement, il faudrait pouvoir le desactiver (bloque login) sans perdre ses references dans les vols/billets.
-
-**Proposed fix:** Ajouter un champ `disabled: Boolean` sur User. `requireAuth` refuse si disabled. Exposer toggle dans admin users.
+Utilise les champs natifs du plugin Better Auth admin (`banned`, `banReason`, `banExpires`) ajoutes au modele `User`. Le plugin bloque automatiquement la creation de session pour un user banne (hook `session.create.before`) et revoque ses sessions actives lors du ban. Action serveur `toggleUserBan` dans `lib/actions/admin.ts` qui delegue a `auth.api.banUser/unbanUser`. Colonne "Statut" + bouton Activer/Desactiver dans `/admin/users`. 3 tests d'integration dans `tests/integration/user-ban.spec.ts`.
 
 **Added:** 2026-04-16
 

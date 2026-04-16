@@ -137,6 +137,12 @@ model User {
   // Account lockout: when set and in the future, login attempts are rejected
   lockedUntil  DateTime?
 
+  // Admin ban (Better Auth admin plugin): banned users cannot sign in.
+  // `banExpires` null = permanent, date in future = temporary ban.
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
   accounts Account[]
   sessions Session[]
 

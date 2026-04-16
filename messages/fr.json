@@ -93,6 +93,14 @@
       "exploitant": "Exploitant",
       "lastLogin": "Derniere connexion",
       "actions": "Actions",
+      "status": "Statut",
+      "active": "Actif",
+      "banned": "Desactive",
+      "ban": "Desactiver",
+      "unban": "Reactiver",
+      "banConfirm": "Desactiver cet utilisateur ? Ses sessions actives seront revoquees et il ne pourra plus se connecter.",
+      "banSuccess": "Utilisateur desactive",
+      "unbanSuccess": "Utilisateur reactive",
       "noUsers": "Aucun utilisateur"
     },
     "sessions": {

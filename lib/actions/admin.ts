@@ -98,3 +98,38 @@ export async function createUserForExploitant(data: {
   revalidatePath('/admin/invitations')
   return { user, emailSent: invitationResult.sent }
 }
+
+/**
+ * Ban/unban a user (TD-034). Uses Better Auth's admin plugin which also
+ * deletes all active sessions for the target user on ban. Banned users cannot
+ * create new sessions (enforced in session.create.before hook).
+ *
+ * Self-banning is rejected at the Better Auth endpoint level.
+ */
+export async function toggleUserBan(args: {
+  userId: string
+  banned: boolean
+  reason?: string
+}): Promise<{ error?: string }> {
+  await requireAdminCalpax()
+
+  try {
+    if (args.banned) {
+      await auth.api.banUser({
+        headers: await headers(),
+        body: { userId: args.userId, banReason: args.reason ?? 'Désactivé par un administrateur' },
+      })
+    } else {
+      await auth.api.unbanUser({
+        headers: await headers(),
+        body: { userId: args.userId },
+      })
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Opération refusée'
+    return { error: msg }
+  }
+
+  revalidatePath('/admin/users')
+  return {}
+}

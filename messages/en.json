@@ -93,6 +93,14 @@
       "exploitant": "Operator",
       "lastLogin": "Last login",
       "actions": "Actions",
+      "status": "Status",
+      "active": "Active",
+      "banned": "Disabled",
+      "ban": "Disable",
+      "unban": "Reactivate",
+      "banConfirm": "Disable this user? Their active sessions will be revoked and they will no longer be able to sign in.",
+      "banSuccess": "User disabled",
+      "unbanSuccess": "User reactivated",
       "noUsers": "No users"
     },
     "sessions": {

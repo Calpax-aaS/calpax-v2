@@ -10,6 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { UserBanButton } from './user-ban-button'
 
 export default async function AdminUsersPage() {
   const t = await getTranslations('admin.users')
@@ -58,6 +59,8 @@ export default async function AdminUsersPage() {
                   <TableHead>{t('role')}</TableHead>
                   <TableHead>{t('exploitant')}</TableHead>
                   <TableHead>{t('lastLogin')}</TableHead>
+                  <TableHead>{t('status')}</TableHead>
+                  <TableHead className="text-right">{t('actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -73,6 +76,16 @@ export default async function AdminUsersPage() {
                     <TableCell>{user.exploitant.name}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {formatDate(lastLoginMap.get(user.id) ?? null)}
+                    </TableCell>
+                    <TableCell>
+                      {user.banned ? (
+                        <Badge variant="destructive">{t('banned')}</Badge>
+                      ) : (
+                        <Badge variant="secondary">{t('active')}</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <UserBanButton userId={user.id} banned={user.banned ?? false} />
                     </TableCell>
                   </TableRow>
                 ))}
