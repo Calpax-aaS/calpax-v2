@@ -266,9 +266,11 @@ Extrait `parseVolFormData()` et `resolveAutreEntities()` dans `lib/actions/vol.t
 
 ## TD-025: Securite -- billetPrefix sans restriction de caracteres
 
-**Severity:** MEDIUM
-**Context:** `billetPrefix` valide uniquement sur max length, pas de regex. Risque CSV injection si export.
-**Proposed fix:** Ajouter `regex(/^[A-Z0-9]+$/i)` au schema Zod.
+**Severity:** MEDIUM (resolu)
+**Status:** RESOLVED (2026-04-16)
+
+Regex `^[A-Z0-9]+$/i` ajoutee au schema Zod `exploitantSchema.billetPrefix`. 8 tests unitaires couvrent accept alphanumerique (majuscules, minuscules, chiffres), reject ponctuation (CSV injection `=CMD`), virgule, espaces, et longueur > 5.
+
 **Added:** 2026-04-14
 
 ---
