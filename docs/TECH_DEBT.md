@@ -258,8 +258,13 @@ Extrait `parseVolFormData()` et `resolveAutreEntities()` dans `lib/actions/vol.t
 
 ## TD-024: Qualite -- i18n incomplet (toasts, sidebar labels, alerts hardcodes FR)
 
-**Severity:** MEDIUM
-**Context:** Toasts de succes, labels de groupes sidebar, textes du banner alertes sont en francais hardcode hors du systeme i18n.
+**Severity:** MEDIUM (partiellement resolu)
+**Status:** RESOLVED (toasts) / OPEN (sidebar labels, alerts banner)
+
+Toasts de succes hardcodes remplaces par `t('saveSuccess')` dans ballons, pilotes, billets, vols, paiements. Cles FR + EN ajoutees aux 4 namespaces manquants (ballons/pilotes/vols/paiements).
+
+Reste: labels de groupes sidebar et textes du banner alertes (scope a part, changement UI structurel).
+
 **Added:** 2026-04-14
 
 ---

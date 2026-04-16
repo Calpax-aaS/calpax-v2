@@ -42,7 +42,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
     if (result?.error) {
       toast.error(result.error)
     } else {
-      toast.success('Ballon enregistre')
+      toast.success(t('saveSuccess'))
     }
   }
 

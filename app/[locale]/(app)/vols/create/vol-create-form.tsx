@@ -134,7 +134,7 @@ export function VolCreateForm({
       setError(result.error)
       toast.error(result.error)
     } else {
-      toast.success('Vol enregistre')
+      toast.success(t('saveSuccess'))
     }
   }
 

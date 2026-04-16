@@ -85,7 +85,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       setError(result.error)
       toast.error(result.error)
     } else {
-      toast.success('Billet enregistre')
+      toast.success(t('saveSuccess'))
     }
   }
 

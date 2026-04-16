@@ -45,7 +45,7 @@ export function PaiementForm({ billetId, locale }: Props) {
       setOpen(false)
       setError(null)
       setModePaiement('')
-      toast.success('Paiement enregistre')
+      toast.success(t('saveSuccess'))
     }
   }
 

@@ -48,7 +48,7 @@ export function PiloteEditForm({ locale, piloteId, pilote }: Props) {
     if (result?.error) {
       toast.error(result.error)
     } else {
-      toast.success('Pilote enregistre')
+      toast.success(t('saveSuccess'))
     }
   }
 
