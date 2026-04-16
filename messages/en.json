@@ -54,7 +54,10 @@
     "passwordResetSuccess": "Password reset successfully. You can now sign in.",
     "invitationTitle": "Set my password",
     "invitationButton": "Create my account",
-    "invitationSuccess": "Your account is ready. You can now sign in."
+    "invitationSuccess": "Your account is ready. You can now sign in.",
+    "orContinueWith": "Or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "googleError": "Google sign-in error"
   },
   "admin": {
     "title": "Calpax — Administration",

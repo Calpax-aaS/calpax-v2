@@ -54,7 +54,10 @@
     "passwordResetSuccess": "Mot de passe reinitialise avec succes. Vous pouvez maintenant vous connecter.",
     "invitationTitle": "Definir mon mot de passe",
     "invitationButton": "Creer mon compte",
-    "invitationSuccess": "Votre compte est pret. Vous pouvez maintenant vous connecter."
+    "invitationSuccess": "Votre compte est pret. Vous pouvez maintenant vous connecter.",
+    "orContinueWith": "Ou continuer avec",
+    "continueWithGoogle": "Continuer avec Google",
+    "googleError": "Erreur de connexion avec Google"
   },
   "admin": {
     "title": "Calpax — Administration",
