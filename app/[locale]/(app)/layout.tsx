@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { AlertsBanner } from '@/components/alerts-banner'
 import { runWithContext } from '@/lib/context'
@@ -58,6 +58,10 @@ export default async function AppLayout({ children, params }: Props) {
     <SidebarProvider>
       <AppSidebar userRole={role} />
       <SidebarInset>
+        <header className="sticky top-0 z-10 flex h-12 items-center gap-2 border-b bg-background px-4 md:hidden">
+          <SidebarTrigger />
+          <span className="text-sm font-semibold text-primary">Calpax</span>
+        </header>
         <AlertsBanner alerts={criticalAlerts} />
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>
