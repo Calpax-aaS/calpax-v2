@@ -36,7 +36,7 @@ function createTestClient(): PrismaClient {
  * Mirrors the minimal subset of prisma/seed.ts needed for auth E2E tests:
  *  - Cameron Balloons France (FR.DEC.059)
  *  - olivier@cameronfrance.com (GERANT) with password credential
- *  - damien@calpax.fr (ADMIN_CALPAX) with password credential
+ *  - dcuenot@calpax.fr (ADMIN_CALPAX) with password credential
  */
 export async function ensureSeedData(): Promise<void> {
   const prisma = createTestClient()
@@ -89,10 +89,10 @@ export async function ensureSeedData(): Promise<void> {
     }
 
     const adminUser = await prisma.user.upsert({
-      where: { email: 'damien@calpax.fr' },
+      where: { email: 'dcuenot@calpax.fr' },
       update: {},
       create: {
-        email: 'damien@calpax.fr',
+        email: 'dcuenot@calpax.fr',
         name: 'Damien Cuenot',
         role: 'ADMIN_CALPAX',
         exploitantId: calpaxSas.id,

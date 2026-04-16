@@ -5,7 +5,7 @@ import { hashPassword } from 'better-auth/crypto'
 
 async function main() {
   const adminEmail = process.env.ADMIN_EMAIL ?? 'dcuenot@calpax.fr'
-  const ownerEmail = process.env.SEED_EXPLOITANT_OWNER_EMAIL ?? 'damien@cameronfrance.com'
+  const ownerEmail = process.env.SEED_EXPLOITANT_OWNER_EMAIL ?? 'olivier@cameronfrance.com'
 
   const calpaxSas = await prisma.exploitant.upsert({
     where: { frDecNumber: 'INTERNAL.CALPAX' },
