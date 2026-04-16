@@ -24,25 +24,35 @@ export function LinkedAccounts({ linkedProviders, hasCredential }: Props) {
   async function handleLink(provider: 'google') {
     setLoading(provider)
     try {
-      const result = await authClient.linkSocial({
-        provider,
-        callbackURL: '/profil?linked=1',
+      // Use raw fetch to have explicit control over the redirect.
+      // authClient.linkSocial sometimes returns the URL in the body but
+      // doesn't auto-redirect, so we handle it manually.
+      const response = await fetch('/api/auth/link-social', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          provider,
+          callbackURL: '/profil?linked=1',
+        }),
       })
-      console.log('[linkSocial] result:', result)
 
-      if (result.error) {
-        toast.error(result.error.message ?? t('linkError'))
+      const body = await response.json()
+      console.log('[linkSocial] response:', response.status, body)
+
+      if (!response.ok) {
+        toast.error(body?.message ?? t('linkError'))
         setLoading(null)
         return
       }
 
-      // Better Auth may return a redirect URL that the client must follow manually
-      const url = (result.data as { url?: string; redirect?: boolean } | undefined)?.url
+      // Better Auth returns { url: "..." } for OAuth flows
+      const url = body?.url
       if (url) {
         window.location.href = url
       } else {
         setLoading(null)
-        toast.error(t('linkError') + ' (no redirect URL)')
+        toast.error(t('linkError') + ' (no redirect URL in response)')
       }
     } catch (err) {
       console.error('[linkSocial] error:', err)

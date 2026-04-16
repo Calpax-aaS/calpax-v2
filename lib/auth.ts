@@ -68,6 +68,10 @@ export const auth = betterAuth({
       // authenticated user to explicitly link via `authClient.linkSocial`.
       enabled: true,
       trustedProviders: [],
+      // Allow linking a social account with a different email than the user's
+      // primary email. Safe here because linking is only initiated by an
+      // already-authenticated user from the profile page.
+      allowDifferentEmails: true,
     },
   },
   plugins: [
