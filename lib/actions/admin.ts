@@ -53,12 +53,11 @@ export async function createUserForExploitant(data: {
 }) {
   await requireAdminCalpax()
 
-  // Create the user via Better Auth's admin API
-  // Since Better Auth uses its own user management, we create directly via Prisma
-  // and create an account with a generated password hash
+  // Generate a random password the user will never see.
+  // The user will receive a password reset email and set their own password.
   const { hashPassword } = await import('better-auth/crypto')
-  const tempPassword = crypto.randomUUID().slice(0, 16)
-  const hashedPassword = await hashPassword(tempPassword)
+  const randomPassword = crypto.randomUUID() + crypto.randomUUID()
+  const hashedPassword = await hashPassword(randomPassword)
 
   const user = await basePrisma.user.create({
     data: {
@@ -80,6 +79,20 @@ export async function createUserForExploitant(data: {
     },
   })
 
+  // Immediately send a password reset email so the user can set their own password
+  let emailSent = false
+  try {
+    await auth.api.requestPasswordReset({
+      body: {
+        email: data.email,
+        redirectTo: '/auth/reset-password',
+      },
+    })
+    emailSent = true
+  } catch (err) {
+    console.warn('[admin] Failed to send invitation email', err)
+  }
+
   revalidatePath('/admin/invitations')
-  return { user, tempPassword }
+  return { user, emailSent }
 }

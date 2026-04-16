@@ -46,7 +46,7 @@ export function InvitationForm({
   const [exploitantId, setExploitantId] = useState(exploitants[0]?.id ?? '')
   const [role, setRole] = useState<string>('GERANT')
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<{ email: string; tempPassword: string } | null>(null)
+  const [result, setResult] = useState<{ email: string; emailSent: boolean } | null>(null)
   const [recentUsers, setRecentUsers] = useState(initialRecentUsers)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -57,7 +57,7 @@ export function InvitationForm({
     setResult(null)
     try {
       const res = await createUserForExploitant({ email, name, exploitantId, role })
-      setResult({ email: res.user.email, tempPassword: res.tempPassword })
+      setResult({ email: res.user.email, emailSent: res.emailSent })
       // Add to recent users list
       const exploitant = exploitants.find((ex) => ex.id === exploitantId)
       setRecentUsers((prev) => [
@@ -141,13 +141,17 @@ export function InvitationForm({
           </form>
 
           {result && (
-            <div className="mt-4 rounded-md border border-green-200 bg-green-50 p-4 text-sm">
-              <p className="font-medium text-green-800">{t('success')}</p>
-              <p className="mt-1 text-green-700">
-                Email: <span className="font-mono">{result.email}</span>
-              </p>
-              <p className="text-green-700">
-                Mot de passe temporaire: <span className="font-mono">{result.tempPassword}</span>
+            <div
+              className={`mt-4 rounded-md border p-4 text-sm ${
+                result.emailSent
+                  ? 'border-success/30 bg-success/10 text-success'
+                  : 'border-warning/30 bg-warning/10 text-warning'
+              }`}
+            >
+              <p className="font-medium">
+                {result.emailSent
+                  ? `Utilisateur cree. Un email de configuration du mot de passe a ete envoye a ${result.email}.`
+                  : `Utilisateur cree mais l'email n'a pas pu etre envoye. Verifiez la config Resend ou renvoyez manuellement un lien de reset a ${result.email}.`}
               </p>
             </div>
           )}
