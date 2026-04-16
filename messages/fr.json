@@ -592,6 +592,21 @@
     "changePasswordButton": "Mettre a jour",
     "passwordMismatch": "Les mots de passe ne correspondent pas",
     "passwordChanged": "Mot de passe mis a jour",
-    "passwordError": "Erreur lors du changement de mot de passe"
+    "passwordError": "Erreur lors du changement de mot de passe",
+    "linkedAccounts": {
+      "title": "Methodes de connexion",
+      "description": "Liez un ou plusieurs comptes pour vous connecter plus rapidement. Vous pouvez les retirer a tout moment.",
+      "emailPassword": "Email + mot de passe",
+      "emailPasswordDescription": "Authentification par email et mot de passe",
+      "googleLinked": "Connecte via Google",
+      "googleNotLinked": "Liez votre compte Google",
+      "active": "Active",
+      "link": "Lier",
+      "unlink": "Delier",
+      "unlinkConfirm": "Etes-vous sur de vouloir delier ce compte ? Vous ne pourrez plus vous connecter avec cette methode.",
+      "unlinkSuccess": "Compte delie",
+      "unlinkError": "Impossible de delier ce compte",
+      "linkError": "Impossible de lier ce compte"
+    }
   }
 }

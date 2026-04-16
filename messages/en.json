@@ -592,6 +592,21 @@
     "changePasswordButton": "Update",
     "passwordMismatch": "Passwords do not match",
     "passwordChanged": "Password updated",
-    "passwordError": "Error changing password"
+    "passwordError": "Error changing password",
+    "linkedAccounts": {
+      "title": "Sign-in methods",
+      "description": "Link one or more accounts to sign in faster. You can remove them at any time.",
+      "emailPassword": "Email + password",
+      "emailPasswordDescription": "Email and password authentication",
+      "googleLinked": "Connected via Google",
+      "googleNotLinked": "Link your Google account",
+      "active": "Active",
+      "link": "Link",
+      "unlink": "Unlink",
+      "unlinkConfirm": "Are you sure you want to unlink this account? You will not be able to sign in with this method anymore.",
+      "unlinkSuccess": "Account unlinked",
+      "unlinkError": "Unable to unlink this account",
+      "linkError": "Unable to link this account"
+    }
   }
 }

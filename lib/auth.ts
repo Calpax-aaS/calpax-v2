@@ -61,6 +61,15 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     },
   },
+  account: {
+    accountLinking: {
+      // Enable manual account linking (from profile page).
+      // Automatic linking on same email is NOT enabled -- we require an
+      // authenticated user to explicitly link via `authClient.linkSocial`.
+      enabled: true,
+      trustedProviders: [],
+    },
+  },
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, url }) => {
