@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import { basePrisma } from '@/lib/db/base'
 import { revalidatePath } from 'next/cache'
 import { ForbiddenError } from '@/lib/errors'
+import { sendInvitationEmail } from '@/lib/email/invitation'
 
 async function requireAdminCalpax() {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -84,20 +85,16 @@ export async function createUserForExploitant(data: {
     },
   })
 
-  // Immediately send a password reset email so the user can set their own password
-  let emailSent = false
-  try {
-    await auth.api.requestPasswordReset({
-      body: {
-        email: data.email,
-        redirectTo: '/auth/reset-password',
-      },
-    })
-    emailSent = true
-  } catch (err) {
-    console.warn('[admin] Failed to send invitation email', err)
-  }
+  // Send a "welcome to Calpax" invitation email (distinct from a password reset).
+  // This generates a reset-password verification token under the hood so the user
+  // can set their own password, but the email copy is written for a brand-new user.
+  const invitationResult = await sendInvitationEmail({
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    exploitantName: user.exploitant?.name ?? '',
+  })
 
   revalidatePath('/admin/invitations')
-  return { user, emailSent }
+  return { user, emailSent: invitationResult.sent }
 }

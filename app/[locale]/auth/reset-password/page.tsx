@@ -11,6 +11,7 @@ export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
+  const isInvitation = searchParams.get('invitation') === '1'
 
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -52,7 +53,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <h2 className="text-[18px] font-semibold text-foreground mb-6 text-center">
-          {t('resetPasswordTitle')}
+          {isInvitation ? t('invitationTitle') : t('resetPasswordTitle')}
         </h2>
 
         {error && (
@@ -64,7 +65,7 @@ export default function ResetPasswordPage() {
         {success ? (
           <div className="text-center space-y-4">
             <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
-              {t('passwordResetSuccess')}
+              {isInvitation ? t('invitationSuccess') : t('passwordResetSuccess')}
             </div>
             <button
               type="button"
@@ -120,7 +121,7 @@ export default function ResetPasswordPage() {
               disabled={loading}
               className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {loading ? '...' : t('resetPasswordButton')}
+              {loading ? '...' : isInvitation ? t('invitationButton') : t('resetPasswordButton')}
             </button>
           </form>
         )}

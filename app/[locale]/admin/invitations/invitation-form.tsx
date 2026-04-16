@@ -150,8 +150,8 @@ export function InvitationForm({
             >
               <p className="font-medium">
                 {result.emailSent
-                  ? `Utilisateur cree. Un email de configuration du mot de passe a ete envoye a ${result.email}.`
-                  : `Utilisateur cree mais l'email n'a pas pu etre envoye. Verifiez la config Resend ou renvoyez manuellement un lien de reset a ${result.email}.`}
+                  ? `Un email de bienvenue a ete envoye a ${result.email}. L'utilisateur pourra definir son mot de passe via le lien recu (valide 24h).`
+                  : `Utilisateur cree mais l'email n'a pas pu etre envoye. Verifiez la config Resend ou renvoyez manuellement un lien d'invitation a ${result.email}.`}
               </p>
             </div>
           )}
