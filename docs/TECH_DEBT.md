@@ -117,13 +117,10 @@ Implemente avec `lib/auth/requireRole.ts`. 11 action files proteges (billet, pai
 
 ## TD-009: Tenant extension silently fails when findUnique uses select without exploitantId
 
-**Severity:** HIGH -- cause des bugs silencieux (page blanche, donnees introuvables).
+**Severity:** HIGH (resolu)
+**Status:** RESOLVED (2026-04-16)
 
-**Context:** Le post-filter du tenant extension pour `findUnique` compare `result[field]` avec `ctx.exploitantId`. Si le `select` ne contient pas le champ tenant (`exploitantId`), `result[field]` est `undefined` et le filtre retourne `null` silencieusement, comme si l'entite n'existait pas. Bug decouvert sur la page post-vol (2026-04-13).
-
-**Proposed fix:** Dans le tenant extension, pour les `UNIQUE_READ_OPS`, forcer l'inclusion du champ tenant dans le `select` si un `select` est present. Ou a defaut, throw une erreur explicite si `result[field]` est `undefined` (ce qui signifie que le select a omis le champ tenant).
-
-**When:** Prioritaire -- a corriger rapidement.
+Le tenant extension injecte maintenant automatiquement le champ tenant dans le `select` des `findUnique`/`findUniqueOrThrow` quand il est absent, verifie l'ownership via le post-filter, puis strip le champ du resultat final pour que l'appelant recoive exactement ce qu'il a demande. 4 tests d'integration ajoutes dans `tests/integration/tenant-isolation.spec.ts` pour couvrir les cas own-tenant, cross-tenant, et `findUniqueOrThrow`.
 
 **Added:** 2026-04-13
 

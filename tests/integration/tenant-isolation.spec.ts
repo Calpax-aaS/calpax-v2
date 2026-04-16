@@ -77,6 +77,43 @@ describe('tenant isolation', () => {
     )
     expect(result).toBeNull()
   })
+
+  it('findUnique with select omitting exploitantId still returns own-tenant row (TD-009)', async () => {
+    const A = await seedTenant('A')
+    // Select that does NOT include exploitantId. Before TD-009 fix, post-filter
+    // received result.exploitantId === undefined and returned null silently.
+    const result = await asUser(A, 'GERANT', async () =>
+      db.user.findUnique({
+        where: { id: A.userId },
+        select: { id: true, email: true },
+      }),
+    )
+    expect(result).not.toBeNull()
+    expect(result?.email).toBe('user-A@test.local')
+  })
+
+  it('findUnique with select omitting exploitantId still rejects cross-tenant row (TD-009)', async () => {
+    const A = await seedTenant('A')
+    const B = await seedTenant('B')
+    const result = await asUser(A, 'GERANT', async () =>
+      db.user.findUnique({
+        where: { id: B.userId },
+        select: { id: true, email: true },
+      }),
+    )
+    expect(result).toBeNull()
+  })
+
+  it('findUniqueOrThrow with select omitting exploitantId returns own-tenant row (TD-009)', async () => {
+    const A = await seedTenant('A')
+    const result = await asUser(A, 'GERANT', async () =>
+      db.user.findUniqueOrThrow({
+        where: { id: A.userId },
+        select: { id: true, email: true },
+      }),
+    )
+    expect(result.email).toBe('user-A@test.local')
+  })
 })
 
 describe('impersonate helper', () => {

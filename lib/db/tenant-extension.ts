@@ -61,9 +61,18 @@ export const tenantExtension = Prisma.defineExtension({
 
         const a = args as Record<string, unknown>
 
-        // findUnique post-filter: run original query, reject if wrong tenant
+        // findUnique post-filter: run original query, reject if wrong tenant.
+        // If caller uses `select` without the tenant field, force-inject it so
+        // the post-filter can verify ownership, then strip it from the result
+        // so the caller gets exactly what they asked for.
         if (UNIQUE_READ_OPS.has(operation)) {
-          const result = (await query(args)) as Record<string, unknown> | null
+          const select = a.select as Record<string, unknown> | undefined
+          let tenantFieldInjected = false
+          if (select && !(field in select)) {
+            a.select = { ...select, [field]: true }
+            tenantFieldInjected = true
+          }
+          const result = (await query(a)) as Record<string, unknown> | null
           if (result == null) return result
           const rowTenant = result[field]
           if (rowTenant !== ctx.exploitantId) {
@@ -71,6 +80,10 @@ export const tenantExtension = Prisma.defineExtension({
               throw new Error(`${model}.findUniqueOrThrow: no record found matching tenant`)
             }
             return null
+          }
+          if (tenantFieldInjected) {
+            const { [field]: _stripped, ...rest } = result
+            return rest
           }
           return result
         }
