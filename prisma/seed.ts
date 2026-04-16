@@ -101,6 +101,39 @@ async function main() {
     })
   }
 
+  // Additional users for Cameron Balloons France (role testing)
+  const extraUsers = [
+    { email: 'pilote@cameronfrance.com', name: 'Pilote Demo', role: 'PILOTE' as const },
+    { email: 'equipier@cameronfrance.com', name: 'Equipier Demo', role: 'EQUIPIER' as const },
+  ]
+
+  for (const u of extraUsers) {
+    const user = await prisma.user.upsert({
+      where: { email: u.email },
+      update: {},
+      create: {
+        email: u.email,
+        name: u.name,
+        role: u.role,
+        exploitantId: cameronBalloons.id,
+      },
+    })
+
+    const existingAccount = await prisma.account.findFirst({
+      where: { userId: user.id, providerId: 'credential' },
+    })
+    if (!existingAccount) {
+      await prisma.account.create({
+        data: {
+          userId: user.id,
+          accountId: user.id,
+          providerId: 'credential',
+          password: hashedPw,
+        },
+      })
+    }
+  }
+
   // Seed 9 ballons for Cameron Balloons France
   const ballonsData = [
     {
@@ -649,6 +682,8 @@ async function main() {
   )
   console.log(`  - User: ${adminEmail} (ADMIN_CALPAX)`)
   console.log(`  - User: ${ownerEmail} (GERANT)`)
+  console.log('  - User: pilote@cameronfrance.com (PILOTE)')
+  console.log('  - User: equipier@cameronfrance.com (EQUIPIER)')
   console.log('  - 9 ballons seeded for Cameron Balloons France')
   console.log('  - 4 pilotes seeded for Cameron Balloons France')
   console.log('  - 2 equipiers seeded for Cameron Balloons France')
