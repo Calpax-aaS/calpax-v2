@@ -19,6 +19,12 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 12,
     maxPasswordLength: 128,
+    // Require email verification before a session can be created.
+    // This only affects self-signup (public signup flow). Users created by an
+    // admin via `createUserForExploitant` (lib/actions/admin.ts) have
+    // `emailVerified: true` set directly in the DB — the admin vouches for them —
+    // so they are not blocked by this flag.
+    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       if (!resend) {
         console.warn('[auth] Resend not configured, reset password URL:', url)
@@ -29,6 +35,22 @@ export const auth = betterAuth({
         to: user.email,
         subject: 'Reinitialisation de votre mot de passe Calpax',
         html: `<p>Cliquez sur ce lien pour reinitialiser votre mot de passe :</p><p><a href="${url}">${url}</a></p><p>Ce lien expire dans 1 heure.</p>`,
+      })
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      if (!resend) {
+        console.warn('[auth] Resend not configured, verification URL:', url)
+        return
+      }
+      await resend.emails.send({
+        from: process.env.EMAIL_FROM ?? 'Calpax <noreply@calpax.fr>',
+        to: user.email,
+        subject: 'Verifiez votre adresse email Calpax',
+        html: `<p>Bienvenue sur Calpax. Cliquez sur ce lien pour verifier votre adresse email :</p><p><a href="${url}">${url}</a></p><p>Ce lien expire dans 1 heure.</p>`,
       })
     },
   },

@@ -59,6 +59,11 @@ export async function createUserForExploitant(data: {
   const randomPassword = crypto.randomUUID() + crypto.randomUUID()
   const hashedPassword = await hashPassword(randomPassword)
 
+  // emailVerified is set to true intentionally: admin-created users are vouched
+  // for by the admin. The user will still receive a password reset email (below)
+  // and must set their own password before they can sign in.
+  // Self-signup (public) goes through Better Auth directly, which enforces
+  // email verification via `emailAndPassword.requireEmailVerification` in lib/auth.ts.
   const user = await basePrisma.user.create({
     data: {
       email: data.email,
