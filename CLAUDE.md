@@ -13,26 +13,70 @@ Cycle couvert : réservations clients → paiements → organisation jour J (pas
 
 ## Stack technique
 
-| Couche          | Choix                                                      |
-| --------------- | ---------------------------------------------------------- |
-| Front           | Next.js (React) — SSR/CSR, SEO pages réservation publiques |
-| Back / API      | Node.js + Prisma                                           |
-| Base de données | PostgreSQL (Supabase)                                      |
-| Auth            | NextAuth.js — multi-tenant natif                           |
-| Paiements       | Mollie (EU, abonnements SaaS + paiements passagers)        |
-| Hébergement     | Vercel + Supabase                                          |
-| Cartes / GPS    | Leaflet.js + OpenStreetMap (open source, 0€)               |
-| Météo vent      | Open-Meteo API (gratuit, open source)                      |
-| Météo METAR/TAF | AVWX ou CheckWX API                                        |
-| i18n            | next-intl (FR + EN dès le départ)                          |
+| Couche          | Choix                                                                        |
+| --------------- | ---------------------------------------------------------------------------- |
+| Front           | Next.js 15 (React 19) — SSR/CSR, SEO pages réservation publiques             |
+| UI              | shadcn/ui (Radix) + Tailwind CSS 4 + DM Sans, palette "Grand Bleu"           |
+| Back / API      | Node.js + Prisma 7 (@prisma/adapter-pg)                                      |
+| Base de données | PostgreSQL (Supabase)                                                        |
+| Auth            | Better Auth v1.6.4 (email+password, magic link, Google OAuth, admin plugin)  |
+| Paiements       | Mollie (EU, abonnements SaaS + paiements passagers)                          |
+| Hébergement     | Vercel + Supabase (eu-central-1)                                             |
+| Cartes / GPS    | Leaflet.js + OpenStreetMap (open source, 0€)                                 |
+| Météo vent      | Open-Meteo API (gratuit, open source)                                        |
+| Météo METAR/TAF | AVWX ou CheckWX API                                                          |
+| PDF             | @react-pdf/renderer (server-side)                                            |
+| Email           | Resend                                                                       |
+| i18n            | next-intl (FR + EN dès le départ)                                            |
+| Tests           | Vitest (unit + integration) + Playwright (E2E)                               |
+| CI/CD           | GitHub Actions (lint + typecheck + unit + integration + build + E2E en prod) |
 
 ---
 
 ## Architecture multi-tenant
 
-Chaque exploitant a son propre espace de données isolé.
-Utiliser une colonne `tenant_id` sur toutes les tables (schéma PostgreSQL distinct si le volume le justifie plus tard).
+Chaque exploitant a son propre espace de données isolé via la colonne `exploitantId` sur toutes les tables.
+
+**Implémentation :**
+
+- `lib/context.ts` : `RequestContext` stocké dans `AsyncLocalStorage` (userId, exploitantId, role, impersonatedBy)
+- `lib/db/tenant-extension.ts` : Prisma extension qui injecte automatiquement `exploitantId` sur toutes les queries scoped
+- `lib/db/index.ts` : exporte `db` (tenant-scoped) et `adminDb` (bypass, audit only, usage restreint)
+- `lib/auth/requireAuth.ts` : wrap les server actions, vérifie la session Better Auth et injecte le contexte
+
 Un bug chez un exploitant ne doit jamais affecter les données d'un autre.
+
+## RBAC (Role-Based Access Control)
+
+4 rôles définis dans `lib/context.ts` :
+
+| Rôle           | Accès                                                                           |
+| -------------- | ------------------------------------------------------------------------------- |
+| `ADMIN_CALPAX` | Tout + espace Super Admin (Damien)                                              |
+| `GERANT`       | CRUD complet sur son tenant                                                     |
+| `PILOTE`       | Lecture sur ballons/pilotes/billets, ses vols en lecture, post-vol sur ses vols |
+| `EQUIPIER`     | Ses vols uniquement                                                             |
+
+**Helpers :**
+
+- `lib/auth/requireAuth.ts` : vérifie que l'utilisateur est authentifié
+- `lib/auth/requireRole.ts` : `requireRole('ADMIN_CALPAX', 'GERANT')` throw `ForbiddenError` si le rôle ne matche pas
+- Toutes les server actions et pages sensibles sont protégées
+- La sidebar masque les items inaccessibles selon le rôle
+
+## Super Admin
+
+Route group `app/[locale]/admin/` protégé par `requireRole('ADMIN_CALPAX')`.
+
+Pages :
+
+- Dashboard : stats globales + table exploitants + impersonation
+- Users : liste cross-tenant (nom, email, rôle, exploitant, dernière connexion)
+- Sessions : sessions actives + bouton revoquer
+- Audit : audit log cross-tenant avec filtre exploitant
+- Invitations : créer un user dans un exploitant
+
+`lib/admin/impersonate.ts` permet à un ADMIN_CALPAX de se connecter en tant qu'exploitant avec audit trail complet.
 
 ---
 
@@ -149,10 +193,36 @@ Le client zéro (Cameron Balloons France, 5+ ballons) est en segment **Expert**.
 
 - TypeScript strict partout
 - Prisma pour toutes les requêtes BDD — pas de SQL brut sauf cas exceptionnel justifié
-- Variables d'environnement pour toutes les clés API (Mollie, AVWX, Open-Meteo)
-- Toujours valider le `tenant_id` avant toute lecture/écriture en base
+- Variables d'environnement pour toutes les clés API (Mollie, AVWX, Open-Meteo, Resend, Better Auth)
+- Toujours utiliser `db` (tenant-scoped) au lieu de `basePrisma` pour les queries standard
+- `basePrisma` uniquement pour les usages cross-tenant légitimes (super admin, cron digest) — ESLint restreint les imports
+- Toutes les server actions doivent être wrappées dans `requireAuth(async () => { ... })`
+- Pour les mutations sensibles, ajouter `requireRole('ADMIN_CALPAX', 'GERANT')` dans le callback
 - Les données sensibles (poids passagers, coordonnées) sont chiffrées en base — utiliser la lib de chiffrement définie dans `/lib/crypto.ts`
+- Les PII dans les audit logs sont automatiquement redactées (email, téléphone, poids, etc. — voir `REDACT_FIELDS` dans `lib/db/audit-extension.ts`)
 - Les PDF (PVE, billets, factures) sont générés côté serveur uniquement
+- `lib/format.ts` : `formatDateFr()` pour tous les formats de date fr-FR
+- `lib/crypto.ts` : `encrypt`, `decrypt`, `safeDecryptInt` pour PII
+- Les helpers d'i18n : toutes les chaînes UI via `messages/fr.json` et `messages/en.json`
+
+## Environnement
+
+Variables obligatoires (voir `.env.example`) :
+
+- `DATABASE_URL` : connexion Postgres (pooled)
+- `DATABASE_URL_DIRECT` : connexion directe (migrations)
+- `BETTER_AUTH_SECRET` : `openssl rand -base64 32`
+- `BETTER_AUTH_URL` : URL de l'app (ex: `https://calpax.fr`)
+- `NEXT_PUBLIC_APP_URL` : même que BETTER_AUTH_URL
+- `ENCRYPTION_KEY` : 64 chars hex pour AES-256-GCM
+- `RESEND_API_KEY` : pour magic link et emails transactionnels
+- `SUPABASE_CA_CERT` : certificat CA Supabase (pour TLS en prod)
+
+Optionnelles :
+
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` : OAuth Google
+- `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` : monitoring
+- `CRON_SECRET` : pour protéger les endpoints Vercel Cron
 
 ---
 

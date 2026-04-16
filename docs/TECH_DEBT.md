@@ -72,18 +72,10 @@ Added `billetPrefix` field to Exploitant model. Reference generator reads from e
 
 ## TD-007: Pas de RBAC -- tous les roles ont acces a tout
 
-**Severity:** MEDIUM -- pas bloquant pour le client zero (Olivier = GERANT) mais requis avant ouverture multi-utilisateur.
+**Severity:** MEDIUM
+**Status:** RESOLVED (2026-04-16)
 
-**Context:** 4 roles existent dans le schema Prisma (`ADMIN_CALPAX`, `GERANT`, `PILOTE`, `EQUIPIER`) et le role est propage via `RequestContext` (AsyncLocalStorage). Cependant `requireAuth()` verifie uniquement que l'utilisateur est connecte, sans jamais controler le role. Toutes les pages, actions serveur et API sont accessibles a tous les roles. Un EQUIPIER voit exactement les memes ecrans qu'un GERANT (billets, paiements, parametres, RGPD, audit).
-
-**Proposed fix:**
-
-- Ajouter un helper `requireRole(...roles: UserRole[])` qui s'appuie sur `getContext().role`
-- Proteger les pages et server actions sensibles (billets, paiements, parametres, RGPD, audit)
-- Adapter la sidebar pour masquer les items inaccessibles selon le role
-- Definir la matrice d'acces par role avec Olivier
-
-**When:** Avant ouverture a d'autres utilisateurs que le gerant (P3/P4).
+Implemente avec `lib/auth/requireRole.ts`. 11 action files proteges (billet, paiement, vol, ballon, pilote, equipier, vehicule, site, exploitant, rgpd, organisation), 6 pages protegees (equipiers, vehicules, sites, settings, rgpd, audit), sidebar adaptative par role.
 
 **Added:** 2026-04-13
 
@@ -168,9 +160,10 @@ Fichier jamais committe (gitignored). Supprime du disque local.
 ## TD-013: Securite -- pas de rate limiting sur magic-link
 
 **Severity:** CRITICAL
-**Context:** Endpoint `/api/auth/signin/resend` sans rate limit. Risque d'email bombing et brute-force de tokens.
-**Proposed fix:** Rate limiting via Upstash Ratelimit ou middleware.
-**When:** Avant mise en production avec utilisateurs externes.
+**Status:** RESOLVED (2026-04-15)
+
+Better Auth v1.6.4 a un rate limiting built-in sur tous les endpoints auth (signin, magic link, reset password). Active par defaut. Verifie par les E2E qui declenchent "Too many requests" si trop d'appels.
+
 **Added:** 2026-04-14
 
 ---
@@ -287,3 +280,51 @@ Extrait `parseVolFormData()` et `resolveAutreEntities()` dans `lib/actions/vol.t
 **Severity:** MEDIUM
 **Context:** CLAUDE.md specifie suppression auto apres 5 ans, aucun cron n'existe pour ca.
 **Added:** 2026-04-14
+
+---
+
+## TD-027: Auth -- NextAuth beta remplace par Better Auth
+
+**Severity:** HIGH (resolu)
+**Status:** RESOLVED (2026-04-15)
+
+Migration de NextAuth v5.0.0-beta.30 vers Better Auth v1.6.4. L'equipe Auth.js a rejoint Better Auth (sept. 2025), qui est desormais recommande pour les nouveaux projets. Beneficies :
+
+- Email+password natif (remplacement du magic link comme methode principale)
+- Magic link toujours disponible pour reset password
+- Google OAuth configure (credentials a ajouter quand pret)
+- Admin plugin pour super admin
+- Rate limiting built-in (resout TD-013)
+- Middleware auth integre disponible
+- Types TypeScript inferes automatiquement depuis la config
+- Schema Prisma migre (User, Session, Account, Verification)
+
+**Added:** 2026-04-15
+
+---
+
+## TD-028: Super Admin -- espace de gestion transverse
+
+**Severity:** HIGH (resolu)
+**Status:** RESOLVED (2026-04-16)
+
+Route group `app/[locale]/admin/` protege par `requireRole('ADMIN_CALPAX')`. Pages : dashboard (stats + exploitants), users cross-tenant, sessions actives avec revocation, audit cross-tenant avec filtre exploitant, invitations (creation user). Banner d'impersonation. Sidebar admin + lien dans sidebar principale visible uniquement pour ADMIN_CALPAX.
+
+**Added:** 2026-04-16
+
+---
+
+## TD-029: Auth -- mot de passe oublie et changement mot de passe
+
+**Severity:** MEDIUM (resolu)
+**Status:** RESOLVED (2026-04-16)
+
+Flow complet :
+
+- Page login : toggle "Mot de passe oublie ?" -> envoi lien reset via Resend (`authClient.requestPasswordReset`)
+- Page `/auth/reset-password` : saisie nouveau mot de passe depuis token email (`authClient.resetPassword`)
+- `sendResetPassword` callback ajoute dans `lib/auth.ts`
+- Section "Changer le mot de passe" dans le profil (`ChangePasswordForm` client component)
+- i18n FR + EN complet
+
+**Added:** 2026-04-16
