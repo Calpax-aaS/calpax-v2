@@ -38,7 +38,6 @@ export function LinkedAccounts({ linkedProviders, hasCredential }: Props) {
       })
 
       const body = await response.json()
-      console.log('[linkSocial] response:', response.status, body)
 
       if (!response.ok) {
         toast.error(body?.message ?? t('linkError'))
@@ -54,8 +53,7 @@ export function LinkedAccounts({ linkedProviders, hasCredential }: Props) {
         setLoading(null)
         toast.error(t('linkError') + ' (no redirect URL in response)')
       }
-    } catch (err) {
-      console.error('[linkSocial] error:', err)
+    } catch {
       toast.error(t('linkError'))
       setLoading(null)
     }
