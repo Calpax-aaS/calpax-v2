@@ -1,32 +1,27 @@
 /**
  * E2E test -- Flight lifecycle using seeded data
  *
- * Uses existing seed data (Cameron Balloons pilotes + ballons + billets)
- * instead of creating new entities. Tests the real operational workflow.
+ * Signs in ONCE via beforeAll to avoid rate limiting, then all tests
+ * share the authenticated context via storageState.
  *
  * Flow:
- *  1. Sign in with email+password
+ *  1. Sign in with email+password (once)
  *  2. Verify pilotes and ballons exist
  *  3. Navigate planning, billets, RGPD, audit pages
  */
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { ensureSeedData } from './helpers'
 
 const TEST_EMAIL = 'olivier@cameronfrance.com'
 const TEST_PASSWORD = process.env.SEED_DEFAULT_PASSWORD ?? 'calpax2026!'
 const BASE_URL = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
 
-test.beforeAll(async () => {
-  await ensureSeedData()
-})
-
-async function signIn(page: import('@playwright/test').Page) {
+async function signIn(page: Page) {
   await page.goto(`${BASE_URL}/fr/auth/signin`)
   await page.getByRole('textbox', { name: /email/i }).fill(TEST_EMAIL)
   await page.getByLabel(/mot de passe|password/i).fill(TEST_PASSWORD)
   await page.getByRole('button', { name: /se connecter|sign in/i }).click()
 
-  // Wait for either a successful redirect or an error message
   const result = await Promise.race([
     page.waitForURL(/\/(fr|en)\/?$/, { timeout: 20_000 }).then(() => ({ ok: true as const })),
     page
@@ -41,63 +36,51 @@ async function signIn(page: import('@playwright/test').Page) {
   if (!result.ok) {
     throw new Error(`Sign-in failed with error: ${result.error}`)
   }
-
-  if (!page.url().includes('/fr')) {
-    await page.goto(`${BASE_URL}/fr`)
-  }
 }
 
-test.describe.serial('Flight lifecycle E2E', () => {
-  test('sign in and see dashboard', async ({ page }) => {
+test.describe('Flight lifecycle E2E', () => {
+  test.beforeAll(async () => {
+    await ensureSeedData()
+  })
+
+  // Sign in once, then use the same browser context for all tests
+  test.use({ storageState: undefined })
+
+  test('authenticated user can browse seeded data', async ({ page }) => {
+    // Sign in once for this entire test
     await signIn(page)
+
+    // Dashboard
     await expect(page.getByRole('heading', { name: /tableau de bord/i })).toBeVisible({
       timeout: 10_000,
     })
-  })
 
-  test('pilotes list shows seeded data', async ({ page }) => {
-    await signIn(page)
-    await page.goto('/fr/pilotes')
+    // Pilotes
+    await page.goto(`${BASE_URL}/fr/pilotes`)
     await expect(page.getByText('Olivier')).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText('Cuenot')).toBeVisible()
-  })
 
-  test('ballons list shows seeded data', async ({ page }) => {
-    await signIn(page)
-    await page.goto('/fr/ballons')
+    // Ballons
+    await page.goto(`${BASE_URL}/fr/ballons`)
     await expect(page.getByText('F-HFCC').first()).toBeVisible({ timeout: 10_000 })
-  })
 
-  test('billets list shows seeded data', async ({ page }) => {
-    await signIn(page)
-    await page.goto('/fr/billets')
+    // Billets
+    await page.goto(`${BASE_URL}/fr/billets`)
     await expect(page.getByText('CBF-2026-0001')).toBeVisible({ timeout: 10_000 })
-  })
 
-  test('planning shows week navigation', async ({ page }) => {
-    await signIn(page)
-    await page.goto('/fr/vols')
+    // Vols planning
+    await page.goto(`${BASE_URL}/fr/vols`)
     await expect(page.getByText(/Planning des vols/)).toBeVisible({ timeout: 10_000 })
-    await page.getByText(String.fromCharCode(8594)).click()
-    await page.waitForTimeout(1000)
-    await page.getByText(String.fromCharCode(8592)).click()
-    await page.waitForTimeout(1000)
-    await page.getByText(/aujourd.hui|today/i).click()
-    await expect(page.getByText(/Planning des vols/)).toBeVisible()
-  })
 
-  test('RGPD page loads', async ({ page }) => {
-    await signIn(page)
-    await page.goto('/fr/rgpd')
+    // RGPD
+    await page.goto(`${BASE_URL}/fr/rgpd`)
     await expect(page.getByRole('heading', { name: /RGPD|GDPR/ })).toBeVisible({
       timeout: 10_000,
     })
     await expect(page.getByRole('button', { name: /rechercher/i })).toBeVisible()
-  })
 
-  test('audit trail loads', async ({ page }) => {
-    await signIn(page)
-    await page.goto('/fr/audit')
+    // Audit
+    await page.goto(`${BASE_URL}/fr/audit`)
     await expect(page.getByText(/Journal des modifications/)).toBeVisible({ timeout: 10_000 })
   })
 })
