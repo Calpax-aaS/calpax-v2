@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { PasswordStrength } from '@/components/password-strength'
 
 export function ChangePasswordForm() {
   const t = useTranslations('profil')
@@ -76,10 +77,11 @@ export function ChangePasswordForm() {
               id="new-password"
               type="password"
               required
-              minLength={8}
+              minLength={12}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
+            <PasswordStrength password={newPassword} minLength={12} />
           </div>
           <div className="space-y-1.5">
             <Label
@@ -92,7 +94,7 @@ export function ChangePasswordForm() {
               id="confirm-password"
               type="password"
               required
-              minLength={8}
+              minLength={12}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />

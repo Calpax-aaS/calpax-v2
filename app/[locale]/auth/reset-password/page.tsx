@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { authClient } from '@/lib/auth-client'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { PasswordStrength } from '@/components/password-strength'
 
 export default function ResetPasswordPage() {
   const t = useTranslations('signin')
@@ -87,12 +88,13 @@ export default function ResetPasswordPage() {
                 name="newPassword"
                 type="password"
                 required
-                minLength={8}
+                minLength={12}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder={t('newPasswordPlaceholder')}
                 className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
+              <PasswordStrength password={newPassword} minLength={12} />
             </div>
             <div className="space-y-1.5">
               <label
@@ -106,7 +108,7 @@ export default function ResetPasswordPage() {
                 name="confirmPassword"
                 type="password"
                 required
-                minLength={8}
+                minLength={12}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder={t('confirmPasswordPlaceholder')}

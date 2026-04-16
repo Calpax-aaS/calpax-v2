@@ -17,7 +17,8 @@ export const auth = betterAuth({
   database: prismaAdapter(basePrisma, { provider: 'postgresql' }),
   emailAndPassword: {
     enabled: true,
-    minPasswordLength: 8,
+    minPasswordLength: 12,
+    maxPasswordLength: 128,
     sendResetPassword: async ({ user, url }) => {
       if (!resend) {
         console.warn('[auth] Resend not configured, reset password URL:', url)
