@@ -328,3 +328,91 @@ Flow complet :
 - i18n FR + EN complet
 
 **Added:** 2026-04-16
+
+---
+
+## TD-030: Auth -- 2FA / TOTP
+
+**Severity:** LOW -- utile pour ADMIN_CALPAX, optionnel pour les autres.
+
+**Context:** Better Auth fournit un plugin `twoFactor` avec TOTP (Google Authenticator, 1Password, etc.). Pas critique pour l'instant mais recommande pour les comptes ADMIN_CALPAX.
+
+**Proposed fix:** Activer le plugin dans `lib/auth.ts`, ajouter UI de setup dans profil, forcer pour ADMIN_CALPAX.
+
+**When:** Avant ouverture multi-exploitant.
+
+**Added:** 2026-04-16
+
+---
+
+## TD-031: Auth -- Passkeys / WebAuthn
+
+**Severity:** LOW -- meilleure UX que mot de passe a long terme.
+
+**Context:** Better Auth supporte les passkeys via plugin. Permettrait login sans mot de passe via biometrie ou cle USB.
+
+**Proposed fix:** Activer le plugin passkey, ajouter UI d'enregistrement dans profil.
+
+**When:** V2 / ouverture publique.
+
+**Added:** 2026-04-16
+
+---
+
+## TD-032: Auth -- Session management UI dans profil
+
+**Severity:** LOW -- deja possible via admin, pas exposee cote user.
+
+**Context:** L'utilisateur ne voit pas ses propres sessions actives (navigateur, mobile, etc.) et ne peut pas les revoquer individuellement. Seul ADMIN_CALPAX voit toutes les sessions de tous les users.
+
+**Proposed fix:** Ajouter une Card "Sessions actives" dans la page profil avec liste + bouton "Deconnecter cet appareil".
+
+**Added:** 2026-04-16
+
+---
+
+## TD-033: Auth -- "Se souvenir de moi" option
+
+**Severity:** LOW -- UX mineure.
+
+**Context:** Actuellement sessions 7 jours par defaut. Certains users voudraient "Se souvenir de moi" pour rester connectes 30 jours.
+
+**Proposed fix:** Checkbox sur la page login, impacte la duree de session Better Auth.
+
+**Added:** 2026-04-16
+
+---
+
+## TD-034: Auth -- Desactiver un user sans le supprimer
+
+**Severity:** MEDIUM -- utile pour gerer les departs.
+
+**Context:** Aujourd'hui on ne peut que supprimer un user. Pour un pilote qui quitte temporairement, il faudrait pouvoir le desactiver (bloque login) sans perdre ses references dans les vols/billets.
+
+**Proposed fix:** Ajouter un champ `disabled: Boolean` sur User. `requireAuth` refuse si disabled. Exposer toggle dans admin users.
+
+**Added:** 2026-04-16
+
+---
+
+## TD-035: Tests E2E RBAC
+
+**Severity:** LOW -- couvert par l'implementation mais pas par des tests automatises.
+
+**Context:** Verifier automatiquement qu'un PILOTE ne peut pas acceder a /settings, qu'un EQUIPIER ne voit que ses vols, etc. Actuellement teste uniquement via ensureSeedData sans assertions RBAC.
+
+**Proposed fix:** Ajouter des tests Playwright qui se connectent avec pilote@ et equipier@ et verifient les restrictions.
+
+**Added:** 2026-04-16
+
+---
+
+## TD-036: Auth -- middleware audit sur impersonation
+
+**Severity:** LOW -- deja partiellement fait.
+
+**Context:** `lib/admin/impersonate.ts` fait du tracking via `impersonatedBy` dans RequestContext, propage dans audit log. A verifier que c'est correctement logge et visible dans l'audit UI.
+
+**Proposed fix:** Ajouter une colonne "Impersonne par" visible dans la page audit admin.
+
+**Added:** 2026-04-16
