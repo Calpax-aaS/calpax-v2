@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { ballonSchema } from '@/lib/schemas/ballon'
@@ -45,6 +46,7 @@ export async function createBallon(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const raw = extractBallonData(formData)
@@ -75,6 +77,7 @@ export async function updateBallon(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const raw = extractBallonData(formData)
     const result = ballonSchema.safeParse(raw)
     if (!result.success) {
@@ -97,6 +100,7 @@ export async function updateBallon(
  */
 export async function toggleBallonActif(id: string, actif: boolean): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     await db.ballon.update({
       where: { id },
       data: { actif },

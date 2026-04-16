@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { db } from '@/lib/db'
 
 export async function affecterBillet(
@@ -10,6 +11,7 @@ export async function affecterBillet(
   locale: string,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     await db.passager.updateMany({
       where: { billetId, volId: null },
       data: { volId },
@@ -38,6 +40,7 @@ export async function affecterPassager(
   locale: string,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const passager = await db.passager.findUniqueOrThrow({ where: { id: passagerId } })
 
     await db.passager.update({
@@ -68,6 +71,7 @@ export async function desaffecterPassager(
   locale: string,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const passager = await db.passager.findUniqueOrThrow({ where: { id: passagerId } })
 
     await db.passager.update({
@@ -88,6 +92,7 @@ export async function desaffecterPassager(
 
 export async function confirmerVol(volId: string, locale: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const vol = await db.vol.findUniqueOrThrow({
       where: { id: volId },
       select: { statut: true, exploitantId: true },

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { z } from 'zod'
@@ -17,6 +18,7 @@ export async function createEquipier(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const raw = {
@@ -49,6 +51,7 @@ export async function toggleEquipierActif(
   locale: string,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const equipier = await db.equipier.findUniqueOrThrow({ where: { id: equipierId } })
     await db.equipier.update({
       where: { id: equipierId },

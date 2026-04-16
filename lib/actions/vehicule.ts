@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { z } from 'zod'
@@ -16,6 +17,7 @@ export async function createVehicule(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const raw = {
@@ -47,6 +49,7 @@ export async function toggleVehiculeActif(
   locale: string,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const vehicule = await db.vehicule.findUniqueOrThrow({ where: { id: vehiculeId } })
     await db.vehicule.update({
       where: { id: vehiculeId },

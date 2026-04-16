@@ -1,9 +1,11 @@
 import { getTranslations } from 'next-intl/server'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { RgpdClient } from './rgpd-client'
 
 export default async function RgpdPage() {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const t = await getTranslations('rgpd')
     return (
       <div className="space-y-6">

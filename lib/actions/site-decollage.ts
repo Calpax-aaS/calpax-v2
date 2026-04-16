@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { z } from 'zod'
@@ -19,6 +20,7 @@ export async function createSiteDecollage(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const raw = {
@@ -53,6 +55,7 @@ export async function createSiteDecollage(
 
 export async function toggleSiteActif(siteId: string, locale: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const site = await db.siteDecollage.findUniqueOrThrow({ where: { id: siteId } })
     await db.siteDecollage.update({
       where: { id: siteId },

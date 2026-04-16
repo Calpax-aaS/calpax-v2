@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { piloteSchema } from '@/lib/schemas/pilote'
@@ -45,6 +46,7 @@ export async function createPilote(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const raw = extractPiloteData(formData)
@@ -77,6 +79,7 @@ export async function updatePilote(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const raw = extractPiloteData(formData)
     const result = piloteSchema.safeParse(raw)
     if (!result.success) {
@@ -102,6 +105,7 @@ export async function updatePilote(
  */
 export async function togglePiloteActif(id: string, actif: boolean): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     await db.pilote.update({
       where: { id },
       data: { actif },

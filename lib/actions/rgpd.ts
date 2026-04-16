@@ -1,6 +1,7 @@
 'use server'
 
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { basePrisma } from '@/lib/db/base'
@@ -55,6 +56,7 @@ export async function searchPassagers(query: string): Promise<PassagerSearchResu
 
 export async function exportPassagerData(passagerId: string): Promise<string> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const passager = await db.passager.findUniqueOrThrow({
       where: { id: passagerId },
       include: { billet: { include: { paiements: true } } },
@@ -99,6 +101,7 @@ export async function exportPassagerData(passagerId: string): Promise<string> {
 
 export async function anonymisePassager(passagerId: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     await db.passager.update({
       where: { id: passagerId },
       data: {

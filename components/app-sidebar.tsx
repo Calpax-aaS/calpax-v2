@@ -43,6 +43,22 @@ type NavGroup = {
   items: NavItem[]
 }
 
+type UserRole = 'ADMIN_CALPAX' | 'GERANT' | 'PILOTE' | 'EQUIPIER'
+
+const roleAccess: Record<string, UserRole[]> = {
+  home: ['ADMIN_CALPAX', 'GERANT', 'PILOTE', 'EQUIPIER'],
+  billets: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
+  vols: ['ADMIN_CALPAX', 'GERANT', 'PILOTE', 'EQUIPIER'],
+  ballons: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
+  pilotes: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
+  equipiers: ['ADMIN_CALPAX', 'GERANT'],
+  vehicules: ['ADMIN_CALPAX', 'GERANT'],
+  sites: ['ADMIN_CALPAX', 'GERANT'],
+  settings: ['ADMIN_CALPAX', 'GERANT'],
+  rgpd: ['ADMIN_CALPAX', 'GERANT'],
+  audit: ['ADMIN_CALPAX', 'GERANT'],
+}
+
 export function AppSidebar({ userRole }: { userRole?: string }) {
   const t = useTranslations('nav')
   const locale = useLocale()
@@ -80,6 +96,17 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
     },
   ]
 
+  const role = (userRole as UserRole) ?? 'GERANT'
+  const filteredGroups = groups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        const allowed = roleAccess[item.key]
+        return !allowed || allowed.includes(role)
+      }),
+    }))
+    .filter((group) => group.items.length > 0)
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -89,7 +116,7 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        {groups.map((group, i) => (
+        {filteredGroups.map((group) => (
           <SidebarGroup key={group.label ?? 'top'}>
             {group.label && (
               <SidebarGroupLabel className="text-sidebar-primary/60 text-[10px] uppercase tracking-widest">

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { paiementCreateSchema } from '@/lib/schemas/paiement'
@@ -29,6 +30,7 @@ export async function addPaiement(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const raw = {
@@ -66,6 +68,7 @@ export async function deletePaiement(
   locale: string,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     await db.paiement.delete({ where: { id: paiementId } })
     await recalcStatutPaiement(billetId)
 

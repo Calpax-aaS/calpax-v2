@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,6 +13,7 @@ import { updateExploitant } from '@/lib/actions/exploitant'
 
 export default async function SettingsPage() {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const t = await getTranslations('settings')
     const ctx = getContext()
 

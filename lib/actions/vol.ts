@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { volCreateSchema, volPostFlightSchema } from '@/lib/schemas/vol'
@@ -49,6 +50,7 @@ function resolveAutreEntities(rest: {
 
 export async function createVol(locale: string, formData: FormData): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const raw = parseVolFormData(formData)
@@ -109,6 +111,7 @@ export async function updateVol(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const vol = await db.vol.findUniqueOrThrow({ where: { id: volId } })
     if (vol.statut !== 'PLANIFIE' && vol.statut !== 'CONFIRME') {
       return { error: 'Impossible de modifier un vol termine ou archive' }
@@ -173,6 +176,7 @@ export async function savePostFlight(
   formData: FormData,
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT', 'PILOTE')
     const vol = await db.vol.findUniqueOrThrow({
       where: { id: volId },
       select: { statut: true, exploitantId: true },
@@ -209,6 +213,7 @@ export async function savePostFlight(
 
 export async function archivePve(volId: string, locale: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
     const volCheck = await db.vol.findUniqueOrThrow({
@@ -247,6 +252,7 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
 
 export async function cancelVol(volId: string, locale: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const vol = await db.vol.findUniqueOrThrow({ where: { id: volId } })
     if (vol.statut === 'ARCHIVE') {
       return { error: "Impossible d'annuler un vol archive" }

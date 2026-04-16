@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { Badge } from '@/components/ui/badge'
@@ -24,6 +25,7 @@ type Props = {
 export default async function EquipiersPage({ params }: Props) {
   const { locale } = await params
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     const t = await getTranslations('equipiers')
     const ctx = getContext()
 
