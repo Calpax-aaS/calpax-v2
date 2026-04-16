@@ -25,7 +25,23 @@ async function signIn(page: import('@playwright/test').Page) {
   await page.getByRole('textbox', { name: /email/i }).fill(TEST_EMAIL)
   await page.getByLabel(/mot de passe|password/i).fill(TEST_PASSWORD)
   await page.getByRole('button', { name: /se connecter|sign in/i }).click()
-  await page.waitForURL(/\/(fr|en)\/?$/, { timeout: 15_000 })
+
+  // Wait for either a successful redirect or an error message
+  const result = await Promise.race([
+    page.waitForURL(/\/(fr|en)\/?$/, { timeout: 20_000 }).then(() => ({ ok: true as const })),
+    page
+      .locator('.bg-destructive\\/10')
+      .waitFor({ state: 'visible', timeout: 20_000 })
+      .then(async () => {
+        const errorText = await page.locator('.bg-destructive\\/10').textContent()
+        return { ok: false as const, error: errorText }
+      }),
+  ])
+
+  if (!result.ok) {
+    throw new Error(`Sign-in failed with error: ${result.error}`)
+  }
+
   if (!page.url().includes('/fr')) {
     await page.goto(`${BASE_URL}/fr`)
   }

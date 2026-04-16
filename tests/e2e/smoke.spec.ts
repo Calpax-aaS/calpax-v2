@@ -43,7 +43,17 @@ test.describe.serial('P0 smoke -- sign-in flow', () => {
     await page.getByLabel(/mot de passe|password/i).fill(TEST_PASSWORD)
     await page.getByRole('button', { name: /se connecter|sign in/i }).click()
 
-    await expect(page).toHaveURL(/\/fr\/?$/, { timeout: 15_000 })
+    // Fail fast if an error message appears instead of waiting for timeout
+    const errorLocator = page.locator('.bg-destructive\\/10')
+    const redirected = await Promise.race([
+      page.waitForURL(/\/fr\/?$/, { timeout: 20_000 }).then(() => true),
+      errorLocator.waitFor({ state: 'visible', timeout: 20_000 }).then(async () => {
+        const msg = await errorLocator.textContent()
+        throw new Error(`Sign-in error displayed: ${msg}`)
+      }),
+    ])
+
+    expect(redirected).toBe(true)
     await expect(page.getByText(/Olivier Cuenot/)).toBeVisible()
   })
 
@@ -54,7 +64,17 @@ test.describe.serial('P0 smoke -- sign-in flow', () => {
     await page.getByLabel(/mot de passe|password/i).fill(TEST_PASSWORD)
     await page.getByRole('button', { name: /se connecter|sign in/i }).click()
 
-    await expect(page).toHaveURL(/\/fr\/?$/, { timeout: 15_000 })
+    // Fail fast if an error message appears instead of waiting for timeout
+    const errorLocator = page.locator('.bg-destructive\\/10')
+    const redirected = await Promise.race([
+      page.waitForURL(/\/fr\/?$/, { timeout: 20_000 }).then(() => true),
+      errorLocator.waitFor({ state: 'visible', timeout: 20_000 }).then(async () => {
+        const msg = await errorLocator.textContent()
+        throw new Error(`Sign-in error displayed: ${msg}`)
+      }),
+    ])
+
+    expect(redirected).toBe(true)
     await expect(page.getByText(/Olivier Cuenot/)).toBeVisible()
     await expect(page.getByText(/Cameron Balloons/)).toBeVisible()
   })
