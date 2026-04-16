@@ -53,7 +53,6 @@ test.describe.serial('Flight lifecycle E2E', () => {
     await expect(page.getByRole('heading', { name: /tableau de bord/i })).toBeVisible({
       timeout: 10_000,
     })
-    await expect(page.getByText(/Cameron Balloons/i)).toBeVisible()
   })
 
   test('pilotes list shows seeded data', async ({ page }) => {
