@@ -141,9 +141,10 @@ Fichier jamais committe (gitignored). Supprime du disque local.
 ## TD-011: Securite -- middleware sans auth guard
 
 **Severity:** CRITICAL
-**Context:** Le middleware ne fait que du routing i18n. Pas d'auth au edge -- toute la securite repose sur `requireAuth()` dans chaque page/action. Un oubli = page publique.
-**Proposed fix:** Ajouter un check auth dans middleware.ts pour les routes `/(app)/`.
-**When:** Avant ouverture multi-utilisateur.
+**Status:** RESOLVED (2026-04-16)
+
+`middleware.ts` verifie maintenant le cookie de session Better Auth via `getSessionCookie` pour toutes les routes `/(app)/*` et `/(admin)/*`. Redirige vers signin si absent, avec `callbackUrl` preserve. Check optimiste au edge + `requireAuth()` reste l'authoritative check cote serveur (defense-in-depth).
+
 **Added:** 2026-04-14
 
 ---
