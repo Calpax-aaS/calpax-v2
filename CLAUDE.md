@@ -147,7 +147,11 @@ Règlement EU 2018/395 (Part-BOP) + DGAC :
 - Création vol (ballon + pilote + date + capacité)
 - Gestion réservations et affectation passagers
 - Page réservation publique + paiement Mollie intégré
-- Dashboard jour J (passagers + devis de masse)
+- Dashboard jour J (vols du jour avec devis de masse, alertes CAMO/BFCL filtrées aux entités du jour, météo — remplace le dashboard hebdo)
+- Post-vol wizard (3 étapes mobile : infos vol → passagers embarqués → journal de bord, remplace l'ancien formulaire unique)
+- Filtrage des vols par rôle (PILOTE voit uniquement ses vols via `pilote.userId`, GERANT/ADMIN voit tout)
+- Alertes météo automatiques (`/api/cron/meteo-alert`, toutes les 30 min de 03:00 à 18:00 UTC, bannière orange + action annulation si vent > seuil exploitant)
+- Notifications email annulation (payeur + pilote + équipier notifiés avec motif)
 - Billet numérique PDF + QR code + email de confirmation
 - Vue pilote mobile (vols assignés + liste passagers)
 - Validation vol par pilote → déclenchement PVE automatique
@@ -166,7 +170,6 @@ Règlement EU 2018/395 (Part-BOP) + DGAC :
 - Portail passager autonome (V2)
 - Bons cadeaux (V2)
 - Notifications SMS (V2)
-- Alertes météo automatiques (V2)
 - Checklist pré-vol digitale (V2)
 - Carnet de vol pilote (V2)
 - Replay parcours GPS (V2)
@@ -203,6 +206,8 @@ Le client zéro (Cameron Balloons France, 5+ ballons) est en segment **Expert**.
 - Les PDF (PVE, billets, factures) sont générés côté serveur uniquement
 - `lib/format.ts` : `formatDateFr()` pour tous les formats de date fr-FR
 - `lib/crypto.ts` : `encrypt`, `decrypt`, `safeDecryptInt` pour PII
+- `lib/vol/role-filter.ts` : `buildVolWhereForRole()` pour filtrer les vols par rôle dans les queries Prisma
+- `components/flight-card.tsx` : composant partagé `FlightCard` utilisé par le dashboard jour J et la liste des vols mobile
 - Les helpers d'i18n : toutes les chaînes UI via `messages/fr.json` et `messages/en.json`
 
 ## Environnement
