@@ -388,6 +388,8 @@
     "confirmer": "Confirmer le vol",
     "save": "Enregistrer",
     "saveSuccess": "Vol enregistré",
+    "mobileList": "Liste",
+    "mobileGrid": "Grille",
     "edit": "Modifier le vol",
     "noVols": "Aucun vol sur cette semaine",
     "createFirst": "Planifier un vol",
@@ -443,6 +445,9 @@
     },
     "postVol": {
       "title": "Compte-rendu post-vol",
+      "step1": "Décollage",
+      "step2": "Atterrissage",
+      "step3": "Compte-rendu",
       "decoLieu": "Lieu de décollage",
       "decoHeure": "Heure de décollage",
       "atterLieu": "Lieu d'atterrissage",
@@ -451,6 +456,10 @@
       "distance": "Distance parcourue (km)",
       "anomalies": "Anomalies / Observations",
       "noteDansCarnet": "Note dans le carnet de bord",
+      "next": "Suivant",
+      "back": "Retour",
+      "submit": "Valider le vol",
+      "summary": "Récapitulatif",
       "save": "Enregistrer et terminer le vol"
     },
     "downloadFiche": "Télécharger PVE",
@@ -590,6 +599,29 @@
       "confirmAnonymise": "Cette action est irréversible. Les données personnelles seront supprimées. Confirmer ?"
     },
     "anonymised": "Données anonymisées"
+  },
+  "dashboard": {
+    "title": "Vols du jour",
+    "noFlights": "Aucun vol aujourd'hui",
+    "goToPlanning": "Voir le planning",
+    "passengers": "passagers",
+    "capacity": "capacité",
+    "massOk": "Masse OK",
+    "massWarning": "Masse limite",
+    "massOver": "Dépassement",
+    "goNogo": {
+      "GO": "GO",
+      "NOGO": "NO-GO",
+      "MARGINAL": "Limite"
+    },
+    "meteoAlert": "Vent prévu au-dessus du seuil",
+    "meteoAlertAction": "Annuler ce vol ?",
+    "cancelMeteo": "Annuler (météo)",
+    "cancelMeteoConfirm": "Annuler ce vol pour raison météo ? Les passagers seront désaffectés et les contacts notifiés par email."
+  },
+  "cancellation": {
+    "emailSubjectPayeur": "Vol annulé — {date}",
+    "emailSubjectEquipe": "Vol annulé — {ballon} — {date}"
   },
   "profil": {
     "title": "Mon profil",

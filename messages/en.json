@@ -388,6 +388,8 @@
     "confirmer": "Confirm flight",
     "save": "Save",
     "saveSuccess": "Flight saved",
+    "mobileList": "List",
+    "mobileGrid": "Grid",
     "edit": "Edit flight",
     "noVols": "No flights this week",
     "createFirst": "Plan a flight",
@@ -443,14 +445,21 @@
     },
     "postVol": {
       "title": "Post-flight report",
+      "step1": "Takeoff",
+      "step2": "Landing",
+      "step3": "Report",
       "decoLieu": "Takeoff location",
       "decoHeure": "Takeoff time",
       "atterLieu": "Landing location",
       "atterHeure": "Landing time",
       "gasConso": "Gas consumption (kg)",
       "distance": "Distance (km)",
-      "anomalies": "Anomalies / Observations",
+      "anomalies": "Issues / Observations",
       "noteDansCarnet": "Log in flight journal",
+      "next": "Next",
+      "back": "Back",
+      "submit": "Complete flight",
+      "summary": "Summary",
       "save": "Save and complete flight"
     },
     "downloadFiche": "Download flight sheet",
@@ -590,6 +599,29 @@
       "confirmAnonymise": "This action is irreversible. Personal data will be deleted. Confirm?"
     },
     "anonymised": "Data anonymised"
+  },
+  "dashboard": {
+    "title": "Today's flights",
+    "noFlights": "No flights today",
+    "goToPlanning": "View planning",
+    "passengers": "passengers",
+    "capacity": "capacity",
+    "massOk": "Mass OK",
+    "massWarning": "Mass marginal",
+    "massOver": "Overweight",
+    "goNogo": {
+      "GO": "GO",
+      "NOGO": "NO-GO",
+      "MARGINAL": "Marginal"
+    },
+    "meteoAlert": "Wind forecast above threshold",
+    "meteoAlertAction": "Cancel this flight?",
+    "cancelMeteo": "Cancel (weather)",
+    "cancelMeteoConfirm": "Cancel this flight due to weather? Passengers will be unassigned and contacts notified by email."
+  },
+  "cancellation": {
+    "emailSubjectPayeur": "Flight cancelled — {date}",
+    "emailSubjectEquipe": "Flight cancelled — {ballon} — {date}"
   },
   "profil": {
     "title": "My profile",
