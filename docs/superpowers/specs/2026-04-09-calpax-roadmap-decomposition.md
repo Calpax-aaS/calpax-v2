@@ -25,7 +25,7 @@ Stack: Next.js 15 + Prisma + Supabase (PostgreSQL) + NextAuth + Mollie + Leaflet
 
 Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) and the critical PHP files (`create-ficheVol-pdf.php`, `view-billetvol.php`, `cron/cron-mail.php`) that are **not in** `BACKLOG.md` but are load-bearing for the domain model:
 
-1. **Billet de vol ≠ Vol.** The billet is a customer-facing reservation with a *window of availability* (`typePlannif`: `matin` / `soir` / `touteLaJournée` / `auPlusVite` / `autre`, `dateVolDeb`, `dateVolFin`, `dateValidite`). The vol is the operational flight. Passengers get assigned from billets to vols later via `passager_vol` — when weather permits. This is a weather-deferred scheduling model, not a Calendly-style booking. **The MVP public booking UX must reflect this or it breaks the whole operational workflow.**
+1. **Billet de vol ≠ Vol.** The billet is a customer-facing reservation with a _window of availability_ (`typePlannif`: `matin` / `soir` / `touteLaJournée` / `auPlusVite` / `autre`, `dateVolDeb`, `dateVolFin`, `dateValidite`). The vol is the operational flight. Passengers get assigned from billets to vols later via `passager_vol` — when weather permits. This is a weather-deferred scheduling model, not a Calendly-style booking. **The MVP public booking UX must reflect this or it breaks the whole operational workflow.**
 
 2. **Devis de masse is a temperature-dependent load chart**, not a simple sum of weights. Each ballon has a per-°C max payload table from 10°C to 34°C, referenced from its Manex annex. Example from `create-ficheVol-pdf.php` (F-HFCC, Z-105, 3000 m³): max payload at 20°C = 365 kg, at 30°C = 256 kg. The v2 `Ballon` entity must store this performance chart and the devis calc must pick the right row based on forecast OAT (or actual OAT at décollage).
 
@@ -38,6 +38,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Plus:** v1 has `billetvol_audit`, `paiement_audit`, `passager_audit` tables tracking every change. Olivier relies on 15+ years of change history. v2 must preserve this pattern (Prisma middleware writing to generic audit table).
 
 **Gaps in v1 that v2 must design from scratch** (no reference available):
+
 - Multi-tenant isolation (v1 is single-tenant)
 - Licence BFCL tracking + expiry alerts
 - CAMO expiry tracking + alerts
@@ -49,13 +50,13 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 
 ## Milestone map
 
-| Milestone | Goal | Contents | Relative size |
-|-----------|------|----------|----------------|
-| **M1** | Olivier replaces v1 internally at Cameron Balloons. First real flights operated through v2. | P0 Foundation + P1 Regulatory + P2 Flight lifecycle + Pw Weather minimum | **large — biggest single milestone by far** |
-| **M2** | First external paying exploitant onboarded. Public SaaS launch. | P3 Public booking + Mollie + P-SaaS Landing/onboarding/billing | medium-large |
-| **M3** | Operational UX polish: mobile pilote + dashboard jour J + pilot-driven PVE finalization | Moves manual PVE entry from back-office to pilot app | medium |
-| **M4** | Full weather stack: METAR/TAF + radar + go/no-go aggregate table | AVWX or CheckWX + radar tiles + per-vol aggregated status | medium |
-| **M5** | GPS live tracking (pilote + équipiers + public suivi) | HTML5 geoloc + WebSocket + Leaflet + public share links | medium-large |
+| Milestone | Goal                                                                                        | Contents                                                                 | Relative size                               |
+| --------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------- |
+| **M1**    | Olivier replaces v1 internally at Cameron Balloons. First real flights operated through v2. | P0 Foundation + P1 Regulatory + P2 Flight lifecycle + Pw Weather minimum | **large — biggest single milestone by far** |
+| **M2**    | First external paying exploitant onboarded. Public SaaS launch.                             | P3 Public booking + Mollie + P-SaaS Landing/onboarding/billing           | medium-large                                |
+| **M3**    | Operational UX polish: mobile pilote + dashboard jour J + pilot-driven PVE finalization     | Moves manual PVE entry from back-office to pilot app                     | medium                                      |
+| **M4**    | Full weather stack: METAR/TAF + radar + go/no-go aggregate table                            | AVWX or CheckWX + radar tiles + per-vol aggregated status                | medium                                      |
+| **M5**    | GPS live tracking (pilote + équipiers + public suivi)                                       | HTML5 geoloc + WebSocket + Leaflet + public share links                  | medium-large                                |
 
 **Rule: each milestone is independently shippable and each is a hard checkpoint.** M1 cannot start P2 before P1 is done. M2 cannot start before Olivier has run ≥5 real flights through M1 at Cameron Balloons. Weather stays tiered: minimum (Open-Meteo wind) in M1, full (METAR/TAF/radar) in M4.
 
@@ -68,6 +69,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Goal:** scaffolding everything else depends on. Zero user-visible value, 100% risk reduction.
 
 **In scope:**
+
 - Next.js 15 app router + TypeScript strict + Tailwind + shadcn/ui
 - Prisma + PostgreSQL (Supabase) + local docker-compose for dev
 - NextAuth.js with email + credentials providers, session tied to `tenant_id`
@@ -90,6 +92,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Goal:** the non-negotiable legal artefacts that must exist before any real flight is operated.
 
 **In scope:**
+
 - Exploitant profile: N° FR.DEC, SIRET, N° CAMO, adresse, contact, logo — displayed on all generated documents
 - **Ballon fiche with performance chart**: immat, nom, volume, MTOM, MLM, pesée à vide, config gaz, Manex annex ref, and a `performanceChart: Record<temperatureCelsius, maxPayloadKg>` JSON field. Temperature range 10°C → 34°C minimum (matches v1). Seed values for Cameron Balloons' 8 ballons extracted from `create-ficheVol-pdf.php` lines 47–622.
 - Ballon CAMO expiry date + alerts at 60j and 30j (notification + blocking flag)
@@ -106,6 +109,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Goal:** reproduce Olivier's v1 workflow end-to-end. Billet → Vol → organisation passagers → fiche de vol printed → signed → archived as PVE.
 
 **In scope:**
+
 - Billet de vol CRUD (back-office only — no public form yet): `typePlannif`, window (`dateVolDeb` → `dateVolFin`), `dateValidite` (important for bons cadeaux), roles (`payeur`, `bénéficiaire`, `organisateur`), reference + checksum, `dateRappel`, statuts, categorie, provenance, commentaire
 - **Multiple passengers per billet** with individual weights, age, PMR flag, contact
 - **Partial payments per billet**: multi-row, modes (cash/chèque/CB/virement/chèque-vacances/avoir), refunds, audit
@@ -129,6 +133,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Relative size:** **large — biggest phase of the whole project**. Contains the fiche de vol PDF generator and the temperature-aware devis de masse calc, which are the most regulatory-sensitive pieces of code in Calpax.
 
 **Critical tests (non-negotiable TDD):**
+
 - Devis de masse calculation must have test vectors extracted from `create-ficheVol-pdf.php` for all 8 Cameron Balloons ballons. A bug here can ground a flight or overload a ballon.
 - Fiche de vol PDF golden-file snapshot tests.
 - Multi-tenant isolation on every query path.
@@ -138,6 +143,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Goal:** enough weather data to render the fiche de vol weather page and make go/no-go decisions. Not the full weather stack.
 
 **In scope:**
+
 - Open-Meteo API integration (free, no key)
 - Fetch per vol: wind speed + direction at 10 m, 80 m, 120 m, 300 m AGL, hourly, for the vol date
 - Fetch OAT forecast for the décollage hour (used by devis de masse to pick the temperature column)
@@ -158,6 +164,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Goal:** external exploitants can take online bookings with Mollie payments and issue billets.
 
 **In scope:**
+
 - Public page réservation per exploitant (white-labeled with logo + couleurs)
 - Booking UX that reflects the v1 model: user picks `typePlannif` (matin/soir/anytime/specific date), window (date start/end), number of passengers, passenger details (nom, age, poids, PMR, consentement RGPD)
 - Mollie Checkout integration + 3DS v2 for all payments > 30€
@@ -178,6 +185,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 **Goal:** SaaS plumbing so new exploitants can sign up, pay their subscription, and start using Calpax.
 
 **In scope:**
+
 - Landing page (marketing site, FR/EN, features + pricing + screenshots + contact)
 - Onboarding flow: sign up → choose plan (Starter 79€ / Pro 149€ / Expert 249€) → Mollie subscription setup → create exploitant profile → seed data (first ballon, first pilote, DPA signing) → redirect to back-office
 - Mollie subscription management (recurring billing, trial period if any, plan upgrade/downgrade, cancellation)
@@ -197,12 +205,14 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 ## Fast follows (post-M2, in strict priority order)
 
 ### M3 — Day-of operations + pilote mobile
+
 - Dashboard jour J (vols du jour, passagers confirmés, poids total, devis, équipe, méteo)
 - Vue pilote mobile (responsive, read-only): vols assignés, liste passagers, météo, lieu décollage
 - Validation vol par pilote (pilot-driven PVE finalization from mobile instead of manual back-office entry) → replaces P2's manual entry path for exploitants that want it
 - Workflow annulation météo amélioré avec notifications automatiques email
 
 ### M4 — Full weather stack
+
 - METAR/TAF décodés via AVWX ou CheckWX (aéroports dans 50 km, codes OACI configurables, refresh 30 min)
 - Radar pluie et orages temps réel (3 h passées + 2 h prévision, 50 km autour du site)
 - Tableau go/no-go agrégé par vol (feu vert/orange/rouge combinant wind + METAR + TAF + radar)
@@ -210,6 +220,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 - Archivage conditions météo par vol (audit DSAC)
 
 ### M5 — GPS live tracking
+
 - HTML5 Geolocation depuis smartphone pilote (WebSocket → serveur)
 - Leaflet + OpenStreetMap live map dans back-office
 - Vue équipiers sol (lien sécurisé, pas d'app, temps réel)
@@ -223,6 +234,7 @@ Five insights from reading the v1 schema (`v1-reference/bdd/extract_bdd.sql`) an
 Features from `BACKLOG.md` that are deferred beyond M5 or removed entirely:
 
 **V2 (later features kept in backlog but not scheduled):**
+
 - Portail passager autonome
 - Certificat d'ascension souvenir
 - Carnet de vol pilote personnel
@@ -237,6 +249,7 @@ Features from `BACKLOG.md` that are deferred beyond M5 or removed entirely:
 - Export GPX/KML
 
 **Plus tard (parked, not promised):**
+
 - Statistiques et reporting dashboard
 - API publique + widgets embarquables
 - Tracker GPS hardware nacelle
@@ -260,10 +273,13 @@ P0 ──► P1 ──► P2 ──► Pw ──► M1 dogfood ──► P3 ─�
 Strict sequencing for solo dev. No parallel tracks. Exception: Pw can technically start while late P2 is being built since the only coupling is the PDF template. If either phase wobbles, fall back to strict order.
 
 **Hard gates** (no phase starts before the previous one is complete AND verified):
+
 - P0 gate: multi-tenant isolation tests passing, audit middleware tested, crypto lib tested
 - P1 gate: all regulatory alerts working, BFCL/CAMO expiry blocks proven via tests
 - P2 gate: fiche de vol PDF golden-file tests passing for all 8 Cameron Balloons ballons, devis de masse test vectors passing
 - Pw gate: weather page renders correctly in a real fiche de vol PDF
+- **Pre-M1: Import V1 data** — migrer les donnees de production Calpax v1 (PHP/MySQL) dans le tenant Cameron Balloons France sur v2 (billets, passagers, paiements, vols historiques, ballons, pilotes). Script de migration one-shot avec mapping des schemas. Prerequis pour qu'Olivier puisse basculer sans perdre son historique.
+- **Pre-M1: Organisation de test pour Olivier** — creer un environnement de test dedie pour qu'Olivier valide toutes les features (voir docs/TEST_PLAN.md). Inclut un jeu de donnees representatif (billets, vols, passagers, paiements) issu de la v1 ou genere a partir de celle-ci.
 - M1 gate: **≥5 real flights operated through v2 at Cameron Balloons with Olivier**
 - P3 gate: Mollie 3DS + partial payments + webhook handling tested end-to-end
 - P-SaaS gate: onboarding flow runs end-to-end for a new exploitant, subscription billing verified, DPA signed
