@@ -10,7 +10,7 @@ import { getWeather } from '@/lib/weather/cache'
 import { extractCreneauHours } from '@/lib/weather/extract'
 import { summarizeWeather } from '@/lib/weather/classify'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -134,7 +134,7 @@ export default async function VolDetailPage({ params }: Props) {
     const labelClassName = 'text-xs uppercase tracking-wider text-muted-foreground'
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 pb-20 md:pb-0">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -181,7 +181,7 @@ export default async function VolDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">{t('detail')}</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div>
               <p className={labelClassName}>{t('fields.ballon')}</p>
               <p className="font-medium">
@@ -242,35 +242,39 @@ export default async function VolDetailPage({ params }: Props) {
             {vol.passagers.length === 0 ? (
               <p className="text-muted-foreground text-sm">{t('organisation.noPassagers')}</p>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className={labelClassName}>{tPassagers('fields.prenom')}</TableHead>
-                    <TableHead className={labelClassName}>{tPassagers('fields.nom')}</TableHead>
-                    <TableHead className={labelClassName}>{tPassagers('fields.age')}</TableHead>
-                    <TableHead className={labelClassName}>{tPassagers('fields.poids')}</TableHead>
-                    <TableHead className={labelClassName}>{tPassagers('fields.pmr')}</TableHead>
-                    <TableHead className={labelClassName}>Billet</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {vol.passagers.map((p) => {
-                    const poids = p.poidsEncrypted ? safeDecryptInt(p.poidsEncrypted) : null
-                    return (
-                      <TableRow key={p.id} className="hover:bg-muted/50">
-                        <TableCell>{p.prenom}</TableCell>
-                        <TableCell>{p.nom}</TableCell>
-                        <TableCell>{p.age ?? '—'}</TableCell>
-                        <TableCell>{poids !== null ? `${poids} kg` : '—'}</TableCell>
-                        <TableCell>{p.pmr ? 'Oui' : 'Non'}</TableCell>
-                        <TableCell className="text-muted-foreground text-xs">
-                          {p.billet.reference}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className={labelClassName}>
+                        {tPassagers('fields.prenom')}
+                      </TableHead>
+                      <TableHead className={labelClassName}>{tPassagers('fields.nom')}</TableHead>
+                      <TableHead className={labelClassName}>{tPassagers('fields.age')}</TableHead>
+                      <TableHead className={labelClassName}>{tPassagers('fields.poids')}</TableHead>
+                      <TableHead className={labelClassName}>{tPassagers('fields.pmr')}</TableHead>
+                      <TableHead className={labelClassName}>Billet</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {vol.passagers.map((p) => {
+                      const poids = p.poidsEncrypted ? safeDecryptInt(p.poidsEncrypted) : null
+                      return (
+                        <TableRow key={p.id} className="hover:bg-muted/50">
+                          <TableCell>{p.prenom}</TableCell>
+                          <TableCell>{p.nom}</TableCell>
+                          <TableCell>{p.age ?? '—'}</TableCell>
+                          <TableCell>{poids !== null ? `${poids} kg` : '—'}</TableCell>
+                          <TableCell>{p.pmr ? 'Oui' : 'Non'}</TableCell>
+                          <TableCell className="text-muted-foreground text-xs">
+                            {p.billet.reference}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -339,7 +343,7 @@ export default async function VolDetailPage({ params }: Props) {
                   {t('devis.temperature')} : {devisTemperature} C
                   {weatherSummary ? '' : ' (temperature par defaut)'}
                 </p>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
                   <div>
                     <p className={labelClassName}>{t('devis.poidsAVide')}</p>
                     <p className="font-medium">{devis.poidsAVide} kg</p>
@@ -385,6 +389,15 @@ export default async function VolDetailPage({ params }: Props) {
             )}
           </CardContent>
         </Card>
+
+        {/* Mobile: sticky post-vol CTA */}
+        {vol.statut === 'CONFIRME' && (
+          <div className="md:hidden fixed bottom-0 inset-x-0 z-10 border-t bg-background p-4">
+            <Button asChild className="w-full" size="lg">
+              <Link href={`/${locale}/vols/${vol.id}/post-vol`}>{t('postVolLink')}</Link>
+            </Button>
+          </div>
+        )}
       </div>
     )
   })
