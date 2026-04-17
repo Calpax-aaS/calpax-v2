@@ -1286,6 +1286,533 @@ async function main() {
   } else if (existingVols > 0) {
     console.log(`  - Skipped vol seeding (${existingVols} vols already exist)`)
   }
+
+  // ===========================================================================
+  // DEMO ORG — "Demo Montgolfière" (FR.DEC.DEMO)
+  // Separate test/demo tenant for Olivier to explore features without touching
+  // the real Cameron Balloons data (which will receive the v1 import).
+  // ===========================================================================
+
+  const demoOrg = await prisma.exploitant.upsert({
+    where: { frDecNumber: 'FR.DEC.DEMO' },
+    update: {},
+    create: {
+      name: 'Demo Montgolfière',
+      frDecNumber: 'FR.DEC.DEMO',
+      siret: '12345678900000',
+      numCamo: 'OSAC',
+      adresse: '1 rue du Ballon',
+      codePostal: '39100',
+      ville: 'Dole',
+      contactName: 'Olivier Demo',
+      billetPrefix: 'DEM',
+      meteoLatitude: 47.0833,
+      meteoLongitude: 5.4833,
+      meteoSeuilVent: 15,
+    },
+  })
+
+  // Demo users
+  const demoUsers = [
+    { email: 'demo-gerant@calpax.fr', name: 'Olivier Demo', role: 'GERANT' as const },
+    { email: 'demo-pilote@calpax.fr', name: 'Pierre Pilote', role: 'PILOTE' as const },
+    { email: 'demo-equipier@calpax.fr', name: 'Lucas Equipier', role: 'EQUIPIER' as const },
+  ]
+
+  const demoUserRecords: Record<string, { id: string }> = {}
+  for (const u of demoUsers) {
+    const user = await prisma.user.upsert({
+      where: { email: u.email },
+      update: {},
+      create: {
+        email: u.email,
+        name: u.name,
+        role: u.role,
+        exploitantId: demoOrg.id,
+        emailVerified: true,
+      },
+    })
+    demoUserRecords[u.email] = user
+
+    const existingAccount = await prisma.account.findFirst({
+      where: { userId: user.id, providerId: 'credential' },
+    })
+    if (!existingAccount) {
+      await prisma.account.create({
+        data: {
+          userId: user.id,
+          accountId: user.id,
+          providerId: 'credential',
+          password: hashedPw,
+        },
+      })
+    }
+  }
+
+  // Demo ballons (3)
+  const demoBallons = [
+    {
+      immatriculation: 'F-DEMO1',
+      nom: 'Grand Bleu (Z-105)',
+      volumeM3: 3000,
+      peseeAVide: 370,
+      configGaz: '4xCB2990 : 4x23 kg',
+      manexAnnexRef: 'Demo Annexe 1',
+      nbPassagerMax: 4,
+      performanceChart: {
+        '10': 480,
+        '15': 420,
+        '20': 365,
+        '25': 310,
+        '30': 256,
+        '34': 214,
+      },
+      camoExpiryDate: new Date('2027-06-01'),
+    },
+    {
+      immatriculation: 'F-DEMO2',
+      nom: 'Petit Prince (Z-77)',
+      volumeM3: 2200,
+      peseeAVide: 340,
+      configGaz: '4xCB2990 : 4x23 kg',
+      manexAnnexRef: 'Demo Annexe 2',
+      nbPassagerMax: 2,
+      performanceChart: {
+        '10': 287,
+        '15': 244,
+        '20': 201,
+        '25': 161,
+        '30': 121,
+        '34': 91,
+      },
+      camoExpiryDate: new Date('2026-05-10'), // WARNING ~23j
+    },
+    {
+      immatriculation: 'F-DEMO3',
+      nom: 'Jura Explorer (Z-225)',
+      volumeM3: 6400,
+      peseeAVide: 750,
+      configGaz: '4xCB2903 : 4x36 kg',
+      manexAnnexRef: 'Demo Annexe 3',
+      nbPassagerMax: 12,
+      performanceChart: {
+        '10': 1090,
+        '15': 965,
+        '20': 842,
+        '25': 723,
+        '30': 607,
+        '34': 518,
+      },
+      camoExpiryDate: new Date('2027-01-01'),
+    },
+  ]
+
+  const demoBallonRecords = []
+  for (const b of demoBallons) {
+    const existing = await prisma.ballon.findFirst({
+      where: { exploitantId: demoOrg.id, immatriculation: b.immatriculation },
+    })
+    if (!existing) {
+      demoBallonRecords.push(
+        await prisma.ballon.create({
+          data: { ...b, exploitantId: demoOrg.id, camoOrganisme: 'OSAC', actif: true },
+        }),
+      )
+    } else {
+      demoBallonRecords.push(existing)
+    }
+  }
+
+  // Demo pilotes (2)
+  const demoPiloteRecords = []
+  const demoPilotesData = [
+    {
+      prenom: 'Olivier',
+      nom: 'Demo',
+      poids: 85,
+      telephone: '0600000001',
+      email: 'demo-gerant@calpax.fr',
+      licenceBfcl: 'BFCL-DEMO-001',
+      qualificationCommerciale: true,
+      classeA: true,
+      groupeA1: true,
+      groupeA2: true,
+      groupeA3: true,
+      heuresDeVol: 1500,
+      dateExpirationLicence: new Date('2027-12-31'),
+      userId: demoUserRecords['demo-gerant@calpax.fr']?.id,
+    },
+    {
+      prenom: 'Pierre',
+      nom: 'Pilote',
+      poids: 78,
+      telephone: '0600000002',
+      email: 'demo-pilote@calpax.fr',
+      licenceBfcl: 'BFCL-DEMO-002',
+      qualificationCommerciale: true,
+      classeA: true,
+      groupeA1: true,
+      groupeA2: true,
+      heuresDeVol: 600,
+      dateExpirationLicence: new Date('2026-05-20'), // WARNING ~33j
+      userId: demoUserRecords['demo-pilote@calpax.fr']?.id,
+    },
+  ]
+
+  for (const p of demoPilotesData) {
+    const { poids, telephone, email, userId, ...rest } = p
+    const existing = await prisma.pilote.findFirst({ where: { licenceBfcl: p.licenceBfcl } })
+    const data = {
+      ...rest,
+      exploitantId: demoOrg.id,
+      poidsEncrypted: encrypt(String(poids)),
+      ...(telephone ? { telephone } : {}),
+      ...(email ? { email } : {}),
+      ...(userId ? { userId } : {}),
+      actif: true,
+    }
+    if (existing) {
+      demoPiloteRecords.push(await prisma.pilote.update({ where: { id: existing.id }, data }))
+    } else {
+      demoPiloteRecords.push(await prisma.pilote.create({ data }))
+    }
+  }
+
+  // Demo equipier + vehicule + site
+  const demoEq = await prisma.equipier.findFirst({
+    where: { exploitantId: demoOrg.id, prenom: 'Lucas' },
+  })
+  const demoEquipier =
+    demoEq ??
+    (await prisma.equipier.create({
+      data: { prenom: 'Lucas', nom: 'Equipier', telephone: '0600000003', exploitantId: demoOrg.id },
+    }))
+
+  const demoVeh = await prisma.vehicule.findFirst({
+    where: { exploitantId: demoOrg.id, nom: 'Renault Master Demo' },
+  })
+  const demoVehicule =
+    demoVeh ??
+    (await prisma.vehicule.create({
+      data: { nom: 'Renault Master Demo', immatriculation: 'XX-000-XX', exploitantId: demoOrg.id },
+    }))
+
+  const demoSiteRec = await prisma.siteDecollage.findFirst({
+    where: { exploitantId: demoOrg.id, nom: 'Terrain Demo Dole' },
+  })
+  const demoSite =
+    demoSiteRec ??
+    (await prisma.siteDecollage.create({
+      data: {
+        nom: 'Terrain Demo Dole',
+        adresse: 'Route de Tavaux, 39100 Dole',
+        latitude: 47.0389,
+        longitude: 5.4275,
+        exploitantId: demoOrg.id,
+      },
+    }))
+
+  // Demo billets (6) with passagers + paiements
+  const demoBilletCount = await prisma.billet.count({ where: { exploitantId: demoOrg.id } })
+  if (demoBilletCount === 0) {
+    await prisma.billetSequence.upsert({
+      where: { exploitantId_year: { exploitantId: demoOrg.id, year: 2026 } },
+      update: { lastSeq: 6 },
+      create: { exploitantId: demoOrg.id, year: 2026, lastSeq: 6 },
+    })
+
+    const demoBilletsData = [
+      {
+        seq: 1,
+        typePlannif: 'MATIN' as const,
+        dateVolDeb: relDate(0),
+        dateVolFin: relDate(5),
+        payeurPrenom: 'Jean',
+        payeurNom: 'Dupont',
+        payeurEmail: 'jean.dupont@example.com',
+        payeurTelephone: '0612345678',
+        payeurVille: 'Dole',
+        montantTtc: 450,
+        categorie: 'Touristique',
+        provenance: 'Telephone',
+        passagers: [
+          { prenom: 'Jean', nom: 'Dupont', age: 45, poids: 82, pmr: false },
+          { prenom: 'Marie', nom: 'Dupont', age: 42, poids: 60, pmr: false },
+        ],
+        paiements: [{ mode: 'CB' as const, montant: 450, date: relDate(-5) }],
+      },
+      {
+        seq: 2,
+        typePlannif: 'SOIR' as const,
+        dateVolDeb: relDate(0),
+        dateVolFin: relDate(7),
+        payeurPrenom: 'Sophie',
+        payeurNom: 'Martin',
+        payeurEmail: 'sophie.martin@example.com',
+        payeurTelephone: '0687654321',
+        payeurVille: 'Besancon',
+        montantTtc: 680,
+        categorie: 'Touristique',
+        provenance: 'Web',
+        passagers: [
+          { prenom: 'Sophie', nom: 'Martin', age: 35, poids: 58, pmr: false },
+          { prenom: 'Lucas', nom: 'Martin', age: 38, poids: 82, pmr: false },
+          { prenom: 'Emma', nom: 'Martin', age: 12, poids: 40, pmr: false },
+        ],
+        paiements: [{ mode: 'CB' as const, montant: 340, date: relDate(-3) }],
+      },
+      {
+        seq: 3,
+        typePlannif: 'MATIN' as const,
+        dateVolDeb: relDate(2),
+        dateVolFin: relDate(10),
+        payeurPrenom: 'Philippe',
+        payeurNom: 'Moreau',
+        payeurEmail: 'p.moreau@example.com',
+        payeurTelephone: '0654321098',
+        payeurVille: 'Lyon',
+        montantTtc: 900,
+        categorie: 'Evenementiel',
+        provenance: 'Entreprise',
+        commentaire: 'Team building — 4 personnes',
+        passagers: [
+          { prenom: 'Philippe', nom: 'Moreau', age: 45, poids: 90, pmr: false },
+          { prenom: 'Claire', nom: 'Dubois', age: 28, poids: 55, pmr: false },
+          { prenom: 'Julien', nom: 'Garcia', age: 41, poids: 88, pmr: false },
+          { prenom: 'Isabelle', nom: 'Petit', age: 36, poids: 60, pmr: false },
+        ],
+        paiements: [{ mode: 'VIREMENT' as const, montant: 900, date: relDate(-1) }],
+      },
+      {
+        seq: 4,
+        typePlannif: 'AU_PLUS_VITE' as const,
+        dateVolDeb: relDate(-5),
+        dateVolFin: relDate(30),
+        payeurPrenom: 'Monique',
+        payeurNom: 'Blanc',
+        payeurEmail: null,
+        payeurTelephone: '0634567890',
+        payeurVille: 'Poligny',
+        montantTtc: 450,
+        categorie: 'Touristique',
+        provenance: 'Telephone',
+        commentaire: 'Bon cadeau — pas de date fixe',
+        passagers: [
+          { prenom: 'Monique', nom: 'Blanc', age: 65, poids: 68, pmr: false },
+          { prenom: 'Gerard', nom: 'Blanc', age: 68, poids: 80, pmr: false },
+        ],
+        paiements: [{ mode: 'CHEQUE' as const, montant: 450, date: relDate(-10) }],
+      },
+      {
+        seq: 5,
+        typePlannif: 'SOIR' as const,
+        dateVolDeb: relDate(5),
+        dateVolFin: relDate(15),
+        payeurPrenom: 'Robert',
+        payeurNom: 'Mercier',
+        payeurEmail: null,
+        payeurTelephone: '0656789012',
+        payeurVille: 'Dole',
+        montantTtc: 225,
+        categorie: 'Touristique',
+        provenance: 'Bouche a oreille',
+        passagers: [{ prenom: 'Robert', nom: 'Mercier', age: 72, poids: 75, pmr: true }],
+        paiements: [{ mode: 'ESPECES' as const, montant: 100, date: relDate(-2) }],
+      },
+      {
+        seq: 6,
+        typePlannif: 'A_DEFINIR' as const,
+        dateVolDeb: null,
+        dateVolFin: null,
+        payeurPrenom: 'Eric',
+        payeurNom: 'Rousseau',
+        payeurEmail: null,
+        payeurTelephone: '0678901234',
+        payeurVille: 'Tavaux',
+        montantTtc: 450,
+        categorie: 'Touristique',
+        provenance: 'Telephone',
+        dateRappel: relDate(3),
+        commentaire: 'Rappeler pour fixer les dates',
+        passagers: [
+          { prenom: 'Eric', nom: 'Rousseau', age: 44, poids: 95, pmr: false },
+          { prenom: 'Sandrine', nom: 'Rousseau', age: 42, poids: 65, pmr: false },
+        ],
+        paiements: [],
+      },
+    ]
+
+    for (const b of demoBilletsData) {
+      const reference = formatReference('DEM', 2026, b.seq)
+      const checksum = computeLuhnChecksum(reference)
+      await prisma.billet.create({
+        data: {
+          exploitantId: demoOrg.id,
+          reference,
+          checksum,
+          typePlannif: b.typePlannif,
+          dateVolDeb: b.dateVolDeb,
+          dateVolFin: b.dateVolFin,
+          dateValidite: (b as Record<string, unknown>).dateValidite as Date | undefined,
+          payeurPrenom: b.payeurPrenom,
+          payeurNom: b.payeurNom,
+          payeurEmail: b.payeurEmail,
+          payeurTelephone: b.payeurTelephone,
+          payeurVille: b.payeurVille,
+          montantTtc: b.montantTtc,
+          statut: 'EN_ATTENTE',
+          statutPaiement:
+            b.paiements.reduce((s, p) => s + p.montant, 0) >= b.montantTtc
+              ? 'SOLDE'
+              : b.paiements.length > 0
+                ? 'PARTIEL'
+                : 'EN_ATTENTE',
+          categorie: b.categorie,
+          provenance: b.provenance,
+          commentaire: (b as Record<string, unknown>).commentaire as string | undefined,
+          dateRappel: (b as Record<string, unknown>).dateRappel as Date | undefined,
+          passagers: {
+            create: b.passagers.map((p) => ({
+              exploitantId: demoOrg.id,
+              prenom: p.prenom,
+              nom: p.nom,
+              age: p.age,
+              poidsEncrypted: encrypt(String(p.poids)),
+              pmr: p.pmr,
+            })),
+          },
+          paiements: {
+            create: b.paiements.map((p) => ({
+              exploitantId: demoOrg.id,
+              modePaiement: p.mode,
+              montantTtc: p.montant,
+              datePaiement: p.date,
+            })),
+          },
+        },
+      })
+    }
+  }
+
+  // Demo vols (6)
+  const demoVolCount = await prisma.vol.count({ where: { exploitantId: demoOrg.id } })
+  if (demoVolCount === 0 && demoBallonRecords.length >= 3 && demoPiloteRecords.length >= 2) {
+    const dp0 = demoPiloteRecords[0]! // Olivier Demo
+    const dp1 = demoPiloteRecords[1]! // Pierre Pilote
+    const db0 = demoBallonRecords[0]! // Grand Bleu
+    const db1 = demoBallonRecords[1]! // Petit Prince
+    const db2 = demoBallonRecords[2]! // Jura Explorer
+
+    const demoVolsData = [
+      // Today MATIN — Olivier — PLANIFIE
+      {
+        date: relDate(0),
+        creneau: 'MATIN' as const,
+        ballonId: db0.id,
+        piloteId: dp0.id,
+        equipierId: demoEquipier.id,
+        siteDecollageId: demoSite.id,
+        vehiculeId: demoVehicule.id,
+        statut: 'PLANIFIE' as const,
+      },
+      // Today SOIR — Pierre — CONFIRME (test post-vol)
+      {
+        date: relDate(0),
+        creneau: 'SOIR' as const,
+        ballonId: db2.id,
+        piloteId: dp1.id,
+        equipierId: demoEquipier.id,
+        siteDecollageId: demoSite.id,
+        statut: 'CONFIRME' as const,
+      },
+      // Yesterday — Olivier — TERMINE (test archive PVE)
+      {
+        date: relDate(-1),
+        creneau: 'MATIN' as const,
+        ballonId: db0.id,
+        piloteId: dp0.id,
+        siteDecollageId: demoSite.id,
+        statut: 'TERMINE' as const,
+        decoLieu: 'Terrain Demo Dole',
+        decoHeure: new Date(Date.now() - 86400000 + 6 * 3600000),
+        atterLieu: 'Parcey',
+        atterHeure: new Date(Date.now() - 86400000 + 7.5 * 3600000),
+        gasConso: 70,
+        distance: 10,
+        noteDansCarnet: true,
+      },
+      // Tomorrow — Pierre — PLANIFIE
+      {
+        date: relDate(1),
+        creneau: 'SOIR' as const,
+        ballonId: db1.id,
+        piloteId: dp1.id,
+        siteDecollageId: demoSite.id,
+        statut: 'PLANIFIE' as const,
+      },
+      // In 3 days — Olivier — PLANIFIE
+      {
+        date: relDate(3),
+        creneau: 'MATIN' as const,
+        ballonId: db2.id,
+        piloteId: dp0.id,
+        equipierId: demoEquipier.id,
+        siteDecollageId: demoSite.id,
+        vehiculeId: demoVehicule.id,
+        statut: 'PLANIFIE' as const,
+      },
+      // Today — meteo alert
+      {
+        date: relDate(0),
+        creneau: 'MATIN' as const,
+        ballonId: db1.id,
+        piloteId: dp1.id,
+        siteDecollageId: demoSite.id,
+        statut: 'PLANIFIE' as const,
+        meteoAlert: true,
+      },
+    ]
+
+    for (const v of demoVolsData) {
+      const existing = await prisma.vol.findFirst({
+        where: { exploitantId: demoOrg.id, date: v.date, creneau: v.creneau, ballonId: v.ballonId },
+      })
+      if (!existing) {
+        await prisma.vol.create({ data: { ...v, exploitantId: demoOrg.id } })
+      }
+    }
+
+    // Assign passagers to today's demo vols
+    const demoTodayVols = await prisma.vol.findMany({
+      where: { exploitantId: demoOrg.id, date: relDate(0), statut: { not: 'ANNULE' } },
+      orderBy: { creneau: 'asc' },
+    })
+    const demoUnassigned = await prisma.passager.findMany({
+      where: { exploitantId: demoOrg.id, volId: null },
+      take: 5,
+    })
+    if (demoTodayVols.length >= 2 && demoUnassigned.length >= 4) {
+      for (let i = 0; i < 2 && i < demoUnassigned.length; i++) {
+        await prisma.passager.update({
+          where: { id: demoUnassigned[i]!.id },
+          data: { volId: demoTodayVols[0]!.id },
+        })
+      }
+      for (let i = 2; i < 4 && i < demoUnassigned.length; i++) {
+        await prisma.passager.update({
+          where: { id: demoUnassigned[i]!.id },
+          data: { volId: demoTodayVols[1]!.id },
+        })
+      }
+    }
+  }
+
+  console.log('')
+  console.log('Demo org "Demo Montgolfière" (FR.DEC.DEMO):')
+  console.log('  - 3 users: demo-gerant / demo-pilote / demo-equipier @calpax.fr')
+  console.log('  - 3 ballons, 2 pilotes, 1 equipier, 1 vehicule, 1 site')
+  console.log('  - 6 billets with passagers + paiements')
+  console.log('  - 6 vols (2 today, 1 yesterday TERMINE, 2 future, 1 meteo alert)')
 }
 
 main()
