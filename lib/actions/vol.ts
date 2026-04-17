@@ -11,6 +11,7 @@ import { generateFicheVolBuffer } from '@/lib/pdf/generate'
 import { buildFicheVolData } from '@/lib/pdf/build-data'
 import { uploadPve } from '@/lib/storage/pve'
 import { validateVolCreation } from '@/lib/vol/validation'
+import { sendCancellationEmails } from '@/lib/email/cancellation'
 
 function parseVolFormData(formData: FormData) {
   return {
@@ -250,16 +251,35 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
   })
 }
 
-export async function cancelVol(volId: string, locale: string): Promise<{ error?: string }> {
+export async function cancelVol(
+  volId: string,
+  locale: string,
+  reason?: string,
+): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
-    const vol = await db.vol.findUniqueOrThrow({ where: { id: volId } })
+    const ctx = getContext()
+
+    const vol = await db.vol.findUniqueOrThrow({
+      where: { id: volId },
+      include: {
+        ballon: { select: { nom: true } },
+        pilote: { select: { email: true, userId: true } },
+        exploitant: { select: { name: true } },
+        passagers: {
+          select: {
+            billetId: true,
+            billet: { select: { payeurEmail: true } },
+          },
+        },
+      },
+    })
+
     if (vol.statut === 'ARCHIVE') {
       return { error: "Impossible d'annuler un vol archive" }
     }
 
-    const passagers = await db.passager.findMany({ where: { volId } })
-    const billetIds = [...new Set(passagers.map((p) => p.billetId))]
+    const billetIds = [...new Set(vol.passagers.map((p) => p.billetId))]
 
     await db.passager.updateMany({ where: { volId }, data: { volId: null } })
     await db.billet.updateMany({
@@ -267,7 +287,29 @@ export async function cancelVol(volId: string, locale: string): Promise<{ error?
       data: { statut: 'EN_ATTENTE' },
     })
 
-    await db.vol.update({ where: { id: volId }, data: { statut: 'ANNULE' } })
+    await db.vol.update({
+      where: { id: volId },
+      data: { statut: 'ANNULE', cancelReason: reason ?? null },
+    })
+
+    const payeurEmails = [
+      ...new Set(vol.passagers.map((p) => p.billet?.payeurEmail).filter((e): e is string => !!e)),
+    ]
+
+    await sendCancellationEmails({
+      payeurEmails,
+      piloteEmail: vol.pilote.email ?? null,
+      equipierEmail: null,
+      cancellingUserId: ctx.userId,
+      piloteUserId: vol.pilote.userId ?? null,
+      data: {
+        ballonNom: vol.ballon.nom,
+        date: vol.date,
+        creneau: vol.creneau,
+        exploitantName: vol.exploitant.name,
+        reason: reason ?? 'Non precisee',
+      },
+    })
 
     redirect(`/${locale}/vols`)
   })
