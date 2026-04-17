@@ -23,6 +23,7 @@ import {
 import { cn } from '@/lib/utils'
 import { formatDateFr } from '@/lib/format'
 import { VolActions } from './vol-actions'
+import { MeteoAlertBanner } from '@/components/meteo-alert-banner'
 import { WeatherTable } from '@/components/weather-table'
 import { refreshWeather } from '@/lib/actions/weather'
 import type { StatutVol } from '@prisma/client'
@@ -175,6 +176,11 @@ export default async function VolDetailPage({ params }: Props) {
         <div className="flex items-center gap-3 flex-wrap">
           <VolActions volId={id} locale={locale} statut={vol.statut} />
         </div>
+
+        {/* Meteo alert banner */}
+        {vol.meteoAlert && vol.statut !== 'ANNULE' && (
+          <MeteoAlertBanner volId={vol.id} locale={locale} />
+        )}
 
         {/* Vol info card */}
         <Card>
