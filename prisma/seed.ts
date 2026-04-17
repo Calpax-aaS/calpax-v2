@@ -1061,6 +1061,231 @@ async function main() {
   }
 
   console.log('  - 15 billets seeded for Cameron Balloons France')
+
+  // ---------------------------------------------------------------------------
+  // Link pilotes to user accounts (required for PILOTE role filtering)
+  // ---------------------------------------------------------------------------
+  const piloteOlivier = await prisma.pilote.findFirst({
+    where: { licenceBfcl: 'BFCL-CBF-001' },
+  })
+  if (piloteOlivier) {
+    await prisma.pilote.update({
+      where: { id: piloteOlivier.id },
+      data: { userId: ownerUser.id },
+    })
+  }
+
+  const piloteDemo = await prisma.user.findUnique({ where: { email: 'pilote@cameronfrance.com' } })
+  const piloteEric = await prisma.pilote.findFirst({ where: { licenceBfcl: 'BFCL-CBF-002' } })
+  if (piloteDemo && piloteEric) {
+    await prisma.pilote.update({
+      where: { id: piloteEric.id },
+      data: { userId: piloteDemo.id },
+    })
+  }
+
+  console.log('  - Pilotes linked to user accounts')
+
+  // ---------------------------------------------------------------------------
+  // Seed 8 vols for testing (today, past, future, various statuses)
+  // ---------------------------------------------------------------------------
+  const allBallons = await prisma.ballon.findMany({
+    where: { exploitantId: cameronBalloons.id },
+    orderBy: { immatriculation: 'asc' },
+  })
+  const allPilotes = await prisma.pilote.findMany({
+    where: { exploitantId: cameronBalloons.id },
+    orderBy: { licenceBfcl: 'asc' },
+  })
+  const allEquipiers = await prisma.equipier.findMany({
+    where: { exploitantId: cameronBalloons.id },
+  })
+  const allSites = await prisma.siteDecollage.findMany({
+    where: { exploitantId: cameronBalloons.id },
+  })
+  const allVehicules = await prisma.vehicule.findMany({
+    where: { exploitantId: cameronBalloons.id },
+  })
+
+  // Helper: date relative to today
+  function relDate(daysFromNow: number): Date {
+    const d = new Date()
+    d.setHours(0, 0, 0, 0)
+    d.setDate(d.getDate() + daysFromNow)
+    return d
+  }
+
+  const existingVols = await prisma.vol.count({
+    where: { exploitantId: cameronBalloons.id },
+  })
+
+  if (existingVols === 0 && allBallons.length >= 3 && allPilotes.length >= 2) {
+    const b0 = allBallons[0]! // F-HCBF
+    const b1 = allBallons[1]! // F-HCDS
+    const b2 = allBallons[2]! // F-HCPJ
+    const b3 = allBallons[3]! // F-HFCC
+    const b6 = allBallons[6]! // F-GVGD
+    const b7 = allBallons[7]! // F-HACK
+    const p0 = allPilotes[0]! // Olivier
+    const p1 = allPilotes[1]! // Eric
+    const p2 = allPilotes.length > 2 ? allPilotes[2]! : p0 // Max (or Olivier)
+    const eq0 = allEquipiers[0]
+    const site0 = allSites[0]
+    const site1 = allSites.length > 1 ? allSites[1] : site0
+    const veh0 = allVehicules[0]
+
+    const volsData = [
+      // Vol 1: TODAY MATIN — Olivier — PLANIFIE (dashboard test)
+      {
+        date: relDate(0),
+        creneau: 'MATIN' as const,
+        ballonId: b6.id,
+        piloteId: p0.id,
+        equipierId: eq0?.id,
+        siteDecollageId: site0?.id,
+        vehiculeId: veh0?.id,
+        statut: 'PLANIFIE' as const,
+      },
+      // Vol 2: TODAY SOIR — Eric (pilote demo) — CONFIRME (post-vol test)
+      {
+        date: relDate(0),
+        creneau: 'SOIR' as const,
+        ballonId: b3.id,
+        piloteId: p1.id,
+        equipierId: eq0?.id,
+        siteDecollageId: site1?.id,
+        vehiculeId: veh0?.id,
+        statut: 'CONFIRME' as const,
+      },
+      // Vol 3: YESTERDAY MATIN — Olivier — TERMINE (archive PVE test)
+      {
+        date: relDate(-1),
+        creneau: 'MATIN' as const,
+        ballonId: b7.id,
+        piloteId: p0.id,
+        siteDecollageId: site0?.id,
+        statut: 'TERMINE' as const,
+        decoLieu: 'Dole-Tavaux',
+        decoHeure: new Date('2026-04-16T06:15:00'),
+        atterLieu: 'Parcey',
+        atterHeure: new Date('2026-04-16T07:30:00'),
+        gasConso: 85,
+        distance: 12,
+        noteDansCarnet: true,
+      },
+      // Vol 4: 3 DAYS AGO — Eric — ARCHIVE (historique)
+      {
+        date: relDate(-3),
+        creneau: 'SOIR' as const,
+        ballonId: b2.id,
+        piloteId: p1.id,
+        siteDecollageId: site0?.id,
+        statut: 'ARCHIVE' as const,
+        decoLieu: 'Dole-Tavaux',
+        decoHeure: new Date('2026-04-14T18:00:00'),
+        atterLieu: 'Brevans',
+        atterHeure: new Date('2026-04-14T19:15:00'),
+        gasConso: 60,
+        distance: 8,
+        noteDansCarnet: true,
+      },
+      // Vol 5: TOMORROW MATIN — Olivier — PLANIFIE (futur)
+      {
+        date: relDate(1),
+        creneau: 'MATIN' as const,
+        ballonId: b0.id,
+        piloteId: p0.id,
+        equipierId: eq0?.id,
+        siteDecollageId: site0?.id,
+        statut: 'PLANIFIE' as const,
+      },
+      // Vol 6: IN 3 DAYS SOIR — Eric — PLANIFIE (futur)
+      {
+        date: relDate(3),
+        creneau: 'SOIR' as const,
+        ballonId: b1.id,
+        piloteId: p1.id,
+        siteDecollageId: site1?.id,
+        statut: 'PLANIFIE' as const,
+      },
+      // Vol 7: 5 DAYS AGO — Max — ANNULE (annulation test)
+      {
+        date: relDate(-5),
+        creneau: 'MATIN' as const,
+        ballonId: b6.id,
+        piloteId: p2.id,
+        statut: 'ANNULE' as const,
+        cancelReason: 'Météo',
+        meteoAlert: false,
+      },
+      // Vol 8: TODAY MATIN — meteo alert test (vent fort)
+      {
+        date: relDate(0),
+        creneau: 'MATIN' as const,
+        ballonId: b0.id,
+        piloteId: p2.id,
+        siteDecollageId: site0?.id,
+        statut: 'PLANIFIE' as const,
+        meteoAlert: true,
+      },
+    ]
+
+    for (const volData of volsData) {
+      // Check unique constraint (exploitantId, date, creneau, ballonId)
+      const existing = await prisma.vol.findFirst({
+        where: {
+          exploitantId: cameronBalloons.id,
+          date: volData.date,
+          creneau: volData.creneau,
+          ballonId: volData.ballonId,
+        },
+      })
+      if (!existing) {
+        await prisma.vol.create({
+          data: {
+            ...volData,
+            exploitantId: cameronBalloons.id,
+          },
+        })
+      }
+    }
+
+    // Assign some passagers to today's vols
+    const todayVols = await prisma.vol.findMany({
+      where: {
+        exploitantId: cameronBalloons.id,
+        date: relDate(0),
+        statut: { not: 'ANNULE' },
+      },
+      orderBy: { creneau: 'asc' },
+    })
+
+    const unassignedPassagers = await prisma.passager.findMany({
+      where: { exploitantId: cameronBalloons.id, volId: null },
+      take: 6,
+    })
+
+    // Assign first 3 passagers to vol 1 (today matin), next 2 to vol 2 (today soir)
+    if (todayVols.length >= 2 && unassignedPassagers.length >= 5) {
+      for (let i = 0; i < 3 && i < unassignedPassagers.length; i++) {
+        await prisma.passager.update({
+          where: { id: unassignedPassagers[i]!.id },
+          data: { volId: todayVols[0]!.id },
+        })
+      }
+      for (let i = 3; i < 5 && i < unassignedPassagers.length; i++) {
+        await prisma.passager.update({
+          where: { id: unassignedPassagers[i]!.id },
+          data: { volId: todayVols[1]!.id },
+        })
+      }
+    }
+
+    console.log('  - 8 vols seeded (2 today, 2 future, 2 past, 1 cancelled, 1 meteo alert)')
+    console.log("  - Passagers assigned to today's vols")
+  } else if (existingVols > 0) {
+    console.log(`  - Skipped vol seeding (${existingVols} vols already exist)`)
+  }
 }
 
 main()
