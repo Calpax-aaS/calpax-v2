@@ -432,6 +432,8 @@ model Vol {
   gasConso        Int?
   anomalies       String?
   noteDansCarnet  Boolean    @default(false)
+  meteoAlert      Boolean    @default(false)
+  cancelReason    String?
 
   pvePdfUrl       String?
   pveArchivedAt   DateTime?
