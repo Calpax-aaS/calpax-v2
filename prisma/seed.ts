@@ -1315,6 +1315,7 @@ async function main() {
   // Demo users
   const demoUsers = [
     { email: 'demo-gerant@calpax.fr', name: 'Olivier Demo', role: 'GERANT' as const },
+    { email: 'damien@cameronfrance.com', name: 'Damien Cuenot', role: 'PILOTE' as const },
     { email: 'demo-pilote@calpax.fr', name: 'Pierre Pilote', role: 'PILOTE' as const },
     { email: 'demo-equipier@calpax.fr', name: 'Lucas Equipier', role: 'EQUIPIER' as const },
   ]
@@ -1423,7 +1424,7 @@ async function main() {
     }
   }
 
-  // Demo pilotes (2)
+  // Demo pilotes (3)
   const demoPiloteRecords = []
   const demoPilotesData = [
     {
@@ -1441,6 +1442,22 @@ async function main() {
       heuresDeVol: 1500,
       dateExpirationLicence: new Date('2027-12-31'),
       userId: demoUserRecords['demo-gerant@calpax.fr']?.id,
+    },
+    {
+      prenom: 'Damien',
+      nom: 'Cuenot',
+      poids: 99,
+      telephone: '0680344117',
+      email: 'damien@cameronfrance.com',
+      licenceBfcl: 'BFCL-DEMO-003',
+      qualificationCommerciale: true,
+      classeA: true,
+      groupeA1: true,
+      groupeA2: true,
+      groupeA3: true,
+      heuresDeVol: 200,
+      dateExpirationLicence: new Date('2027-06-15'),
+      userId: demoUserRecords['damien@cameronfrance.com']?.id,
     },
     {
       prenom: 'Pierre',
