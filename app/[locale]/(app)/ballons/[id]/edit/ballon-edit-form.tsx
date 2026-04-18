@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { PerformanceChartInput } from '@/components/performance-chart-input'
+import { ConfigGazInput } from '@/components/config-gaz-input'
 import { updateBallon } from '@/lib/actions/ballon'
 import { cn } from '@/lib/utils'
 
@@ -111,21 +112,11 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
               />
             </div>
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="configGaz" className={labelClassName}>
-              {t('fields.configGaz')} *
-            </Label>
-            <Input
-              id="configGaz"
-              name="configGaz"
-              defaultValue={ballon.configGaz}
-              placeholder="4xCB2990 : 4x23 kg"
-              required
-            />
-            <p className="text-xs text-muted-foreground">
-              Format : [nb]x[modele] : [nb]x[poids] kg — ex: 4xCB2990 : 4x23 kg
-            </p>
-          </div>
+          <ConfigGazInput
+            defaultValue={ballon.configGaz}
+            required
+            labelClassName={labelClassName}
+          />
           <div className="space-y-1">
             <Label htmlFor="manexAnnexRef" className={labelClassName}>
               {t('fields.manexAnnexRef')} *

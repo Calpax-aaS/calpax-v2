@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { PerformanceChartInput } from '@/components/performance-chart-input'
+import { ConfigGazInput } from '@/components/config-gaz-input'
 import { createBallon } from '@/lib/actions/ballon'
 import { cn } from '@/lib/utils'
 
@@ -65,11 +66,7 @@ export default async function BallonNewPage({ params }: Props) {
                 </div>
               </div>
               <div className="space-y-1">
-                <Label htmlFor="configGaz">{t('fields.configGaz')} *</Label>
-                <Input id="configGaz" name="configGaz" placeholder="4xCB2990 : 4x23 kg" required />
-                <p className="text-xs text-muted-foreground">
-                  Format : [nb]x[modele] : [nb]x[poids] kg — ex: 4xCB2990 : 4x23 kg
-                </p>
+                <ConfigGazInput defaultValue="" required />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="manexAnnexRef">{t('fields.manexAnnexRef')} *</Label>
