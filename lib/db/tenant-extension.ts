@@ -15,6 +15,7 @@ export const TENANT_FILTER: Record<string, string> = {
   Vehicule: 'exploitantId',
   SiteDecollage: 'exploitantId',
   WeatherCache: 'exploitantId',
+  Tag: 'exploitantId',
 }
 
 export const UNTENANTED = new Set<string>([
@@ -24,6 +25,7 @@ export const UNTENANTED = new Set<string>([
   'Verification',
   'BilletSequence',
   'FailedLoginAttempt',
+  'BilletTag',
 ])
 
 const COMPOSABLE_READ_OPS = new Set([

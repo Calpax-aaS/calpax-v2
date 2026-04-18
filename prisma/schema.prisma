@@ -31,6 +31,7 @@ model Exploitant {
   passagers   Passager[]
   paiements    Paiement[]
   weatherCache WeatherCache[]
+  tags         Tag[]
   equipiers      Equipier[]
   vehicules      Vehicule[]
   sitesDecollage SiteDecollage[]
@@ -336,6 +337,7 @@ model Billet {
 
   passagers       Passager[]
   paiements       Paiement[]
+  tags            BilletTag[]
 
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
@@ -393,6 +395,33 @@ model Paiement {
   @@index([exploitantId])
   @@index([billetId])
   @@map("paiement")
+}
+
+model Tag {
+  id           String     @id @default(cuid())
+  exploitantId String
+  exploitant   Exploitant @relation(fields: [exploitantId], references: [id], onDelete: Cascade)
+  nom          String
+  couleur      String?
+
+  billets      BilletTag[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([exploitantId, nom])
+  @@index([exploitantId])
+  @@map("tag")
+}
+
+model BilletTag {
+  billetId String
+  billet   Billet @relation(fields: [billetId], references: [id], onDelete: Cascade)
+  tagId    String
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([billetId, tagId])
+  @@map("billet_tag")
 }
 
 model Vol {
