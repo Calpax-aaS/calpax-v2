@@ -57,8 +57,8 @@ test.describe('Flight lifecycle E2E', () => {
 
     // Pilotes
     await page.goto(`${BASE_URL}/fr/pilotes`)
-    await expect(page.getByText('Olivier')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByText('Cuenot')).toBeVisible()
+    await expect(page.getByText('Olivier').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Cuenot').first()).toBeVisible()
 
     // Ballons
     await page.goto(`${BASE_URL}/fr/ballons`)
