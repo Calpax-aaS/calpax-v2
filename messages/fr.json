@@ -256,11 +256,16 @@
       "peseeAVide": "Pesée à vide (kg)",
       "configGaz": "Configuration gaz",
       "manexAnnexRef": "Référence annexe MANEX",
+      "manexAnnexRefHint": "Référence de l'annexe technique dans le manuel d'exploitation",
       "mtom": "MTOM (kg)",
+      "mtomHint": "Masse maximale au décollage",
       "mlm": "MLM (kg)",
+      "mlmHint": "Masse maximale à l'atterrissage",
       "camoOrganisme": "Organisme CAMO",
       "camoExpiryDate": "Date expiration CAMO",
+      "camoSectionHint": "Organisme chargé du suivi de navigabilité continue",
       "certificatNavigabilite": "Certificat de navigabilité",
+      "certificatNavigabiliteHint": "Numéro du CdN délivré par la DGAC / EASA",
       "performanceChart": "Devis de chargement — charge utile maximale (kg) par température"
     }
   },

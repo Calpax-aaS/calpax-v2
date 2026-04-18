@@ -256,11 +256,16 @@
       "peseeAVide": "Empty weight (kg)",
       "configGaz": "Gas configuration",
       "manexAnnexRef": "MANEX annex reference",
+      "manexAnnexRefHint": "Technical annex reference from the operations manual",
       "mtom": "MTOM (kg)",
+      "mtomHint": "Maximum take-off mass",
       "mlm": "MLM (kg)",
+      "mlmHint": "Maximum landing mass",
       "camoOrganisme": "CAMO organization",
       "camoExpiryDate": "CAMO expiry date",
+      "camoSectionHint": "Continuing airworthiness management organisation",
       "certificatNavigabilite": "Certificate of airworthiness",
+      "certificatNavigabiliteHint": "CofA number issued by the national aviation authority / EASA",
       "performanceChart": "Loading chart — max payload (kg) by temperature"
     }
   },

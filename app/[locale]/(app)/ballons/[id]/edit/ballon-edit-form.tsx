@@ -127,9 +127,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
               defaultValue={ballon.manexAnnexRef}
               required
             />
-            <p className="text-xs text-muted-foreground">
-              Manuel d&apos;exploitation — reference de l&apos;annexe technique du ballon
-            </p>
+            <p className="text-xs text-muted-foreground">{t('fields.manexAnnexRefHint')}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
@@ -137,18 +135,14 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
                 {t('fields.mtom')}
               </Label>
               <Input id="mtom" name="mtom" type="number" min="0" defaultValue={ballon.mtom ?? ''} />
-              <p className="text-xs text-muted-foreground">
-                Masse maximale au decollage (Maximum Take-Off Mass)
-              </p>
+              <p className="text-xs text-muted-foreground">{t('fields.mtomHint')}</p>
             </div>
             <div className="space-y-1">
               <Label htmlFor="mlm" className={labelClassName}>
                 {t('fields.mlm')}
               </Label>
               <Input id="mlm" name="mlm" type="number" min="0" defaultValue={ballon.mlm ?? ''} />
-              <p className="text-xs text-muted-foreground">
-                Masse maximale a l&apos;atterrissage (Maximum Landing Mass)
-              </p>
+              <p className="text-xs text-muted-foreground">{t('fields.mlmHint')}</p>
             </div>
           </div>
         </CardContent>
@@ -159,10 +153,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
       <Card>
         <CardHeader>
           <CardTitle className="text-base">CAMO &amp; Navigabilite</CardTitle>
-          <p className="text-xs text-muted-foreground">
-            Continuing Airworthiness Management Organisation — organisme charge du suivi de
-            navigabilite
-          </p>
+          <p className="text-xs text-muted-foreground">{t('fields.camoSectionHint')}</p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1">
@@ -198,7 +189,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
               placeholder="ex: CDN-FR-2024-001"
             />
             <p className="text-xs text-muted-foreground">
-              Numero du certificat de navigabilite (CdN) delivre par la DGAC / EASA
+              {t('fields.certificatNavigabiliteHint')}
             </p>
           </div>
         </CardContent>
