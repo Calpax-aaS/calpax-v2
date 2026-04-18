@@ -47,13 +47,13 @@ type UserRole = 'ADMIN_CALPAX' | 'GERANT' | 'PILOTE' | 'EQUIPIER'
 
 const roleAccess: Record<string, UserRole[]> = {
   home: ['ADMIN_CALPAX', 'GERANT', 'PILOTE', 'EQUIPIER'],
-  billets: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
+  billets: ['ADMIN_CALPAX', 'GERANT'],
   vols: ['ADMIN_CALPAX', 'GERANT', 'PILOTE', 'EQUIPIER'],
   ballons: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
   pilotes: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
-  equipiers: ['ADMIN_CALPAX', 'GERANT'],
-  vehicules: ['ADMIN_CALPAX', 'GERANT'],
-  sites: ['ADMIN_CALPAX', 'GERANT'],
+  equipiers: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
+  vehicules: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
+  sites: ['ADMIN_CALPAX', 'GERANT', 'PILOTE'],
   settings: ['ADMIN_CALPAX', 'GERANT'],
   rgpd: ['ADMIN_CALPAX', 'GERANT'],
   audit: ['ADMIN_CALPAX', 'GERANT'],
