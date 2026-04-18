@@ -623,6 +623,19 @@
     "emailSubjectPayeur": "Flight cancelled — {date}",
     "emailSubjectEquipe": "Flight cancelled — {ballon} — {date}"
   },
+  "tags": {
+    "title": "Tags",
+    "add": "Add a tag",
+    "name": "Tag name",
+    "color": "Color",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this tag? It will be removed from all tickets.",
+    "noTags": "No tags",
+    "addToBillet": "Add a tag",
+    "removeFromBillet": "Remove",
+    "saveSuccess": "Tag saved",
+    "deleteSuccess": "Tag deleted"
+  },
   "profil": {
     "title": "My profile",
     "identity": "Identity",

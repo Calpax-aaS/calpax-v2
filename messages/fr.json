@@ -623,6 +623,19 @@
     "emailSubjectPayeur": "Vol annulé — {date}",
     "emailSubjectEquipe": "Vol annulé — {ballon} — {date}"
   },
+  "tags": {
+    "title": "Tags",
+    "add": "Ajouter un tag",
+    "name": "Nom du tag",
+    "color": "Couleur",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer ce tag ? Il sera retiré de tous les billets.",
+    "noTags": "Aucun tag",
+    "addToBillet": "Ajouter un tag",
+    "removeFromBillet": "Retirer",
+    "saveSuccess": "Tag enregistré",
+    "deleteSuccess": "Tag supprimé"
+  },
   "profil": {
     "title": "Mon profil",
     "identity": "Identité",
