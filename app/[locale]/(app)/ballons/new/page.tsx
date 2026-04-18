@@ -71,15 +71,24 @@ export default async function BallonNewPage({ params }: Props) {
               <div className="space-y-1">
                 <Label htmlFor="manexAnnexRef">{t('fields.manexAnnexRef')} *</Label>
                 <Input id="manexAnnexRef" name="manexAnnexRef" required />
+                <p className="text-xs text-muted-foreground">
+                  Manuel d&apos;exploitation — reference de l&apos;annexe technique du ballon
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label htmlFor="mtom">{t('fields.mtom')}</Label>
                   <Input id="mtom" name="mtom" type="number" min="0" />
+                  <p className="text-xs text-muted-foreground">
+                    Masse maximale au decollage (Maximum Take-Off Mass)
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="mlm">{t('fields.mlm')}</Label>
                   <Input id="mlm" name="mlm" type="number" min="0" />
+                  <p className="text-xs text-muted-foreground">
+                    Masse maximale a l&apos;atterrissage (Maximum Landing Mass)
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -90,11 +99,15 @@ export default async function BallonNewPage({ params }: Props) {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">CAMO &amp; Navigabilité</CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Continuing Airworthiness Management Organisation — organisme charge du suivi de
+                navigabilite
+              </p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1">
                 <Label htmlFor="camoOrganisme">{t('fields.camoOrganisme')}</Label>
-                <Input id="camoOrganisme" name="camoOrganisme" />
+                <Input id="camoOrganisme" name="camoOrganisme" placeholder="ex: OSAC" />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="camoExpiryDate">{t('fields.camoExpiryDate')}</Label>
@@ -102,7 +115,14 @@ export default async function BallonNewPage({ params }: Props) {
               </div>
               <div className="space-y-1">
                 <Label htmlFor="certificatNavigabilite">{t('fields.certificatNavigabilite')}</Label>
-                <Input id="certificatNavigabilite" name="certificatNavigabilite" />
+                <Input
+                  id="certificatNavigabilite"
+                  name="certificatNavigabilite"
+                  placeholder="ex: CDN-FR-2024-001"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Numero du certificat de navigabilite (CdN) delivre par la DGAC / EASA
+                </p>
               </div>
             </CardContent>
           </Card>

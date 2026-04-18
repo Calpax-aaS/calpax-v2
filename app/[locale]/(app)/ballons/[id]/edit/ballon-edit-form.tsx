@@ -127,6 +127,9 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
               defaultValue={ballon.manexAnnexRef}
               required
             />
+            <p className="text-xs text-muted-foreground">
+              Manuel d&apos;exploitation — reference de l&apos;annexe technique du ballon
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
@@ -134,12 +137,18 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
                 {t('fields.mtom')}
               </Label>
               <Input id="mtom" name="mtom" type="number" min="0" defaultValue={ballon.mtom ?? ''} />
+              <p className="text-xs text-muted-foreground">
+                Masse maximale au decollage (Maximum Take-Off Mass)
+              </p>
             </div>
             <div className="space-y-1">
               <Label htmlFor="mlm" className={labelClassName}>
                 {t('fields.mlm')}
               </Label>
               <Input id="mlm" name="mlm" type="number" min="0" defaultValue={ballon.mlm ?? ''} />
+              <p className="text-xs text-muted-foreground">
+                Masse maximale a l&apos;atterrissage (Maximum Landing Mass)
+              </p>
             </div>
           </div>
         </CardContent>
@@ -150,6 +159,10 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
       <Card>
         <CardHeader>
           <CardTitle className="text-base">CAMO &amp; Navigabilite</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Continuing Airworthiness Management Organisation — organisme charge du suivi de
+            navigabilite
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1">
@@ -160,6 +173,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
               id="camoOrganisme"
               name="camoOrganisme"
               defaultValue={ballon.camoOrganisme ?? ''}
+              placeholder="ex: OSAC"
             />
           </div>
           <div className="space-y-1">
@@ -181,7 +195,11 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
               id="certificatNavigabilite"
               name="certificatNavigabilite"
               defaultValue={ballon.certificatNavigabilite ?? ''}
+              placeholder="ex: CDN-FR-2024-001"
             />
+            <p className="text-xs text-muted-foreground">
+              Numero du certificat de navigabilite (CdN) delivre par la DGAC / EASA
+            </p>
           </div>
         </CardContent>
       </Card>
