@@ -19,6 +19,10 @@ export default async function VolEditPage({ params }: Props) {
     const t = await getTranslations('vols')
     const ctx = getContext()
 
+    if (ctx.role !== 'ADMIN_CALPAX' && ctx.role !== 'GERANT') {
+      redirect(`/${locale}/vols/${id}`)
+    }
+
     const vol = await db.vol.findUnique({ where: { id } })
     if (!vol) notFound()
 

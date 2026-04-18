@@ -1,4 +1,12 @@
 {
+  "common": {
+    "forbidden": "Access denied",
+    "forbiddenMessage": "You do not have permission to access this page. Contact your administrator if you believe this is an error.",
+    "error": "Something went wrong",
+    "errorMessage": "An unexpected error occurred. Please try again.",
+    "retry": "Try again",
+    "backHome": "Back to home"
+  },
   "home": {
     "signedInAs": "Signed in as {name} — Operator {exploitant}",
     "signOut": "Sign out",

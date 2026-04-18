@@ -1,4 +1,12 @@
 {
+  "common": {
+    "forbidden": "Accès refusé",
+    "forbiddenMessage": "Vous n'avez pas les droits nécessaires pour accéder à cette page. Contactez votre administrateur si vous pensez qu'il s'agit d'une erreur.",
+    "error": "Une erreur est survenue",
+    "errorMessage": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "backHome": "Retour à l'accueil"
+  },
   "home": {
     "signedInAs": "Connecté en tant que {name} — Exploitant {exploitant}",
     "signOut": "Se déconnecter",
