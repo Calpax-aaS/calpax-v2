@@ -10,16 +10,24 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { LogoUpload } from '@/components/logo-upload'
 import { updateExploitant } from '@/lib/actions/exploitant'
+import { TagManager } from './tag-manager'
 
 export default async function SettingsPage() {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
     const t = await getTranslations('settings')
+    const tTags = await getTranslations('tags')
     const ctx = getContext()
 
-    const exploitant = await db.exploitant.findFirstOrThrow({
-      where: { id: ctx.exploitantId },
-    })
+    const [exploitant, tags] = await Promise.all([
+      db.exploitant.findFirstOrThrow({
+        where: { id: ctx.exploitantId },
+      }),
+      db.tag.findMany({
+        orderBy: { nom: 'asc' },
+        select: { id: true, nom: true, couleur: true },
+      }),
+    ])
 
     async function handleUpdate(formData: FormData) {
       'use server'
@@ -188,6 +196,16 @@ export default async function SettingsPage() {
             <Button type="submit">{t('saveButton')}</Button>
           </div>
         </form>
+
+        {/* Tags section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{tTags('title')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TagManager tags={tags} />
+          </CardContent>
+        </Card>
       </div>
     )
   })
