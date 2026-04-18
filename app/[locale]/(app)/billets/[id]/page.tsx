@@ -79,6 +79,7 @@ export default async function BilletDetailPage({ params }: Props) {
       include: {
         passagers: true,
         paiements: { orderBy: { datePaiement: 'desc' } },
+        tags: { include: { tag: true } },
       },
     })
     if (!billet) notFound()
@@ -114,6 +115,20 @@ export default async function BilletDetailPage({ params }: Props) {
             </Link>
           </div>
         </div>
+
+        {billet.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {billet.tags.map(({ tag }) => (
+              <Badge
+                key={tag.id}
+                variant="outline"
+                style={tag.couleur ? { borderColor: tag.couleur, color: tag.couleur } : undefined}
+              >
+                {tag.nom}
+              </Badge>
+            ))}
+          </div>
+        )}
 
         {/* Payeur card */}
         <Card>
