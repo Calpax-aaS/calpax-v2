@@ -66,7 +66,10 @@ export default async function BallonNewPage({ params }: Props) {
               </div>
               <div className="space-y-1">
                 <Label htmlFor="configGaz">{t('fields.configGaz')} *</Label>
-                <Input id="configGaz" name="configGaz" required />
+                <Input id="configGaz" name="configGaz" placeholder="4xCB2990 : 4x23 kg" required />
+                <p className="text-xs text-muted-foreground">
+                  Format : [nb]x[modele] : [nb]x[poids] kg — ex: 4xCB2990 : 4x23 kg
+                </p>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="manexAnnexRef">{t('fields.manexAnnexRef')} *</Label>

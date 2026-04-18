@@ -115,7 +115,16 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
             <Label htmlFor="configGaz" className={labelClassName}>
               {t('fields.configGaz')} *
             </Label>
-            <Input id="configGaz" name="configGaz" defaultValue={ballon.configGaz} required />
+            <Input
+              id="configGaz"
+              name="configGaz"
+              defaultValue={ballon.configGaz}
+              placeholder="4xCB2990 : 4x23 kg"
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              Format : [nb]x[modele] : [nb]x[poids] kg — ex: 4xCB2990 : 4x23 kg
+            </p>
           </div>
           <div className="space-y-1">
             <Label htmlFor="manexAnnexRef" className={labelClassName}>
