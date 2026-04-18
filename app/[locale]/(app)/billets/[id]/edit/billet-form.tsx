@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 import {
   Select,
   SelectContent,
@@ -41,6 +42,13 @@ type BilletDefaults = {
   categorie?: string | null
   provenance?: string | null
   commentaire?: string | null
+  estBonCadeau?: boolean | null
+  dateCadeau?: Date | null
+  destinataireNom?: string | null
+  destinataireEmail?: string | null
+  organisateurNom?: string | null
+  organisateurEmail?: string | null
+  organisateurTelephone?: string | null
 } | null
 
 type Props = {
@@ -70,6 +78,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
   const [error, setError] = useState<string | null>(null)
   const [typePlannif, setTypePlannif] = useState(defaultValues?.typePlannif ?? 'A_DEFINIR')
   const [payeurCiv, setPayeurCiv] = useState(defaultValues?.payeurCiv ?? '')
+  const [estBonCadeau, setEstBonCadeau] = useState(defaultValues?.estBonCadeau ?? false)
 
   const showDates =
     typePlannif === 'MATIN' || typePlannif === 'SOIR' || typePlannif === 'TOUTE_LA_JOURNEE'
@@ -395,6 +404,70 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
           <PassagerTableEditor passagers={passagers} onChange={setPassagers} />
         </CardContent>
       </Card>
+
+      {/* Bon cadeau section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Switch id="estBonCadeau" checked={estBonCadeau} onCheckedChange={setEstBonCadeau} />
+            <CardTitle className="text-base">{t('bonCadeau.title')}</CardTitle>
+          </div>
+        </CardHeader>
+        {estBonCadeau && (
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('bonCadeau.dateCadeau')}</Label>
+                <Input
+                  type="date"
+                  name="dateCadeau"
+                  defaultValue={toDateInputValue(defaultValues?.dateCadeau)}
+                />
+              </div>
+            </div>
+            <Separator />
+            <h3 className="text-sm font-medium">{t('bonCadeau.destinataire')}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('bonCadeau.destinataireNom')}</Label>
+                <Input name="destinataireNom" defaultValue={defaultValues?.destinataireNom ?? ''} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('bonCadeau.destinataireEmail')}</Label>
+                <Input
+                  type="email"
+                  name="destinataireEmail"
+                  defaultValue={defaultValues?.destinataireEmail ?? ''}
+                />
+              </div>
+            </div>
+            <Separator />
+            <h3 className="text-sm font-medium">{t('bonCadeau.organisateur')}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('bonCadeau.organisateurNom')}</Label>
+                <Input name="organisateurNom" defaultValue={defaultValues?.organisateurNom ?? ''} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('bonCadeau.organisateurEmail')}</Label>
+                <Input
+                  type="email"
+                  name="organisateurEmail"
+                  defaultValue={defaultValues?.organisateurEmail ?? ''}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('bonCadeau.organisateurTelephone')}</Label>
+                <Input
+                  name="organisateurTelephone"
+                  defaultValue={defaultValues?.organisateurTelephone ?? ''}
+                />
+              </div>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+      <input type="hidden" name="estBonCadeau" value={estBonCadeau ? 'true' : 'false'} />
 
       <div className="flex justify-end gap-3">
         <Link href={backHref} className={cn(buttonVariants({ variant: 'outline' }))}>

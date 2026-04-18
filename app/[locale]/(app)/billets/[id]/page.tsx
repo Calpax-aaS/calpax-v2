@@ -261,6 +261,48 @@ export default async function BilletDetailPage({ params }: Props) {
           </CardContent>
         </Card>
 
+        {/* Bon cadeau card */}
+        {billet.estBonCadeau && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{tBillets('bonCadeau.title')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              {billet.dateCadeau && (
+                <div>
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                    {tBillets('bonCadeau.dateCadeau')}
+                  </span>
+                  <p className="font-medium">{formatDate(billet.dateCadeau)}</p>
+                </div>
+              )}
+              {billet.destinataireNom && (
+                <div>
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                    {tBillets('bonCadeau.destinataire')}
+                  </span>
+                  <p className="font-medium">
+                    {billet.destinataireNom}
+                    {billet.destinataireEmail ? ` (${billet.destinataireEmail})` : ''}
+                  </p>
+                </div>
+              )}
+              {billet.organisateurNom && (
+                <div>
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                    {tBillets('bonCadeau.organisateur')}
+                  </span>
+                  <p className="font-medium">
+                    {billet.organisateurNom}
+                    {billet.organisateurEmail ? ` (${billet.organisateurEmail})` : ''}
+                    {billet.organisateurTelephone ? ` — ${billet.organisateurTelephone}` : ''}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Passagers card */}
         <Card>
           <CardHeader>
