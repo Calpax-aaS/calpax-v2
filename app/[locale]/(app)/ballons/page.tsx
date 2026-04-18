@@ -30,7 +30,7 @@ export default async function BallonsPage({ params }: Props) {
 
     const ballons = await db.ballon.findMany({
       where: { exploitantId: ctx.exploitantId },
-      orderBy: { nom: 'asc' },
+      orderBy: [{ actif: 'desc' }, { volumeM3: 'desc' }, { immatriculation: 'asc' }],
     })
 
     return (

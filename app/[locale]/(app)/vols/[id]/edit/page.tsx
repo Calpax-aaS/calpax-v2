@@ -33,7 +33,7 @@ export default async function VolEditPage({ params }: Props) {
     const [ballons, pilotes, equipiers, vehicules, sites] = await Promise.all([
       db.ballon.findMany({
         where: { actif: true, exploitantId: ctx.exploitantId },
-        orderBy: { nom: 'asc' },
+        orderBy: [{ volumeM3: 'desc' }, { immatriculation: 'asc' }],
         select: {
           id: true,
           nom: true,
