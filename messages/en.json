@@ -375,6 +375,17 @@
       "PARTIEL": "Partial",
       "SOLDE": "Paid",
       "REMBOURSE": "Refunded"
+    },
+    "bonCadeau": {
+      "title": "Gift card",
+      "dateCadeau": "Gift date",
+      "destinataire": "Recipient",
+      "destinataireNom": "Recipient name",
+      "destinataireEmail": "Recipient email",
+      "organisateur": "Organizer",
+      "organisateurNom": "Organizer name",
+      "organisateurEmail": "Organizer email",
+      "organisateurTelephone": "Organizer phone"
     }
   },
   "vols": {

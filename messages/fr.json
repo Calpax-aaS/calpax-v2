@@ -375,6 +375,17 @@
       "PARTIEL": "Partiel",
       "SOLDE": "Soldé",
       "REMBOURSE": "Remboursé"
+    },
+    "bonCadeau": {
+      "title": "Bon cadeau",
+      "dateCadeau": "Date du cadeau",
+      "destinataire": "Destinataire",
+      "destinataireNom": "Nom du destinataire",
+      "destinataireEmail": "Email du destinataire",
+      "organisateur": "Organisateur",
+      "organisateurNom": "Nom de l'organisateur",
+      "organisateurEmail": "Email de l'organisateur",
+      "organisateurTelephone": "Téléphone de l'organisateur"
     }
   },
   "vols": {

@@ -55,6 +55,13 @@ function extractBilletData(formData: FormData) {
     survol: formData.get('survol') || undefined,
     commentaire: formData.get('commentaire') || undefined,
     dateRappel: formData.get('dateRappel') || undefined,
+    estBonCadeau: formData.get('estBonCadeau') === 'true',
+    dateCadeau: formData.get('dateCadeau') || undefined,
+    destinataireNom: formData.get('destinataireNom') || undefined,
+    destinataireEmail: formData.get('destinataireEmail') || undefined,
+    organisateurNom: formData.get('organisateurNom') || undefined,
+    organisateurEmail: formData.get('organisateurEmail') || undefined,
+    organisateurTelephone: formData.get('organisateurTelephone') || undefined,
     passagers,
   }
 }

@@ -24,6 +24,14 @@ export const billetCreateSchema = z.object({
   commentaire: z.string().optional().or(z.literal('')),
   dateRappel: z.coerce.date().optional(),
 
+  estBonCadeau: z.coerce.boolean().optional(),
+  dateCadeau: z.coerce.date().optional(),
+  destinataireNom: z.string().optional(),
+  destinataireEmail: z.string().email().optional().or(z.literal('')),
+  organisateurNom: z.string().optional(),
+  organisateurEmail: z.string().email().optional().or(z.literal('')),
+  organisateurTelephone: z.string().optional(),
+
   passagers: z.array(passagerSchema).min(1, 'Au moins un passager requis'),
 })
 
