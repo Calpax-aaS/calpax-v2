@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/meteo-alert",
-      "schedule": "*/30 3-18 * * *"
+      "schedule": "0 5 * * *"
     }
   ]
 }
