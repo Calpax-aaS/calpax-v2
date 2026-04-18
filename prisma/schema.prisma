@@ -333,6 +333,16 @@ model Billet {
   lieuDecollage   String?
   survol          String?
   commentaire     String?
+
+  // Bon cadeau
+  estBonCadeau         Boolean   @default(false)
+  dateCadeau           DateTime?
+  destinataireNom      String?
+  destinataireEmail    String?
+  organisateurNom      String?
+  organisateurEmail    String?
+  organisateurTelephone String?
+
   dateRappel      DateTime?
 
   passagers       Passager[]
