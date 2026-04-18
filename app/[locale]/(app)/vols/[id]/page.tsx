@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { safeDecryptInt } from '@/lib/crypto'
 import { calculerDevisMasse } from '@/lib/vol/devis-masse'
@@ -59,6 +60,8 @@ export default async function VolDetailPage({ params }: Props) {
   return requireAuth(async () => {
     const t = await getTranslations('vols')
     const tPassagers = await getTranslations('passagers')
+    const ctx = getContext()
+    const canEdit = ctx.role === 'ADMIN_CALPAX' || ctx.role === 'GERANT'
 
     const vol = await db.vol.findUnique({
       where: { id },
@@ -153,7 +156,7 @@ export default async function VolDetailPage({ params }: Props) {
             </Badge>
           </div>
           <div className="flex gap-2">
-            {(vol.statut === 'PLANIFIE' || vol.statut === 'CONFIRME') && (
+            {canEdit && (vol.statut === 'PLANIFIE' || vol.statut === 'CONFIRME') && (
               <Link
                 href={`/${locale}/vols/${id}/edit`}
                 className={buttonVariants({ variant: 'outline' })}
@@ -161,7 +164,7 @@ export default async function VolDetailPage({ params }: Props) {
                 {t('edit')}
               </Link>
             )}
-            {vol.statut === 'PLANIFIE' && (
+            {canEdit && vol.statut === 'PLANIFIE' && (
               <Link
                 href={`/${locale}/vols/${id}/organiser`}
                 className={buttonVariants({ variant: 'outline' })}
@@ -174,7 +177,7 @@ export default async function VolDetailPage({ params }: Props) {
 
         {/* Action buttons */}
         <div className="flex items-center gap-3 flex-wrap">
-          <VolActions volId={id} locale={locale} statut={vol.statut} />
+          <VolActions volId={id} locale={locale} statut={vol.statut} canEdit={canEdit} />
         </div>
 
         {/* Meteo alert banner */}

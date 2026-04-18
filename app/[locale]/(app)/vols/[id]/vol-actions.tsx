@@ -12,9 +12,10 @@ type Props = {
   volId: string
   locale: string
   statut: string
+  canEdit?: boolean
 }
 
-export function VolActions({ volId, locale, statut }: Props) {
+export function VolActions({ volId, locale, statut, canEdit = true }: Props) {
   const t = useTranslations('vols')
   const [error, setError] = useState<string | null>(null)
 
@@ -65,12 +66,12 @@ export function VolActions({ volId, locale, statut }: Props) {
           {t('postVolLink')}
         </Link>
       )}
-      {statut === 'PLANIFIE' && (
+      {canEdit && statut === 'PLANIFIE' && (
         <Button size="sm" onClick={handleConfirmer}>
           {t('confirmer')}
         </Button>
       )}
-      {statut === 'TERMINE' && (
+      {canEdit && statut === 'TERMINE' && (
         <Button size="sm" onClick={handleArchive}>
           {t('archivePve')}
         </Button>
@@ -84,7 +85,7 @@ export function VolActions({ volId, locale, statut }: Props) {
           {t('downloadPve')}
         </a>
       )}
-      {statut !== 'ARCHIVE' && statut !== 'ANNULE' && (
+      {canEdit && statut !== 'ARCHIVE' && statut !== 'ANNULE' && (
         <Button variant="destructive" size="sm" onClick={handleCancel}>
           {t('cancel')}
         </Button>
