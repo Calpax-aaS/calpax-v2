@@ -82,41 +82,59 @@ export function FlightCard({ flight, locale, showActions = true }: Props) {
             <span className="text-xs text-muted-foreground">{tv('fields.pilote')}</span>
             <p className="font-medium">{flight.piloteNom}</p>
           </div>
-          {flight.equipierNom && (
-            <div>
-              <span className="text-xs text-muted-foreground">{tv('fields.equipier')}</span>
-              <p className="font-medium">{flight.equipierNom}</p>
-            </div>
-          )}
-          {flight.siteDeco && (
-            <div>
-              <span className="text-xs text-muted-foreground">{tv('fields.lieuDecollage')}</span>
-              <p className="font-medium">{flight.siteDeco}</p>
-            </div>
-          )}
+          <div>
+            <span className="text-xs text-muted-foreground">{tv('fields.equipier')}</span>
+            <p className="font-medium">{flight.equipierNom ?? '—'}</p>
+          </div>
+          <div>
+            <span className="text-xs text-muted-foreground">{tv('fields.lieuDecollage')}</span>
+            <p className="font-medium">{flight.siteDeco ?? '—'}</p>
+          </div>
+          <div>
+            <span className="text-xs text-muted-foreground">{t('capacity')}</span>
+            <p className="font-medium">
+              {flight.passagerCount}/{flight.passagerMax}
+            </p>
+          </div>
         </div>
 
-        {/* Passengers + mass */}
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1">
-            <Users className="h-3.5 w-3.5 text-muted-foreground" />
-            <span>
-              {flight.passagerCount}/{flight.passagerMax} {t('passengers')}
+        {/* Mass budget */}
+        {flight.massBudget ? (
+          <div className="flex items-center gap-3 text-sm rounded-md bg-muted/50 px-3 py-2">
+            <span className="text-muted-foreground">{t('massLabel')}</span>
+            <span className={cn('font-semibold', MASS_COLORS[flight.massBudget.status])}>
+              {flight.massBudget.totalWeight} kg / {flight.massBudget.maxPayload} kg
             </span>
+            <Badge
+              variant={
+                flight.massBudget.status === 'OK'
+                  ? 'secondary'
+                  : flight.massBudget.status === 'WARNING'
+                    ? 'warning'
+                    : 'destructive'
+              }
+              className="text-xs"
+            >
+              {t(
+                flight.massBudget.status === 'OK'
+                  ? 'massOk'
+                  : flight.massBudget.status === 'WARNING'
+                    ? 'massWarning'
+                    : 'massOver',
+              )}
+            </Badge>
           </div>
-          {flight.massBudget && (
-            <span className={cn('font-medium', MASS_COLORS[flight.massBudget.status])}>
-              {flight.massBudget.totalWeight}kg / {flight.massBudget.maxPayload}kg
-            </span>
-          )}
-        </div>
+        ) : (
+          <div className="text-xs text-muted-foreground italic">{t('massUnavailable')}</div>
+        )}
 
         {/* Weather */}
         {flight.weather && (
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-4 text-sm rounded-md bg-muted/50 px-3 py-2">
+            <span className="text-muted-foreground">{tv(`creneau.${flight.creneau}`)}</span>
             <div className="flex items-center gap-1">
               <Wind className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>{flight.weather.maxWindKt} kt</span>
+              <span>{flight.weather.maxWindKt} km/h max</span>
             </div>
             <div className="flex items-center gap-1">
               <Thermometer className="h-3.5 w-3.5 text-muted-foreground" />

@@ -13,6 +13,7 @@ export type Alert = {
 
 type BallonInput = {
   id: string
+  nom?: string
   immatriculation: string
   camoExpiryDate: Date | null
   actif: boolean
@@ -81,7 +82,7 @@ export function buildBallonAlerts(ballons: BallonInput[], today: Date = new Date
       severity,
       entityType: 'BALLON',
       entityId: ballon.id,
-      entityName: ballon.immatriculation,
+      entityName: ballon.nom ? `${ballon.nom} (${ballon.immatriculation})` : ballon.immatriculation,
       alertType: 'CAMO_EXPIRY',
       expiryDate: ballon.camoExpiryDate,
       daysRemaining: computeDaysRemaining(ballon.camoExpiryDate, today),

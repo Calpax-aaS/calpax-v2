@@ -137,7 +137,13 @@ export default async function HomePage({ params }: Props) {
       todayBallonIds.length > 0
         ? db.ballon.findMany({
             where: { id: { in: todayBallonIds }, actif: true },
-            select: { id: true, immatriculation: true, camoExpiryDate: true, actif: true },
+            select: {
+              id: true,
+              nom: true,
+              immatriculation: true,
+              camoExpiryDate: true,
+              actif: true,
+            },
           })
         : Promise.resolve([]),
       todayPiloteIds.length > 0

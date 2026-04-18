@@ -38,7 +38,7 @@ export default async function AppLayout({ children, params }: Props) {
       const [ballons, pilotes] = await Promise.all([
         db.ballon.findMany({
           where: { actif: true },
-          select: { id: true, immatriculation: true, camoExpiryDate: true, actif: true },
+          select: { id: true, nom: true, immatriculation: true, camoExpiryDate: true, actif: true },
         }),
         db.pilote.findMany({
           where: { actif: true },
