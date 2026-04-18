@@ -116,6 +116,11 @@ export default async function HomePage({ params }: Props) {
 
     const seuilVent = exploitant.meteoSeuilVent ?? 15
 
+    const CRENEAU_LABELS: Record<string, string> = {
+      MATIN: '05h — 10h',
+      SOIR: '17h — 22h',
+    }
+
     // Helper: get weather summary per créneau
     function getWeatherForCreneau(creneau: 'MATIN' | 'SOIR'): FlightCardData['weather'] {
       if (!forecast) return null
@@ -124,8 +129,10 @@ export default async function HomePage({ params }: Props) {
       const summary = summarizeWeather(hours, seuilVent)
       return {
         maxWindKt: summary.maxWindKt,
+        maxWindAltitude: summary.maxWindAltitude,
         avgTemperature: summary.avgTemperature,
         goNogo: levelToGoNogo(summary.level),
+        creneauRange: CRENEAU_LABELS[creneau] ?? '',
       }
     }
 

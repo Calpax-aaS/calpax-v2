@@ -14,8 +14,10 @@ type MassBudget = {
 
 type WeatherSummary = {
   maxWindKt: number
+  maxWindAltitude: string
   avgTemperature: number
   goNogo: 'GO' | 'NOGO' | 'MARGINAL'
+  creneauRange: string
 }
 
 export type FlightCardData = {
@@ -130,11 +132,15 @@ export function FlightCard({ flight, locale, showActions = true }: Props) {
 
         {/* Weather */}
         {flight.weather && (
-          <div className="flex items-center gap-4 text-sm rounded-md bg-muted/50 px-3 py-2">
-            <span className="text-muted-foreground">{tv(`creneau.${flight.creneau}`)}</span>
+          <div className="flex items-center gap-4 text-sm rounded-md bg-muted/50 px-3 py-2 flex-wrap">
+            <span className="text-muted-foreground">
+              {tv(`creneau.${flight.creneau}`)} ({flight.weather.creneauRange})
+            </span>
             <div className="flex items-center gap-1">
               <Wind className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>{flight.weather.maxWindKt} km/h max</span>
+              <span>
+                {flight.weather.maxWindKt} km/h ({flight.weather.maxWindAltitude})
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <Thermometer className="h-3.5 w-3.5 text-muted-foreground" />
