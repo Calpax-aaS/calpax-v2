@@ -24,13 +24,13 @@ export default function SignInPage() {
     try {
       const result = await signIn.email({ email, password })
       if (result.error) {
-        setError(result.error.message ?? 'Erreur de connexion')
+        setError(result.error.message ?? t('loginError'))
       } else {
         router.push('/')
         router.refresh()
       }
     } catch {
-      setError('Erreur de connexion')
+      setError(t('loginError'))
     } finally {
       setLoading(false)
     }
@@ -174,6 +174,8 @@ export default function SignInPage() {
                     id="email"
                     name="email"
                     type="email"
+                    autoComplete="email"
+                    autoFocus
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -192,6 +194,7 @@ export default function SignInPage() {
                     id="password"
                     name="password"
                     type="password"
+                    autoComplete="current-password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -272,6 +275,8 @@ export default function SignInPage() {
                     id="forgot-email"
                     name="email"
                     type="email"
+                    autoComplete="email"
+                    autoFocus
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

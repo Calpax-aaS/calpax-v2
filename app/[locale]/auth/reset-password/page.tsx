@@ -88,6 +88,8 @@ export default function ResetPasswordPage() {
                 id="new-password"
                 name="newPassword"
                 type="password"
+                autoComplete="new-password"
+                autoFocus
                 required
                 minLength={12}
                 value={newPassword}
@@ -108,6 +110,7 @@ export default function ResetPasswordPage() {
                 id="confirm-password"
                 name="confirmPassword"
                 type="password"
+                autoComplete="new-password"
                 required
                 minLength={12}
                 value={confirmPassword}

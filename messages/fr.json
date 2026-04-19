@@ -58,7 +58,7 @@
     "backToSignin": "Retour a la connexion",
     "resetPasswordTitle": "Nouveau mot de passe",
     "newPasswordLabel": "Nouveau mot de passe",
-    "newPasswordPlaceholder": "Minimum 8 caracteres",
+    "newPasswordPlaceholder": "Minimum 12 caractères",
     "confirmPasswordLabel": "Confirmer le mot de passe",
     "confirmPasswordPlaceholder": "Retapez le mot de passe",
     "resetPasswordButton": "Reinitialiser le mot de passe",
@@ -69,7 +69,16 @@
     "invitationSuccess": "Votre compte est pret. Vous pouvez maintenant vous connecter.",
     "orContinueWith": "Ou continuer avec",
     "continueWithGoogle": "Continuer avec Google",
-    "googleError": "Erreur de connexion avec Google"
+    "googleError": "Erreur de connexion avec Google",
+    "loginError": "Erreur de connexion",
+    "passwordStrength": {
+      "tooShort": "Minimum {min} caractères",
+      "veryWeak": "Très faible",
+      "weak": "Faible",
+      "fair": "Moyen",
+      "good": "Bon",
+      "strong": "Excellent"
+    }
   },
   "admin": {
     "title": "Calpax — Administration",

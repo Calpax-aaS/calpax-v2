@@ -58,7 +58,7 @@
     "backToSignin": "Back to sign in",
     "resetPasswordTitle": "New password",
     "newPasswordLabel": "New password",
-    "newPasswordPlaceholder": "Minimum 8 characters",
+    "newPasswordPlaceholder": "Minimum 12 characters",
     "confirmPasswordLabel": "Confirm password",
     "confirmPasswordPlaceholder": "Re-enter password",
     "resetPasswordButton": "Reset password",
@@ -69,7 +69,16 @@
     "invitationSuccess": "Your account is ready. You can now sign in.",
     "orContinueWith": "Or continue with",
     "continueWithGoogle": "Continue with Google",
-    "googleError": "Google sign-in error"
+    "googleError": "Google sign-in error",
+    "loginError": "Sign-in failed",
+    "passwordStrength": {
+      "tooShort": "Minimum {min} characters",
+      "veryWeak": "Very weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    }
   },
   "admin": {
     "title": "Calpax — Administration",
