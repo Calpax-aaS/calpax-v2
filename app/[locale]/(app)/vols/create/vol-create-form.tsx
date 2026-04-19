@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select'
 import { createVol, updateVol } from '@/lib/actions/vol'
 import { cn } from '@/lib/utils'
+import { formLabelClass as labelClassName } from '@/lib/ui'
 
 type BallonOption = {
   id: string
@@ -73,8 +74,6 @@ type Props = {
 }
 
 const CRENEAU_OPTIONS = ['MATIN', 'SOIR'] as const
-
-const labelClassName = 'text-xs font-medium uppercase tracking-wider text-muted-foreground'
 
 export function VolCreateForm({
   locale,

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { PasswordStrength } from '@/components/password-strength'
+import { formLabelClass } from '@/lib/ui'
 
 export function ChangePasswordForm() {
   const t = useTranslations('profil')
@@ -54,7 +55,7 @@ export function ChangePasswordForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="current-password"
-              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              className={formLabelClass}
             >
               {t('currentPassword')}
             </Label>
@@ -69,7 +70,7 @@ export function ChangePasswordForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="new-password"
-              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              className={formLabelClass}
             >
               {t('newPassword')}
             </Label>
@@ -86,7 +87,7 @@ export function ChangePasswordForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="confirm-password"
-              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              className={formLabelClass}
             >
               {t('confirmPassword')}
             </Label>

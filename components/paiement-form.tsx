@@ -14,10 +14,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { addPaiement } from '@/lib/actions/paiement'
+import { formLabelClass as labelClassName } from '@/lib/ui'
 
 const MODES = ['ESPECES', 'CHEQUE', 'CB', 'VIREMENT', 'CHEQUE_VACANCES', 'AVOIR'] as const
-
-const labelClassName = 'text-xs font-medium uppercase tracking-wider text-muted-foreground'
 
 type Props = { billetId: string; locale: string }
 
