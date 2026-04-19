@@ -74,44 +74,108 @@ export default function SignInPage() {
       <div className="w-full max-w-5xl rounded-2xl shadow-xl bg-white flex flex-row overflow-hidden">
         {/* Left panel - branding */}
         <div
-          className="hidden md:flex md:w-1/2 relative flex-col justify-end p-10"
+          className="hidden md:flex md:w-1/2 relative flex-col justify-end p-10 overflow-hidden"
           style={{
             background:
-              'linear-gradient(160deg, #0D3B66 0%, #1A5A96 30%, #3B82F6 55%, #7DD3FC 70%, #F59E0B 88%, #FCD34D 100%)',
+              'linear-gradient(160deg, #0D3B66 0%, #144B82 35%, #1E6BA8 62%, #F59E0B 92%, #FCD34D 100%)',
           }}
         >
-          {/* Diagonal stripe pattern overlay */}
+          {/* Soft radial glow */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{
-              backgroundImage:
-                'repeating-linear-gradient(135deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 12px)',
+              background:
+                'radial-gradient(circle at 70% 85%, rgba(252,211,77,0.35), transparent 55%)',
             }}
           />
 
-          {/* Balloon silhouettes */}
-          <div className="absolute inset-0 flex items-start justify-center pt-16">
+          {/* Main balloon — paneled, detailed */}
+          <div className="absolute inset-0 flex items-start justify-center pt-10">
             <svg
-              viewBox="0 0 400 320"
-              className="w-72 h-auto"
+              viewBox="0 0 320 420"
+              className="w-80 h-auto"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              style={{ opacity: 0.15 }}
+              style={{ opacity: 0.22 }}
+              aria-hidden="true"
             >
-              {/* Large balloon center */}
-              <ellipse cx="200" cy="100" rx="70" ry="90" fill="white" />
-              <rect x="192" y="185" width="16" height="20" rx="2" fill="white" />
-              <rect x="185" y="205" width="30" height="22" rx="4" fill="white" />
+              {/* Envelope — alternating panels */}
+              <path
+                d="M160 20 C90 20 45 90 45 160 C45 220 85 270 130 290 L190 290 C235 270 275 220 275 160 C275 90 230 20 160 20 Z"
+                fill="white"
+                fillOpacity="0.9"
+              />
+              <path
+                d="M160 20 C130 20 110 90 110 160 C110 220 125 270 145 290 L175 290 C195 270 210 220 210 160 C210 90 190 20 160 20 Z"
+                fill="white"
+                fillOpacity="0.55"
+              />
+              <path d="M160 20 L160 290" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+              <path d="M110 160 L210 160" stroke="white" strokeOpacity="0.4" strokeWidth="1" />
+              <path d="M75 160 L245 160" stroke="white" strokeOpacity="0.25" strokeWidth="1" />
 
-              {/* Small balloon left */}
-              <ellipse cx="80" cy="130" rx="40" ry="52" fill="white" />
-              <rect x="75" y="178" width="10" height="12" rx="2" fill="white" />
-              <rect x="70" y="190" width="20" height="14" rx="3" fill="white" />
+              {/* Burner + lines */}
+              <rect x="152" y="290" width="16" height="14" rx="2" fill="white" />
+              <line
+                x1="140"
+                y1="304"
+                x2="145"
+                y2="345"
+                stroke="white"
+                strokeOpacity="0.8"
+                strokeWidth="1.2"
+              />
+              <line
+                x1="180"
+                y1="304"
+                x2="175"
+                y2="345"
+                stroke="white"
+                strokeOpacity="0.8"
+                strokeWidth="1.2"
+              />
+              <line
+                x1="160"
+                y1="304"
+                x2="160"
+                y2="345"
+                stroke="white"
+                strokeOpacity="0.8"
+                strokeWidth="1.2"
+              />
 
-              {/* Small balloon right */}
-              <ellipse cx="320" cy="80" rx="35" ry="45" fill="white" />
-              <rect x="315" y="122" width="10" height="10" rx="2" fill="white" />
-              <rect x="310" y="132" width="20" height="13" rx="3" fill="white" />
+              {/* Basket */}
+              <rect
+                x="130"
+                y="345"
+                width="60"
+                height="34"
+                rx="4"
+                fill="white"
+                fillOpacity="0.95"
+              />
+              <path
+                d="M130 355 L190 355"
+                stroke="white"
+                strokeOpacity="0.4"
+                strokeWidth="0.8"
+              />
+            </svg>
+          </div>
+
+          {/* Small balloon accent — top right */}
+          <div className="absolute top-14 right-10 pointer-events-none">
+            <svg
+              viewBox="0 0 80 100"
+              className="w-12 h-auto"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ opacity: 0.18 }}
+              aria-hidden="true"
+            >
+              <ellipse cx="40" cy="40" rx="30" ry="38" fill="white" />
+              <rect x="35" y="76" width="10" height="8" rx="1" fill="white" />
+              <rect x="30" y="82" width="20" height="13" rx="2" fill="white" />
             </svg>
           </div>
 
