@@ -100,7 +100,6 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       if (billetId) {
         router.push(`/${locale}/billets/${billetId}`)
       }
-      // createBillet redirects server-side
     }
   }
 

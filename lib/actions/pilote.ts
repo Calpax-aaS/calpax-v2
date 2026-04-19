@@ -8,6 +8,7 @@ import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { piloteSchema } from '@/lib/schemas/pilote'
 import { encrypt } from '@/lib/crypto'
+import { formatZodError } from '@/lib/zod-error'
 
 function extractPiloteData(formData: FormData) {
   return {
@@ -52,8 +53,7 @@ export async function createPilote(
     const raw = extractPiloteData(formData)
     const result = piloteSchema.safeParse(raw)
     if (!result.success) {
-      const messages = result.error.issues.map((i) => i.message)
-      return { error: messages.join(' — ') }
+      return { error: formatZodError(result.error) }
     }
 
     const { poids, ...rest } = result.data
@@ -83,8 +83,7 @@ export async function updatePilote(
     const raw = extractPiloteData(formData)
     const result = piloteSchema.safeParse(raw)
     if (!result.success) {
-      const messages = result.error.issues.map((i) => i.message)
-      return { error: messages.join(' — ') }
+      return { error: formatZodError(result.error) }
     }
 
     const { poids, ...rest } = result.data

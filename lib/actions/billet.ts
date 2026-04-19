@@ -10,6 +10,7 @@ import { basePrisma } from '@/lib/db/base'
 import { billetCreateSchema } from '@/lib/schemas/billet'
 import { encrypt } from '@/lib/crypto'
 import { formatReference, computeLuhnChecksum } from '@/lib/billet/reference'
+import { formatZodError } from '@/lib/zod-error'
 
 async function nextSequence(exploitantId: string, year: number): Promise<number> {
   const row = await basePrisma.$queryRaw<{ lastSeq: number }[]>`
@@ -77,8 +78,7 @@ export async function createBillet(
     const raw = extractBilletData(formData)
     const result = billetCreateSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     const { passagers, ...billetData } = result.data
@@ -129,8 +129,7 @@ export async function updateBillet(
     const raw = extractBilletData(formData)
     const result = billetCreateSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     const { passagers, ...billetData } = result.data

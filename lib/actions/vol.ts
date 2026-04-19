@@ -12,6 +12,7 @@ import { buildFicheVolData } from '@/lib/pdf/build-data'
 import { uploadPve } from '@/lib/storage/pve'
 import { validateVolCreation } from '@/lib/vol/validation'
 import { sendCancellationEmails } from '@/lib/email/cancellation'
+import { formatZodError } from '@/lib/zod-error'
 
 function parseVolFormData(formData: FormData) {
   return {
@@ -58,8 +59,7 @@ export async function createVol(locale: string, formData: FormData): Promise<{ e
 
     const result = volCreateSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     const { ballonId, piloteId, date, creneau, ...rest } = result.data
@@ -122,8 +122,7 @@ export async function updateVol(
 
     const result = volCreateSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     const { ballonId, piloteId, date, creneau, ...rest } = result.data
@@ -167,7 +166,7 @@ export async function updateVol(
     })
 
     revalidatePath(`/${locale}/vols/${volId}`)
-    redirect(`/${locale}/vols/${volId}`)
+    return {}
   })
 }
 
@@ -199,8 +198,7 @@ export async function savePostFlight(
 
     const result = volPostFlightSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     await db.vol.update({
