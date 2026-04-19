@@ -5,13 +5,13 @@ const coerceCheckbox = z
   .transform((v) => v === true || v === 'on' || v === 'true')
 
 export const piloteSchema = z.object({
-  prenom: z.string().min(1, 'Prenom requis'),
+  prenom: z.string().min(1, 'Prénom requis'),
   nom: z.string().min(1, 'Nom requis'),
   email: z.string().email('Email invalide').optional().or(z.literal('')),
   telephone: z.string().optional(),
   poids: z.coerce.number().positive('Poids invalide').optional(),
-  licenceBfcl: z.string().min(1, 'Numero de licence BFCL requis'),
-  dateExpirationLicence: z.coerce.date(),
+  licenceBfcl: z.string().min(1, 'Numéro de licence BFCL requis'),
+  dateExpirationLicence: z.coerce.date({ message: "Date d'expiration de licence requise" }),
   heuresDeVol: z.coerce.number().int().nonnegative().optional(),
 
   // BFCL.200 classes

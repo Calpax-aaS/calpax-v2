@@ -52,8 +52,8 @@ export async function createPilote(
     const raw = extractPiloteData(formData)
     const result = piloteSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Données invalides' }
+      const messages = result.error.issues.map((i) => i.message)
+      return { error: messages.join(' — ') }
     }
 
     const { poids, ...rest } = result.data
@@ -83,8 +83,8 @@ export async function updatePilote(
     const raw = extractPiloteData(formData)
     const result = piloteSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Données invalides' }
+      const messages = result.error.issues.map((i) => i.message)
+      return { error: messages.join(' — ') }
     }
 
     const { poids, ...rest } = result.data
