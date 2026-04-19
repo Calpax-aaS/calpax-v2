@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const coerceCheckbox = z
-  .union([z.boolean(), z.string()])
+  .union([z.boolean(), z.string(), z.null()])
   .transform((v) => v === true || v === 'on' || v === 'true')
 
 export const piloteSchema = z.object({
