@@ -1,4 +1,8 @@
 {
+  "impersonation": {
+    "connectedAs": "Viewing as",
+    "exit": "Exit"
+  },
   "common": {
     "forbidden": "Access denied",
     "forbiddenMessage": "You do not have permission to access this page. Contact your administrator if you believe this is an error.",
@@ -142,6 +146,7 @@
     "audit": {
       "title": "Audit (all tenants)",
       "exploitant": "Operator",
+      "impersonatedBy": "Impersonated by",
       "all": "All",
       "noEntries": "No changes"
     },
@@ -173,7 +178,23 @@
     "audit": "Audit",
     "profil": "My profile",
     "signout": "Sign out",
-    "superAdmin": "Super Admin"
+    "superAdmin": "Super Admin",
+    "groups": {
+      "activity": "Activity",
+      "fleet": "Fleet",
+      "administration": "Administration"
+    }
+  },
+  "alerts": {
+    "title": "Regulatory alerts",
+    "expired": "Expired",
+    "critical": "Critical",
+    "daysRemaining": "{days, plural, =0 {Expired} one {# day} other {# days}}",
+    "summary": "{count, plural, one {# regulatory alert} other {# regulatory alerts}} ({parts})",
+    "countExpired": "{count, plural, one {# expired} other {# expired}}",
+    "countCritical": "{count, plural, one {# critical} other {# critical}}",
+    "camoExpiry": "CAMO certificate",
+    "bfclExpiry": "BFCL licence"
   },
   "settings": {
     "title": "Operator Settings",

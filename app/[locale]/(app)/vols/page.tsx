@@ -10,6 +10,7 @@ import { WeekGrid } from '@/components/week-grid'
 import type { VolSummary } from '@/components/week-grid'
 import { FlightCard } from '@/components/flight-card'
 import type { FlightCardData } from '@/components/flight-card'
+import { EmptyState } from '@/components/empty-state'
 import { buildVolWhereForRole } from '@/lib/vol/role-filter'
 
 type Props = {
@@ -130,16 +131,21 @@ export default async function VolsPage({ params, searchParams }: Props) {
 
         {/* Mobile: stacked flight cards */}
         <div className="md:hidden space-y-3">
-          {volsRaw.map((vol) => (
-            <FlightCard
-              key={vol.id}
-              flight={mapVolToCardData(vol)}
-              locale={locale}
-              userRole={ctx.role}
+          {volsRaw.length === 0 ? (
+            <EmptyState
+              message={t('noVols')}
+              actionLabel={t('createFirst')}
+              actionHref={`/${locale}/vols/create`}
             />
-          ))}
-          {volsRaw.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">{t('noVols')}</p>
+          ) : (
+            volsRaw.map((vol) => (
+              <FlightCard
+                key={vol.id}
+                flight={mapVolToCardData(vol)}
+                locale={locale}
+                userRole={ctx.role}
+              />
+            ))
           )}
         </div>
 

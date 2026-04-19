@@ -31,6 +31,7 @@ const ACTIONS = [
 type AuditLog = {
   id: bigint
   exploitantId: string | null
+  impersonatedBy: string | null
   entityType: string
   entityId: string
   action: string
@@ -45,7 +46,19 @@ type Exploitant = {
   name: string
 }
 
-export function AdminAuditClient({ exploitants }: { exploitants: Exploitant[] }) {
+type Admin = {
+  id: string
+  name: string
+  email: string
+}
+
+export function AdminAuditClient({
+  exploitants,
+  admins,
+}: {
+  exploitants: Exploitant[]
+  admins: Admin[]
+}) {
   const t = useTranslations('audit')
   const ta = useTranslations('admin.audit')
   const [exploitantId, setExploitantId] = useState('')
@@ -84,6 +97,7 @@ export function AdminAuditClient({ exploitants }: { exploitants: Exploitant[] })
   }
 
   const exploitantMap = new Map(exploitants.map((e) => [e.id, e.name]))
+  const adminMap = new Map(admins.map((a) => [a.id, a.name || a.email]))
 
   return (
     <Card>
@@ -160,6 +174,7 @@ export function AdminAuditClient({ exploitants }: { exploitants: Exploitant[] })
               <TableRow>
                 <TableHead>{t('fields.date')}</TableHead>
                 <TableHead>{ta('exploitant')}</TableHead>
+                <TableHead>{ta('impersonatedBy')}</TableHead>
                 <TableHead>{t('fields.entity')}</TableHead>
                 <TableHead>{t('fields.action')}</TableHead>
                 <TableHead>{t('fields.field')}</TableHead>
@@ -173,6 +188,15 @@ export function AdminAuditClient({ exploitants }: { exploitants: Exploitant[] })
                   <TableCell className="text-xs">{formatDate(log.createdAt)}</TableCell>
                   <TableCell className="text-xs">
                     {log.exploitantId ? (exploitantMap.get(log.exploitantId) ?? '--') : '--'}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {log.impersonatedBy ? (
+                      <Badge variant="outline" className="border-amber-500 text-amber-700">
+                        {adminMap.get(log.impersonatedBy) ?? log.impersonatedBy.slice(0, 8)}
+                      </Badge>
+                    ) : (
+                      '--'
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">{log.entityType}</Badge>{' '}
