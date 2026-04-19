@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,6 +41,7 @@ type Props = {
 
 export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: Props) {
   const t = useTranslations('ballons')
+  const router = useRouter()
 
   async function handleUpdate(formData: FormData) {
     const result = await updateBallon(ballonId, locale, formData)
@@ -47,6 +49,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
       toast.error(result.error)
     } else {
       toast.success(t('saveSuccess'))
+      router.push(`/${locale}/ballons/${ballonId}`)
     }
   }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -42,6 +43,7 @@ type Props = {
 
 export function PiloteEditForm({ locale, piloteId, pilote }: Props) {
   const t = useTranslations('pilotes')
+  const router = useRouter()
 
   async function handleUpdate(formData: FormData) {
     const result = await updatePilote(piloteId, locale, formData)
@@ -49,6 +51,7 @@ export function PiloteEditForm({ locale, piloteId, pilote }: Props) {
       toast.error(result.error)
     } else {
       toast.success(t('saveSuccess'))
+      router.push(`/${locale}/pilotes/${piloteId}`)
     }
   }
 

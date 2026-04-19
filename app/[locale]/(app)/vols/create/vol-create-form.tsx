@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -97,6 +98,7 @@ export function VolCreateForm({
   defaultQteGaz,
 }: Props) {
   const t = useTranslations('vols')
+  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [selectedBallonId, setSelectedBallonId] = useState<string>(
     defaultBallonId ?? ballons[0]?.id ?? '',
@@ -135,6 +137,10 @@ export function VolCreateForm({
       toast.error(result.error)
     } else {
       toast.success(t('saveSuccess'))
+      if (volId) {
+        router.push(`/${locale}/vols/${volId}`)
+      }
+      // createVol redirects server-side
     }
   }
 

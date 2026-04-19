@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -75,6 +76,7 @@ function toDateInputValue(date: Date | null | undefined): string {
 export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }: Props) {
   const t = useTranslations('billets')
   const [passagers, setPassagers] = useState<PassagerRow[]>(defaultPassagers)
+  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [typePlannif, setTypePlannif] = useState(defaultValues?.typePlannif ?? 'A_DEFINIR')
   const [payeurCiv, setPayeurCiv] = useState(defaultValues?.payeurCiv ?? '')
@@ -95,6 +97,10 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       toast.error(result.error)
     } else {
       toast.success(t('saveSuccess'))
+      if (billetId) {
+        router.push(`/${locale}/billets/${billetId}`)
+      }
+      // createBillet redirects server-side
     }
   }
 
