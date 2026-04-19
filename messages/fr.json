@@ -71,6 +71,8 @@
     "continueWithGoogle": "Continuer avec Google",
     "googleError": "Erreur de connexion avec Google",
     "loginError": "Erreur de connexion",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
     "passwordStrength": {
       "tooShort": "Minimum {min} caractères",
       "veryWeak": "Très faible",

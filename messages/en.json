@@ -71,6 +71,8 @@
     "continueWithGoogle": "Continue with Google",
     "googleError": "Google sign-in error",
     "loginError": "Sign-in failed",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "passwordStrength": {
       "tooShort": "Minimum {min} characters",
       "veryWeak": "Very weak",
