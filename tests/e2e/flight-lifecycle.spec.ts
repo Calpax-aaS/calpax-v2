@@ -50,8 +50,8 @@ test.describe('Flight lifecycle E2E', () => {
     // Sign in once for this entire test
     await signIn(page)
 
-    // Dashboard
-    await expect(page.getByRole('heading', { name: /tableau de bord/i })).toBeVisible({
+    // Dashboard (jour J)
+    await expect(page.getByRole('heading', { name: /vols du jour/i })).toBeVisible({
       timeout: 10_000,
     })
 
