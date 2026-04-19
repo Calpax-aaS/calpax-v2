@@ -178,7 +178,23 @@
     "audit": "Audit",
     "profil": "Mon profil",
     "signout": "Déconnexion",
-    "superAdmin": "Super Admin"
+    "superAdmin": "Super Admin",
+    "groups": {
+      "activity": "Activité",
+      "fleet": "Flotte",
+      "administration": "Administration"
+    }
+  },
+  "alerts": {
+    "title": "Alertes réglementaires",
+    "expired": "Expiré",
+    "critical": "Critique",
+    "daysRemaining": "{days, plural, =0 {Expiré} one {# jour} other {# jours}}",
+    "summary": "{count, plural, one {# alerte réglementaire} other {# alertes réglementaires}} ({parts})",
+    "countExpired": "{count, plural, one {# expirée} other {# expirées}}",
+    "countCritical": "{count, plural, one {# critique} other {# critiques}}",
+    "camoExpiry": "Certificat CAMO",
+    "bfclExpiry": "Licence BFCL"
   },
   "settings": {
     "title": "Paramètres de l'exploitant",

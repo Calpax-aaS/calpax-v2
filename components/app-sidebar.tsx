@@ -70,14 +70,14 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
       items: [{ key: 'home', href: `/${locale}`, icon: Home }],
     },
     {
-      label: 'Activité',
+      label: t('groups.activity'),
       items: [
         { key: 'billets', href: `/${locale}/billets`, icon: Ticket },
         { key: 'vols', href: `/${locale}/vols`, icon: Plane },
       ],
     },
     {
-      label: 'Flotte',
+      label: t('groups.fleet'),
       items: [
         { key: 'ballons', href: `/${locale}/ballons`, icon: Wind },
         { key: 'pilotes', href: `/${locale}/pilotes`, icon: User2 },
@@ -87,7 +87,7 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
       ],
     },
     {
-      label: 'Administration',
+      label: t('groups.administration'),
       items: [
         { key: 'settings', href: `/${locale}/settings`, icon: Settings },
         { key: 'rgpd', href: `/${locale}/rgpd`, icon: Shield },

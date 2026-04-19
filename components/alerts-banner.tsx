@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertTriangle, ChevronRight, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { AlertTriangle, ChevronRight } from 'lucide-react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import type { Alert, AlertSeverity } from '@/lib/regulatory/alerts'
@@ -14,33 +15,23 @@ const SEVERITY_VARIANT: Record<AlertSeverity, 'destructive' | 'critical' | 'warn
     OK: 'outline',
   }
 
-function formatDaysRemaining(daysRemaining: number): string {
-  if (daysRemaining <= 0) return 'Expiré'
-  if (daysRemaining === 1) return '1 jour'
-  return `${daysRemaining} jours`
-}
-
-function summaryLabel(alerts: Alert[]): string {
-  const expired = alerts.filter((a) => a.severity === 'EXPIRED').length
-  const critical = alerts.filter((a) => a.severity === 'CRITICAL').length
-
-  const parts: string[] = []
-  if (expired > 0) parts.push(`${expired} expirée${expired > 1 ? 's' : ''}`)
-  if (critical > 0) parts.push(`${critical} critique${critical > 1 ? 's' : ''}`)
-
-  return `${alerts.length} alerte${alerts.length > 1 ? 's' : ''} réglementaire${alerts.length > 1 ? 's' : ''} (${parts.join(', ')})`
-}
-
 /**
  * Single-line alert summary that opens a Sheet with full details.
  * Only shows EXPIRED and CRITICAL alerts (WARNING is sidebar-only).
  */
 export function AlertsBanner({ alerts }: { alerts: Alert[] }) {
+  const t = useTranslations('alerts')
   const [open, setOpen] = useState(false)
 
   if (alerts.length === 0) return null
 
   const hasExpired = alerts.some((a) => a.severity === 'EXPIRED')
+  const expiredCount = alerts.filter((a) => a.severity === 'EXPIRED').length
+  const criticalCount = alerts.filter((a) => a.severity === 'CRITICAL').length
+  const parts: string[] = []
+  if (expiredCount > 0) parts.push(t('countExpired', { count: expiredCount }))
+  if (criticalCount > 0) parts.push(t('countCritical', { count: criticalCount }))
+  const summary = t('summary', { count: alerts.length, parts: parts.join(', ') })
 
   return (
     <>
@@ -54,7 +45,7 @@ export function AlertsBanner({ alerts }: { alerts: Alert[] }) {
           }`}
         >
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          <span className="flex-1 text-left font-medium">{summaryLabel(alerts)}</span>
+          <span className="flex-1 text-left font-medium">{summary}</span>
           <ChevronRight className="h-4 w-4 shrink-0 opacity-50" />
         </button>
       </div>
@@ -62,7 +53,7 @@ export function AlertsBanner({ alerts }: { alerts: Alert[] }) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Alertes réglementaires</SheetTitle>
+            <SheetTitle>{t('title')}</SheetTitle>
           </SheetHeader>
           <div className="mt-4 flex flex-col gap-3">
             {alerts.map((alert) => (
@@ -73,15 +64,15 @@ export function AlertsBanner({ alerts }: { alerts: Alert[] }) {
                 <div className="flex flex-col gap-1">
                   <span className="text-sm font-medium">{alert.entityName}</span>
                   <span className="text-xs text-muted-foreground">
-                    {alert.alertType === 'CAMO_EXPIRY' ? 'Certificat CAMO' : 'Licence BFCL'}
+                    {alert.alertType === 'CAMO_EXPIRY' ? t('camoExpiry') : t('bfclExpiry')}
                   </span>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <Badge variant={SEVERITY_VARIANT[alert.severity]}>
-                    {alert.severity === 'EXPIRED' ? 'Expiré' : 'Critique'}
+                    {alert.severity === 'EXPIRED' ? t('expired') : t('critical')}
                   </Badge>
                   <span className="text-xs text-muted-foreground">
-                    {formatDaysRemaining(alert.daysRemaining)}
+                    {t('daysRemaining', { days: Math.max(0, alert.daysRemaining) })}
                   </span>
                 </div>
               </div>
