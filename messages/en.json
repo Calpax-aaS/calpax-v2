@@ -1,4 +1,8 @@
 {
+  "impersonation": {
+    "connectedAs": "Viewing as",
+    "exit": "Exit"
+  },
   "common": {
     "forbidden": "Access denied",
     "forbiddenMessage": "You do not have permission to access this page. Contact your administrator if you believe this is an error.",

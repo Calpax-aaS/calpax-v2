@@ -1,4 +1,8 @@
 {
+  "impersonation": {
+    "connectedAs": "Connecté en tant que",
+    "exit": "Revenir"
+  },
   "common": {
     "forbidden": "Accès refusé",
     "forbiddenMessage": "Vous n'avez pas les droits nécessaires pour accéder à cette page. Contactez votre administrateur si vous pensez qu'il s'agit d'une erreur.",
