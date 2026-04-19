@@ -22,34 +22,34 @@ Cocher chaque item apres test. Noter les bugs/remarques en bas.
 
 ### 1.1 Connexion email/mot de passe
 
-- [ ] Se connecter avec dcuenot@calpax.fr
-- [ ] Se connecter avec olivier@cameronfrance.com
-- [ ] Tester un mot de passe incorrect → message d'erreur
-- [ ] Tester 5 mots de passe incorrects → compte verrouille 30 min
-- [ ] Se deconnecter
+- [x] Se connecter avec dcuenot@calpax.fr
+- [x] Se connecter avec olivier@cameronfrance.com
+- [x] Tester un mot de passe incorrect → message d'erreur
+- [x] Tester 5 mots de passe incorrects → compte verrouille 30 min
+- [x] Se deconnecter
 
 ### 1.2 Google OAuth
 
-- [ ] Cliquer "Se connecter avec Google" sur la page login
-- [ ] Verifier la redirection Google → retour sur l'app
-- [ ] Depuis le profil, lier un compte Google (bouton "Lier")
-- [ ] Depuis le profil, delier un compte Google (bouton "Delier")
+- [x] Cliquer "Se connecter avec Google" sur la page login
+- [x] Verifier la redirection Google → retour sur l'app
+- [x] Depuis le profil, lier un compte Google (bouton "Lier")
+- [x] Depuis le profil, delier un compte Google (bouton "Delier")
 
 ### 1.3 Mot de passe oublie
 
-- [ ] Sur la page login, cliquer "Mot de passe oublie"
-- [ ] Saisir un email → verifier reception de l'email
-- [ ] Cliquer le lien dans l'email → page de reset
-- [ ] Saisir un nouveau mot de passe (min 12 caracteres)
-- [ ] Verifier le metre de force du mot de passe (5 barres)
-- [ ] Se connecter avec le nouveau mot de passe
+- [x] Sur la page login, cliquer "Mot de passe oublie"
+- [x] Saisir un email → verifier reception de l'email
+- [x] Cliquer le lien dans l'email → page de reset
+- [x] Saisir un nouveau mot de passe (min 12 caracteres)
+- [x] Verifier le metre de force du mot de passe (5 barres)
+- [x] Se connecter avec le nouveau mot de passe
 
 ### 1.4 Changement de mot de passe
 
-- [ ] Depuis le profil, section "Changer le mot de passe"
-- [ ] Saisir ancien + nouveau mot de passe
-- [ ] Verifier le metre de force
-- [ ] Confirmer → toast succes
+- [x] Depuis le profil, section "Changer le mot de passe"
+- [x] Saisir ancien + nouveau mot de passe
+- [x] Verifier le metre de force
+- [x] Confirmer → toast succes
 
 ---
 
@@ -57,25 +57,25 @@ Cocher chaque item apres test. Noter les bugs/remarques en bas.
 
 ### 2.1 Vue GERANT/ADMIN
 
-- [ ] La page d'accueil affiche "Vols du jour — [date]"
-- [ ] S'il y a des vols aujourd'hui : cartes de vol affichees
-- [ ] Chaque carte montre : creneau, ballon, pilote, equipier, site, passagers/capacite
-- [ ] Le devis de masse est affiche (poids total vs charge max) avec badge vert/orange/rouge
-- [ ] La meteo est affichee (vent, temperature, badge GO/NO-GO/Limite)
-- [ ] Les alertes CAMO/BFCL ne montrent que les entites du jour
-- [ ] Boutons d'action rapide : "Detail", "Organiser" (si PLANIFIE)
-- [ ] S'il n'y a pas de vol : message "Aucun vol aujourd'hui" + lien vers le planning
+- [x] La page d'accueil affiche "Vols du jour — [date]"
+- [x] S'il y a des vols aujourd'hui : cartes de vol affichees
+- [x] Chaque carte montre : creneau, ballon, pilote, equipier, site, passagers/capacite
+- [x] Le devis de masse est affiche (poids total vs charge max) avec badge vert/orange/rouge
+- [x] La meteo est affichee (vent, temperature, badge GO/NO-GO/Limite)
+- [x] Les alertes CAMO/BFCL ne montrent que les entites du jour
+- [x] Boutons d'action rapide : "Detail", "Organiser" (si PLANIFIE)
+- [x] S'il n'y a pas de vol : message "Aucun vol aujourd'hui" + lien vers le planning
 
 ### 2.2 Vue PILOTE
 
-- [ ] Se connecter avec pilote@cameronfrance.com
-- [ ] Verifier que le dashboard ne montre que les vols assignes a ce pilote
-- [ ] Les vols des autres pilotes ne sont PAS visibles
+- [x] Se connecter avec pilote@cameronfrance.com
+- [x] Verifier que le dashboard ne montre que les vols assignes a ce pilote
+- [x] Les vols des autres pilotes ne sont PAS visibles
 
 ### 2.3 Vue EQUIPIER
 
-- [ ] Se connecter avec equipier@cameronfrance.com
-- [ ] Verifier que le dashboard montre tous les vols du tenant (pas de filtrage equipier)
+- [x] Se connecter avec equipier@cameronfrance.com
+- [x] Verifier que le dashboard montre tous les vols du tenant (pas de filtrage equipier)
 
 ---
 
@@ -93,7 +93,7 @@ Cocher chaque item apres test. Noter les bugs/remarques en bas.
 - [ ] Remplir : nom, immatriculation, volume, pax max, pesee a vide, config gaz, ref MANEX
 - [ ] Optionnel : MTOM, MLM, organisme CAMO, date expiration CAMO, certificat navigabilite
 - [ ] Remplir le devis de chargement (tableau temperature → charge utile max)
-- [ ] Enregistrer → toast "Ballon enregistre"
+- [ ] Enregistrer → redirection vers la fiche du ballon cree
 
 ### 3.3 Detail
 
