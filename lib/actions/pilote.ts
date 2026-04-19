@@ -96,7 +96,7 @@ export async function updatePilote(
     await db.pilote.update({ where: { id }, data })
 
     revalidatePath(`/${locale}/pilotes/${id}`)
-    redirect(`/${locale}/pilotes/${id}`)
+    return {}
   })
 }
 

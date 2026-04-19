@@ -158,6 +158,6 @@ export async function updateBillet(
     })
 
     revalidatePath(`/${locale}/billets/${id}`)
-    redirect(`/${locale}/billets/${id}`)
+    return {}
   })
 }

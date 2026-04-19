@@ -91,7 +91,7 @@ export async function updateBallon(
     })
 
     revalidatePath(`/${locale}/ballons/${id}`)
-    redirect(`/${locale}/ballons/${id}`)
+    return {}
   })
 }
 
