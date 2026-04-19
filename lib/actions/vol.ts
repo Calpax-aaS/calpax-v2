@@ -31,6 +31,14 @@ function parseVolFormData(formData: FormData) {
   }
 }
 
+function resolveAutre(
+  id: string | undefined,
+  autre: string | undefined,
+): { id: string | null; autre: string | null } {
+  if (id === 'AUTRE') return { id: null, autre: autre || null }
+  return { id: id || null, autre: null }
+}
+
 function resolveAutreEntities(rest: {
   equipierId?: string
   equipierAutre?: string
@@ -39,14 +47,16 @@ function resolveAutreEntities(rest: {
   siteDecollageId?: string
   lieuDecollageAutre?: string
 }) {
+  const equipier = resolveAutre(rest.equipierId, rest.equipierAutre)
+  const vehicule = resolveAutre(rest.vehiculeId, rest.vehiculeAutre)
+  const site = resolveAutre(rest.siteDecollageId, rest.lieuDecollageAutre)
   return {
-    equipierId: rest.equipierId && rest.equipierId !== 'AUTRE' ? rest.equipierId : null,
-    equipierAutre: rest.equipierId === 'AUTRE' ? rest.equipierAutre || null : null,
-    vehiculeId: rest.vehiculeId && rest.vehiculeId !== 'AUTRE' ? rest.vehiculeId : null,
-    vehiculeAutre: rest.vehiculeId === 'AUTRE' ? rest.vehiculeAutre || null : null,
-    siteDecollageId:
-      rest.siteDecollageId && rest.siteDecollageId !== 'AUTRE' ? rest.siteDecollageId : null,
-    lieuDecollageAutre: rest.siteDecollageId === 'AUTRE' ? rest.lieuDecollageAutre || null : null,
+    equipierId: equipier.id,
+    equipierAutre: equipier.autre,
+    vehiculeId: vehicule.id,
+    vehiculeAutre: vehicule.autre,
+    siteDecollageId: site.id,
+    lieuDecollageAutre: site.autre,
   }
 }
 

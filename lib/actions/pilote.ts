@@ -38,10 +38,6 @@ function extractPiloteData(formData: FormData) {
   }
 }
 
-/**
- * Create a new pilote for the current tenant.
- * Encrypts poids before storing. Redirects to detail page on success.
- */
 export async function createPilote(
   locale: string,
   formData: FormData,
@@ -69,10 +65,6 @@ export async function createPilote(
   })
 }
 
-/**
- * Update an existing pilote.
- * Re-encrypts poids if provided. Redirects to detail page on success.
- */
 export async function updatePilote(
   id: string,
   locale: string,
@@ -99,9 +91,6 @@ export async function updatePilote(
   })
 }
 
-/**
- * Toggle the actif flag of a pilote.
- */
 export async function togglePiloteActif(id: string, actif: boolean): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')

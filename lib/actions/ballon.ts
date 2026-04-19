@@ -38,10 +38,6 @@ function extractBallonData(formData: FormData) {
   }
 }
 
-/**
- * Create a new ballon for the current tenant.
- * Validates with ballonSchema, creates via db, then redirects to the detail page.
- */
 export async function createBallon(
   locale: string,
   formData: FormData,
@@ -67,10 +63,6 @@ export async function createBallon(
   })
 }
 
-/**
- * Update an existing ballon.
- * Validates with ballonSchema, updates via db, then redirects to the detail page.
- */
 export async function updateBallon(
   id: string,
   locale: string,
@@ -94,9 +86,6 @@ export async function updateBallon(
   })
 }
 
-/**
- * Toggle the actif flag of a ballon.
- */
 export async function toggleBallonActif(id: string, actif: boolean): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')

@@ -43,7 +43,9 @@ type Props = {
   showActions?: boolean
 }
 
-const STATUT_VARIANT: Record<string, 'outline' | 'secondary' | 'default' | 'destructive'> = {
+type BadgeVariant = 'outline' | 'secondary' | 'default' | 'destructive' | 'warning'
+
+const STATUT_VARIANT: Record<string, BadgeVariant> = {
   PLANIFIE: 'outline',
   CONFIRME: 'secondary',
   TERMINE: 'default',
@@ -51,10 +53,28 @@ const STATUT_VARIANT: Record<string, 'outline' | 'secondary' | 'default' | 'dest
   ANNULE: 'destructive',
 }
 
-const MASS_COLORS: Record<string, string> = {
+const MASS_COLORS: Record<MassBudget['status'], string> = {
   OK: 'text-green-600',
   WARNING: 'text-amber-600',
   OVER: 'text-red-600',
+}
+
+const MASS_VARIANT: Record<MassBudget['status'], BadgeVariant> = {
+  OK: 'secondary',
+  WARNING: 'warning',
+  OVER: 'destructive',
+}
+
+const MASS_LABEL_KEY: Record<MassBudget['status'], string> = {
+  OK: 'massOk',
+  WARNING: 'massWarning',
+  OVER: 'massOver',
+}
+
+const GONOGO_VARIANT: Record<WeatherSummary['goNogo'], BadgeVariant> = {
+  GO: 'secondary',
+  NOGO: 'destructive',
+  MARGINAL: 'warning',
 }
 
 export function FlightCard({ flight, locale, showActions = true }: Props) {
@@ -107,23 +127,8 @@ export function FlightCard({ flight, locale, showActions = true }: Props) {
             <span className={cn('font-semibold', MASS_COLORS[flight.massBudget.status])}>
               {flight.massBudget.totalWeight} kg / {flight.massBudget.maxPayload} kg
             </span>
-            <Badge
-              variant={
-                flight.massBudget.status === 'OK'
-                  ? 'secondary'
-                  : flight.massBudget.status === 'WARNING'
-                    ? 'warning'
-                    : 'destructive'
-              }
-              className="text-xs"
-            >
-              {t(
-                flight.massBudget.status === 'OK'
-                  ? 'massOk'
-                  : flight.massBudget.status === 'WARNING'
-                    ? 'massWarning'
-                    : 'massOver',
-              )}
+            <Badge variant={MASS_VARIANT[flight.massBudget.status]} className="text-xs">
+              {t(MASS_LABEL_KEY[flight.massBudget.status])}
             </Badge>
           </div>
         ) : (
@@ -146,15 +151,7 @@ export function FlightCard({ flight, locale, showActions = true }: Props) {
               <Thermometer className="h-3.5 w-3.5 text-muted-foreground" />
               <span>{flight.weather.avgTemperature}°C</span>
             </div>
-            <Badge
-              variant={
-                flight.weather.goNogo === 'GO'
-                  ? 'secondary'
-                  : flight.weather.goNogo === 'NOGO'
-                    ? 'destructive'
-                    : 'warning'
-              }
-            >
+            <Badge variant={GONOGO_VARIANT[flight.weather.goNogo]}>
               {t(`goNogo.${flight.weather.goNogo}`)}
             </Badge>
           </div>

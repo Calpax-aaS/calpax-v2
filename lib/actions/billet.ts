@@ -7,10 +7,23 @@ import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { basePrisma } from '@/lib/db/base'
-import { billetCreateSchema } from '@/lib/schemas/billet'
+import { billetCreateSchema, type BilletFormData } from '@/lib/schemas/billet'
 import { encrypt } from '@/lib/crypto'
 import { formatReference, computeLuhnChecksum } from '@/lib/billet/reference'
 import { formatZodError } from '@/lib/zod-error'
+
+function mapPassagerForCreate(p: BilletFormData['passagers'][number], exploitantId: string) {
+  return {
+    exploitantId,
+    prenom: p.prenom,
+    nom: p.nom,
+    email: p.email || null,
+    telephone: p.telephone || null,
+    age: p.age ?? null,
+    poidsEncrypted: p.poids != null ? encrypt(p.poids.toString()) : null,
+    pmr: p.pmr,
+  }
+}
 
 async function nextSequence(exploitantId: string, year: number): Promise<number> {
   const row = await basePrisma.$queryRaw<{ lastSeq: number }[]>`
@@ -99,16 +112,7 @@ export async function createBillet(
         reference,
         checksum,
         passagers: {
-          create: passagers.map((p) => ({
-            exploitantId: ctx.exploitantId,
-            prenom: p.prenom,
-            nom: p.nom,
-            email: p.email || null,
-            telephone: p.telephone || null,
-            age: p.age ?? null,
-            poidsEncrypted: p.poids != null ? encrypt(p.poids.toString()) : null,
-            pmr: p.pmr,
-          })),
+          create: passagers.map((p) => mapPassagerForCreate(p, ctx.exploitantId)),
         },
       },
     })
@@ -134,7 +138,6 @@ export async function updateBillet(
 
     const { passagers, ...billetData } = result.data
 
-    // Delete existing passagers and recreate (simpler than diffing)
     await db.passager.deleteMany({ where: { billetId: id } })
 
     await db.billet.update({
@@ -142,16 +145,7 @@ export async function updateBillet(
       data: {
         ...billetData,
         passagers: {
-          create: passagers.map((p) => ({
-            exploitantId: ctx.exploitantId,
-            prenom: p.prenom,
-            nom: p.nom,
-            email: p.email || null,
-            telephone: p.telephone || null,
-            age: p.age ?? null,
-            poidsEncrypted: p.poids != null ? encrypt(p.poids.toString()) : null,
-            pmr: p.pmr,
-          })),
+          create: passagers.map((p) => mapPassagerForCreate(p, ctx.exploitantId)),
         },
       },
     })
