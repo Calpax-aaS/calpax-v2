@@ -224,7 +224,7 @@ export default async function HomePage({ params }: Props) {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {cards.map((card) => (
-              <FlightCard key={card.id} flight={card} locale={locale} />
+              <FlightCard key={card.id} flight={card} locale={locale} userRole={ctx.role} />
             ))}
           </div>
         )}
