@@ -29,7 +29,7 @@ export default async function BallonEditPage({ params }: Props) {
       <main className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
         <div className="flex items-center gap-4">
           <Link
-            href={`/${locale}/ballons/${id}`}
+            href={`/${locale}/ballons`}
             className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
           >
             {t('backToList')}

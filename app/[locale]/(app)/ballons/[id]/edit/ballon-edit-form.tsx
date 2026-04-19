@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -8,10 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 import { PerformanceChartInput } from '@/components/performance-chart-input'
 import { ConfigGazInput } from '@/components/config-gaz-input'
 import { updateBallon, toggleBallonActif } from '@/lib/actions/ballon'
-import { ToggleActifButton } from '@/components/toggle-actif-button'
 import { cn } from '@/lib/utils'
 
 const labelClassName = 'text-xs font-medium uppercase tracking-wider text-muted-foreground'
@@ -49,19 +50,33 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
     }
   }
 
+  const [actif, setActif] = useState(ballon.actif)
+
+  async function handleToggleActif(checked: boolean) {
+    setActif(checked)
+    const result = await toggleBallonActif(ballonId, checked)
+    if (result?.error) {
+      setActif(!checked)
+      toast.error(result.error)
+    }
+  }
+
   return (
     <form action={handleUpdate} className="space-y-6">
-      <div className="flex justify-end">
-        <ToggleActifButton
-          actif={ballon.actif}
-          onToggle={async (actif) => toggleBallonActif(ballonId, actif)}
-        />
-      </div>
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Informations generales</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <Label className={labelClassName}>{t('status.actif')}</Label>
+              <p className="text-xs text-muted-foreground">
+                {actif ? t('status.actif') : t('status.inactif')}
+              </p>
+            </div>
+            <Switch checked={actif} onCheckedChange={handleToggleActif} />
+          </div>
           <div className="space-y-1">
             <Label htmlFor="nom" className={labelClassName}>
               {t('fields.nom')} *
