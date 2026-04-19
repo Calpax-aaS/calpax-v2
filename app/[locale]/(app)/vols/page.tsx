@@ -131,7 +131,12 @@ export default async function VolsPage({ params, searchParams }: Props) {
         {/* Mobile: stacked flight cards */}
         <div className="md:hidden space-y-3">
           {volsRaw.map((vol) => (
-            <FlightCard key={vol.id} flight={mapVolToCardData(vol)} locale={locale} />
+            <FlightCard
+              key={vol.id}
+              flight={mapVolToCardData(vol)}
+              locale={locale}
+              userRole={ctx.role}
+            />
           ))}
           {volsRaw.length === 0 && (
             <p className="text-center text-muted-foreground py-8">{t('noVols')}</p>

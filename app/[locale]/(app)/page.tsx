@@ -197,7 +197,7 @@ export default async function HomePage({ params }: Props) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
             <p className="text-sm text-muted-foreground">
               {today.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
                 weekday: 'long',
@@ -224,7 +224,7 @@ export default async function HomePage({ params }: Props) {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {cards.map((card) => (
-              <FlightCard key={card.id} flight={card} locale={locale} />
+              <FlightCard key={card.id} flight={card} locale={locale} userRole={ctx.role} />
             ))}
           </div>
         )}

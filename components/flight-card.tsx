@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { Users, Wind, Thermometer, AlertTriangle } from 'lucide-react'
+import { Wind, Thermometer, AlertTriangle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import type { UserRole } from '@/lib/context'
 
 type MassBudget = {
   totalWeight: number
@@ -41,6 +42,16 @@ type Props = {
   flight: FlightCardData
   locale: string
   showActions?: boolean
+  userRole?: UserRole
+}
+
+const CAN_ORGANIZE: UserRole[] = ['ADMIN_CALPAX', 'GERANT']
+
+function capacityColorClass(count: number, max: number): string {
+  if (max === 0) return ''
+  if (count > max) return 'text-red-600'
+  if (count / max >= 0.8) return 'text-amber-600'
+  return 'text-green-700'
 }
 
 type BadgeVariant = 'outline' | 'secondary' | 'default' | 'destructive' | 'warning'
@@ -77,9 +88,10 @@ const GONOGO_VARIANT: Record<WeatherSummary['goNogo'], BadgeVariant> = {
   MARGINAL: 'warning',
 }
 
-export function FlightCard({ flight, locale, showActions = true }: Props) {
+export function FlightCard({ flight, locale, showActions = true, userRole }: Props) {
   const t = useTranslations('dashboard')
   const tv = useTranslations('vols')
+  const canOrganize = userRole ? CAN_ORGANIZE.includes(userRole) : true
 
   return (
     <Card className={cn(flight.meteoAlert && 'border-amber-400 bg-amber-50/50')}>
@@ -114,7 +126,12 @@ export function FlightCard({ flight, locale, showActions = true }: Props) {
           </div>
           <div>
             <span className="text-xs text-muted-foreground">{t('capacity')}</span>
-            <p className="font-medium">
+            <p
+              className={cn(
+                'font-medium',
+                capacityColorClass(flight.passagerCount, flight.passagerMax),
+              )}
+            >
               {flight.passagerCount}/{flight.passagerMax}
             </p>
           </div>
@@ -137,31 +154,36 @@ export function FlightCard({ flight, locale, showActions = true }: Props) {
 
         {/* Weather */}
         {flight.weather && (
-          <div className="flex items-center gap-4 text-sm rounded-md bg-muted/50 px-3 py-2 flex-wrap">
-            <span className="text-muted-foreground">
-              {tv(`creneau.${flight.creneau}`)} ({flight.weather.creneauRange})
-            </span>
-            <div className="flex items-center gap-1">
-              <Wind className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>
-                {flight.weather.maxWindKt} km/h ({flight.weather.maxWindAltitude})
+          <div
+            className={cn(
+              'rounded-md px-3 py-2 text-sm space-y-1.5',
+              flight.meteoAlert ? 'bg-amber-100' : 'bg-muted/50',
+            )}
+          >
+            <div className="flex items-center gap-4 flex-wrap">
+              <span className="text-muted-foreground">
+                {tv(`creneau.${flight.creneau}`)} ({flight.weather.creneauRange})
               </span>
+              <div className="flex items-center gap-1">
+                <Wind className="h-4 w-4 text-muted-foreground" />
+                <span>
+                  {flight.weather.maxWindKt} km/h ({flight.weather.maxWindAltitude})
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Thermometer className="h-4 w-4 text-muted-foreground" />
+                <span>{flight.weather.avgTemperature}°C</span>
+              </div>
+              <Badge variant={GONOGO_VARIANT[flight.weather.goNogo]}>
+                {t(`goNogo.${flight.weather.goNogo}`)}
+              </Badge>
             </div>
-            <div className="flex items-center gap-1">
-              <Thermometer className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>{flight.weather.avgTemperature}°C</span>
-            </div>
-            <Badge variant={GONOGO_VARIANT[flight.weather.goNogo]}>
-              {t(`goNogo.${flight.weather.goNogo}`)}
-            </Badge>
-          </div>
-        )}
-
-        {/* Meteo alert */}
-        {flight.meteoAlert && (
-          <div className="flex items-center gap-2 rounded-md bg-amber-100 px-3 py-2 text-sm text-amber-800">
-            <AlertTriangle className="h-4 w-4 shrink-0" />
-            <span>{t('meteoAlert')}</span>
+            {flight.meteoAlert && (
+              <div className="flex items-center gap-2 text-amber-800 font-medium">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>{t('meteoAlert')}</span>
+              </div>
+            )}
           </div>
         )}
 
@@ -171,7 +193,7 @@ export function FlightCard({ flight, locale, showActions = true }: Props) {
             <Button asChild size="sm" variant="outline">
               <Link href={`/${locale}/vols/${flight.id}`}>{tv('detail')}</Link>
             </Button>
-            {flight.statut === 'PLANIFIE' && (
+            {canOrganize && flight.statut === 'PLANIFIE' && (
               <Button asChild size="sm" variant="outline">
                 <Link href={`/${locale}/vols/${flight.id}/organiser`}>{tv('organiser')}</Link>
               </Button>

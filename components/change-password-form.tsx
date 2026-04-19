@@ -8,7 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
 import { PasswordStrength } from '@/components/password-strength'
+import { formLabelClass } from '@/lib/ui'
 
 export function ChangePasswordForm() {
   const t = useTranslations('profil')
@@ -54,7 +56,7 @@ export function ChangePasswordForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="current-password"
-              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              className={formLabelClass}
             >
               {t('currentPassword')}
             </Label>
@@ -69,7 +71,7 @@ export function ChangePasswordForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="new-password"
-              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              className={formLabelClass}
             >
               {t('newPassword')}
             </Label>
@@ -86,7 +88,7 @@ export function ChangePasswordForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="confirm-password"
-              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+              className={formLabelClass}
             >
               {t('confirmPassword')}
             </Label>
@@ -100,7 +102,8 @@ export function ChangePasswordForm() {
             />
           </div>
           <Button type="submit" disabled={loading} className="w-full sm:w-auto">
-            {loading ? '...' : t('changePasswordButton')}
+            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {t('changePasswordButton')}
           </Button>
         </form>
       </CardContent>

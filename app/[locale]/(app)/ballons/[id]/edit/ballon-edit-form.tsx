@@ -15,8 +15,7 @@ import { PerformanceChartInput } from '@/components/performance-chart-input'
 import { ConfigGazInput } from '@/components/config-gaz-input'
 import { updateBallon, toggleBallonActif } from '@/lib/actions/ballon'
 import { cn } from '@/lib/utils'
-
-const labelClassName = 'text-xs font-medium uppercase tracking-wider text-muted-foreground'
+import { formLabelClass as labelClassName } from '@/lib/ui'
 
 type Props = {
   locale: string

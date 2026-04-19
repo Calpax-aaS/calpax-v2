@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { authClient, signIn } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { Eye, EyeOff, Loader2, X } from 'lucide-react'
 
 type Mode = 'signin' | 'forgot'
 
@@ -12,6 +13,7 @@ export default function SignInPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [mode, setMode] = useState<Mode>('signin')
@@ -24,13 +26,13 @@ export default function SignInPage() {
     try {
       const result = await signIn.email({ email, password })
       if (result.error) {
-        setError(result.error.message ?? 'Erreur de connexion')
+        setError(result.error.message ?? t('loginError'))
       } else {
         router.push('/')
         router.refresh()
       }
     } catch {
-      setError('Erreur de connexion')
+      setError(t('loginError'))
     } finally {
       setLoading(false)
     }
@@ -137,8 +139,16 @@ export default function SignInPage() {
           </h2>
 
           {error && (
-            <div className="mb-4 w-full max-w-xs rounded-lg bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
-              {error}
+            <div className="mb-4 w-full max-w-xs rounded-lg bg-destructive/10 px-4 py-2.5 text-sm text-destructive flex items-start justify-between gap-2">
+              <span>{error}</span>
+              <button
+                type="button"
+                onClick={() => setError(null)}
+                aria-label="Dismiss"
+                className="text-destructive/70 hover:text-destructive"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
           )}
 
@@ -174,6 +184,8 @@ export default function SignInPage() {
                     id="email"
                     name="email"
                     type="email"
+                    autoComplete="email"
+                    autoFocus
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -188,16 +200,31 @@ export default function SignInPage() {
                   >
                     {t('passwordLabel')}
                   </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder={t('passwordPlaceholder')}
-                    className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  />
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={t('passwordPlaceholder')}
+                      className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 pr-10 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      aria-label={showPassword ? t('hidePassword') : t('showPassword')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div className="text-right">
                   <button
@@ -214,9 +241,10 @@ export default function SignInPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {loading ? '...' : t('submit')}
+                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {t('submit')}
                 </button>
               </form>
 
@@ -272,6 +300,8 @@ export default function SignInPage() {
                     id="forgot-email"
                     name="email"
                     type="email"
+                    autoComplete="email"
+                    autoFocus
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -282,9 +312,10 @@ export default function SignInPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {loading ? '...' : t('sendResetLink')}
+                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {t('sendResetLink')}
                 </button>
               </form>
               <button

@@ -1,22 +1,25 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core'
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
+import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en'
 import * as zxcvbnFrPackage from '@zxcvbn-ts/language-fr'
 
-let zxcvbnConfigured = false
-function configureZxcvbn() {
-  if (zxcvbnConfigured) return
+let zxcvbnLocale: string | null = null
+function configureZxcvbn(locale: string) {
+  if (zxcvbnLocale === locale) return
+  const pack = locale === 'fr' ? zxcvbnFrPackage : zxcvbnEnPackage
   zxcvbnOptions.setOptions({
-    translations: zxcvbnFrPackage.translations,
+    translations: pack.translations,
     graphs: zxcvbnCommonPackage.adjacencyGraphs,
     dictionary: {
       ...zxcvbnCommonPackage.dictionary,
-      ...zxcvbnFrPackage.dictionary,
+      ...pack.dictionary,
     },
   })
-  zxcvbnConfigured = true
+  zxcvbnLocale = locale
 }
 
 type Props = {
@@ -24,7 +27,7 @@ type Props = {
   minLength?: number
 }
 
-const SCORE_LABELS = ['Tres faible', 'Faible', 'Moyen', 'Bon', 'Excellent'] as const
+const SCORE_KEYS = ['veryWeak', 'weak', 'fair', 'good', 'strong'] as const
 const SCORE_COLORS = [
   'bg-destructive',
   'bg-destructive/60',
@@ -34,12 +37,14 @@ const SCORE_COLORS = [
 ] as const
 
 export function PasswordStrength({ password, minLength = 12 }: Props) {
+  const locale = useLocale()
+  const t = useTranslations('signin.passwordStrength')
   const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
-    configureZxcvbn()
+    configureZxcvbn(locale)
     setIsReady(true)
-  }, [])
+  }, [locale])
 
   const result = useMemo(() => {
     if (!isReady || !password) return null
@@ -76,7 +81,7 @@ export function PasswordStrength({ password, minLength = 12 }: Props) {
                   : 'text-destructive'
           }
         >
-          {tooShort ? `Minimum ${minLength} caracteres` : SCORE_LABELS[score]}
+          {tooShort ? t('tooShort', { min: minLength }) : t(SCORE_KEYS[score])}
         </span>
         {feedback && !tooShort && (
           <span className="text-muted-foreground truncate max-w-[60%]" title={feedback}>
