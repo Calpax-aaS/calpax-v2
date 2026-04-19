@@ -24,11 +24,13 @@ const config = [
     ],
   },
 
-  // adminDb import restriction: only lib/admin/**, app/**/admin/**, scripts/**, prisma/seed.ts
+  // adminDb import restriction: only lib/admin/**, lib/actions/admin.ts,
+  // app/**/admin/**, scripts/**, prisma/seed.ts
   {
     files: ['**/*.ts', '**/*.tsx'],
     ignores: [
       'lib/admin/**',
+      'lib/actions/admin.ts',
       'app/**/admin/**',
       'lib/db/**',
       'scripts/**',
