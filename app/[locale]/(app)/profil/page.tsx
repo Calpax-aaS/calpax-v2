@@ -7,13 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ChangePasswordForm } from '@/components/change-password-form'
 import { LinkedAccounts } from '@/components/linked-accounts'
+import { MySessionsCard } from '@/components/my-sessions-card'
+import { getMySessions } from '@/lib/actions/session'
 
 export default async function ProfilPage() {
   return requireAuth(async () => {
     const t = await getTranslations('profil')
     const ctx = getContext()
 
-    const [user, exploitant, accounts] = await Promise.all([
+    const [user, exploitant, accounts, sessions] = await Promise.all([
       db.user.findUniqueOrThrow({
         where: { id: ctx.userId },
       }),
@@ -26,6 +28,7 @@ export default async function ProfilPage() {
         where: { userId: ctx.userId },
         select: { providerId: true },
       }),
+      getMySessions(),
     ])
 
     const linkedProviders = accounts.map((a) => a.providerId).filter((p) => p !== 'credential')
@@ -90,6 +93,8 @@ export default async function ProfilPage() {
         <LinkedAccounts linkedProviders={linkedProviders} hasCredential={hasCredential} />
 
         <ChangePasswordForm />
+
+        <MySessionsCard sessions={sessions} />
       </div>
     )
   })
