@@ -53,6 +53,7 @@ export default async function BallonEditPage({ params }: Props) {
             camoOrganisme: ballon.camoOrganisme,
             camoExpiryDate: camoExpiryDateStr,
             certificatNavigabilite: ballon.certificatNavigabilite,
+            actif: ballon.actif,
           }}
           performanceChart={chart}
         />

@@ -10,7 +10,8 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { PerformanceChartInput } from '@/components/performance-chart-input'
 import { ConfigGazInput } from '@/components/config-gaz-input'
-import { updateBallon } from '@/lib/actions/ballon'
+import { updateBallon, toggleBallonActif } from '@/lib/actions/ballon'
+import { ToggleActifButton } from '@/components/toggle-actif-button'
 import { cn } from '@/lib/utils'
 
 const labelClassName = 'text-xs font-medium uppercase tracking-wider text-muted-foreground'
@@ -31,6 +32,7 @@ type Props = {
     camoOrganisme: string | null
     camoExpiryDate: string
     certificatNavigabilite: string | null
+    actif: boolean
   }
   performanceChart: Record<string, number>
 }
@@ -49,6 +51,12 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
 
   return (
     <form action={handleUpdate} className="space-y-6">
+      <div className="flex justify-end">
+        <ToggleActifButton
+          actif={ballon.actif}
+          onToggle={async (actif) => toggleBallonActif(ballonId, actif)}
+        />
+      </div>
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Informations generales</CardTitle>
