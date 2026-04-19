@@ -7,7 +7,9 @@ import { basePrisma } from '@/lib/db/base'
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
+import { getContext } from '@/lib/context'
 import { sendInvitationEmail } from '@/lib/email/invitation'
+import { AuditAction } from '@prisma/client'
 
 export async function revokeSession(sessionId: string) {
   return requireAuth(async () => {
@@ -113,6 +115,7 @@ export async function toggleUserBan(args: {
 }): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX')
+    const ctx = getContext()
 
     try {
       if (args.banned) {
@@ -129,6 +132,26 @@ export async function toggleUserBan(args: {
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Opération refusée'
       return { error: msg }
+    }
+
+    // Better Auth's ban/unban bypasses the audit extension since it uses its own
+    // Prisma client; emit an explicit auditLog row so the action is traceable.
+    try {
+      await basePrisma.auditLog.create({
+        data: {
+          exploitantId: null,
+          userId: ctx.userId,
+          impersonatedBy: ctx.impersonatedBy ?? null,
+          entityType: 'User',
+          entityId: args.userId,
+          action: AuditAction.UPDATE,
+          field: 'banned',
+          beforeValue: !args.banned,
+          afterValue: args.banned,
+        },
+      })
+    } catch (err) {
+      console.warn('toggleUserBan: failed to write audit row', err)
     }
 
     revalidatePath('/admin/users')
