@@ -146,6 +146,7 @@
     "audit": {
       "title": "Audit (toutes tenants)",
       "exploitant": "Exploitant",
+      "impersonatedBy": "Impersonné par",
       "all": "Tous",
       "noEntries": "Aucune modification"
     },
