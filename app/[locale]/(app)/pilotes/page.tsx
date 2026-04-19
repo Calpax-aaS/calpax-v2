@@ -30,7 +30,7 @@ export default async function PilotesPage({ params }: Props) {
 
     const pilotes = await db.pilote.findMany({
       where: { exploitantId: ctx.exploitantId },
-      orderBy: [{ nom: 'asc' }, { prenom: 'asc' }],
+      orderBy: [{ actif: 'desc' }, { nom: 'asc' }, { prenom: 'asc' }],
     })
 
     return (
@@ -74,6 +74,9 @@ export default async function PilotesPage({ params }: Props) {
                       {t('table.qualification')}
                     </TableHead>
                     <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {t('table.groupes')}
+                    </TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
                       {t('table.status')}
                     </TableHead>
                     <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -97,6 +100,36 @@ export default async function PilotesPage({ params }: Props) {
                         ) : (
                           <Badge variant="secondary">Non</Badge>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 flex-wrap">
+                          {pilote.groupeA1 && (
+                            <Badge variant="outline" className="text-xs">
+                              A1
+                            </Badge>
+                          )}
+                          {pilote.groupeA2 && (
+                            <Badge variant="outline" className="text-xs">
+                              A2
+                            </Badge>
+                          )}
+                          {pilote.groupeA3 && (
+                            <Badge variant="outline" className="text-xs">
+                              A3
+                            </Badge>
+                          )}
+                          {pilote.groupeA4 && (
+                            <Badge variant="outline" className="text-xs">
+                              A4
+                            </Badge>
+                          )}
+                          {!pilote.groupeA1 &&
+                            !pilote.groupeA2 &&
+                            !pilote.groupeA3 &&
+                            !pilote.groupeA4 && (
+                              <span className="text-muted-foreground text-xs">—</span>
+                            )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Badge variant={pilote.actif ? 'default' : 'secondary'}>
