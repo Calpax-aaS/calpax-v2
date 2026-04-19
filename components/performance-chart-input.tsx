@@ -35,6 +35,9 @@ export function PerformanceChartInput({ defaultValues = {} }: PerformanceChartIn
                     step="1"
                     min="0"
                     placeholder="—"
+                    onKeyDown={(e) => {
+                      if ('eE+-'.includes(e.key)) e.preventDefault()
+                    }}
                     className="w-full bg-transparent outline-none focus:ring-1 focus:ring-ring rounded px-1 py-0.5 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </td>
