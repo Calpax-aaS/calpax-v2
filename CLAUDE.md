@@ -42,9 +42,15 @@ Chaque exploitant a son propre espace de données isolé via la colonne `exploit
 - `lib/context.ts` : `RequestContext` stocké dans `AsyncLocalStorage` (userId, exploitantId, role, impersonatedBy)
 - `lib/db/tenant-extension.ts` : Prisma extension qui injecte automatiquement `exploitantId` sur toutes les queries scoped
 - `lib/db/index.ts` : exporte `db` (tenant-scoped) et `adminDb` (bypass, audit only, usage restreint)
-- `lib/auth/requireAuth.ts` : wrap les server actions, vérifie la session Better Auth et injecte le contexte
+- `lib/auth/requireAuth.ts` : wrap les server actions, vérifie la session Better Auth et injecte le contexte. Autorise `ADMIN_CALPAX` sans `exploitantId` (future-proof pour super-admins sans tenant)
 
 Un bug chez un exploitant ne doit jamais affecter les données d'un autre.
+
+**Garde-fous :**
+
+- Le tenant extension (`db`) rejette toute query si `exploitantId` est absent du contexte — les actions super-admin DOIVENT utiliser `adminDb`, jamais `db`
+- `adminDb` = `basePrisma` + audit extension (pas de tenant scoping, mais les writes sont logues)
+- `basePrisma` = raw, aucune extension — uniquement pour les reads cross-tenant (audit logs, cron digest)
 
 ## RBAC (Role-Based Access Control)
 
@@ -198,9 +204,11 @@ Le client zéro (Cameron Balloons France, 5+ ballons) est en segment **Expert**.
 - Prisma pour toutes les requêtes BDD — pas de SQL brut sauf cas exceptionnel justifié
 - Variables d'environnement pour toutes les clés API (Mollie, AVWX, Open-Meteo, Resend, Better Auth)
 - Toujours utiliser `db` (tenant-scoped) au lieu de `basePrisma` pour les queries standard
-- `basePrisma` uniquement pour les usages cross-tenant légitimes (super admin, cron digest) — ESLint restreint les imports
+- `adminDb` pour les writes super-admin (audit sans tenant scoping) — ESLint restreint les imports aux modules admin
+- `basePrisma` uniquement pour les reads cross-tenant légitimes (audit logs, cron digest) — ESLint restreint les imports
 - Toutes les server actions doivent être wrappées dans `requireAuth(async () => { ... })`
 - Pour les mutations sensibles, ajouter `requireRole('ADMIN_CALPAX', 'GERANT')` dans le callback
+- Les server actions super-admin (`lib/actions/admin.ts`) utilisent `requireAuth` + `requireRole('ADMIN_CALPAX')` + `adminDb`
 - Les données sensibles (poids passagers, coordonnées) sont chiffrées en base — utiliser la lib de chiffrement définie dans `/lib/crypto.ts`
 - Les PII dans les audit logs sont automatiquement redactées (email, téléphone, poids, etc. — voir `REDACT_FIELDS` dans `lib/db/audit-extension.ts`)
 - Les PDF (PVE, billets, factures) sont générés côté serveur uniquement
@@ -234,3 +242,7 @@ Optionnelles :
 ## Backlog complet
 
 Voir `BACKLOG.md` pour la liste exhaustive des features avec priorités.
+
+## Dette technique
+
+Trackée dans GitHub Issues avec le label `tech-debt` : `gh issue list --label tech-debt`

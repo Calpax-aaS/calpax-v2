@@ -15,7 +15,12 @@ export async function requireAuth<T>(fn: () => Promise<T>): Promise<T> {
   const exploitantId = user.exploitantId as string
   const role = (user.role as string) ?? 'GERANT'
 
-  if (!exploitantId) throw new UnauthorizedError('User has no exploitant')
+  // ADMIN_CALPAX can operate without a tenant (super-admin actions use adminDb).
+  // Today the DB schema enforces exploitantId on all users, but this guard
+  // future-proofs for the day ADMIN_CALPAX users may exist without a tenant.
+  if (!exploitantId && role !== 'ADMIN_CALPAX') {
+    throw new UnauthorizedError('User has no exploitant')
+  }
 
   return runWithContext(
     {

@@ -60,6 +60,11 @@ export const tenantExtension = Prisma.defineExtension({
             `${model}.${operation}() called outside request context. Wrap in requireAuth() or use lib/admin/*.`,
           )
         }
+        if (!ctx.exploitantId) {
+          throw new Error(
+            `${model}.${operation}() requires exploitantId in context. Super-admin actions must use adminDb instead of db.`,
+          )
+        }
 
         const a = args as Record<string, unknown>
 

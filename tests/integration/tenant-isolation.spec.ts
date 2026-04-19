@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/lib/db'
 import { basePrisma } from '@/lib/db/base'
+import { runWithContext } from '@/lib/context'
 import { impersonate } from '@/lib/admin/impersonate'
 import { resetDb, seedTenant, asUser } from './helpers'
 
@@ -60,6 +61,14 @@ describe('tenant isolation', () => {
   it('throws when called outside request context', async () => {
     await seedTenant('A')
     await expect(db.user.findMany()).rejects.toThrow(/outside request context/)
+  })
+
+  it('throws when exploitantId is missing in context (super-admin without tenant)', async () => {
+    await seedTenant('A')
+    const ctx = { userId: 'admin_1', exploitantId: '', role: 'ADMIN_CALPAX' as const }
+    await expect(runWithContext(ctx, async () => db.user.findMany())).rejects.toThrow(
+      /requires exploitantId in context/,
+    )
   })
 
   it('exploitant.findFirst returns only the current tenant', async () => {
