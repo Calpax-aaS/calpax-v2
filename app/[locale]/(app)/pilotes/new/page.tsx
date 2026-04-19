@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { createPilote } from '@/lib/actions/pilote'
+import { PiloteCreateForm } from './pilote-create-form'
 import { cn } from '@/lib/utils'
 
 type Props = {
@@ -18,9 +19,9 @@ export default async function PiloteNewPage({ params }: Props) {
   return requireAuth(async () => {
     const t = await getTranslations('pilotes')
 
-    async function handleCreate(formData: FormData) {
+    async function handleCreate(_prev: { error?: string } | null, formData: FormData) {
       'use server'
-      await createPilote(locale, formData)
+      return createPilote(locale, formData)
     }
 
     return (
@@ -35,7 +36,7 @@ export default async function PiloteNewPage({ params }: Props) {
           <h1 className="text-2xl font-bold">{t('createTitle')}</h1>
         </div>
 
-        <form action={handleCreate} className="space-y-6">
+        <PiloteCreateForm action={handleCreate}>
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Identité</CardTitle>
@@ -188,7 +189,7 @@ export default async function PiloteNewPage({ params }: Props) {
             </Link>
             <Button type="submit">{t('createButton')}</Button>
           </div>
-        </form>
+        </PiloteCreateForm>
       </main>
     )
   })
