@@ -5,7 +5,11 @@
     "error": "Une erreur est survenue",
     "errorMessage": "Une erreur inattendue s'est produite. Veuillez réessayer.",
     "retry": "Réessayer",
-    "backHome": "Retour à l'accueil"
+    "backHome": "Retour à l'accueil",
+    "activate": "Activer",
+    "deactivate": "Désactiver",
+    "activateConfirm": "Réactiver cet élément ?",
+    "deactivateConfirm": "Désactiver cet élément ? Il ne sera plus sélectionnable pour les nouveaux vols."
   },
   "home": {
     "signedInAs": "Connecté en tant que {name} — Exploitant {exploitant}",

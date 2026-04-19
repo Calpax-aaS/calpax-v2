@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge'
 import { ExpiryBadge } from '@/components/expiry-badge'
 import { PerformanceChartDisplay } from '@/components/performance-chart-display'
 import { getBallonGroupe } from '@/lib/regulatory/validation'
+import { toggleBallonActif } from '@/lib/actions/ballon'
+import { ToggleActifButton } from '@/components/toggle-actif-button'
 import { cn } from '@/lib/utils'
 
 type Props = {
@@ -43,6 +45,13 @@ export default async function BallonDetailPage({ params }: Props) {
             </Badge>
           </div>
           <div className="flex gap-2">
+            <ToggleActifButton
+              actif={ballon.actif}
+              onToggle={async (actif: boolean) => {
+                'use server'
+                return toggleBallonActif(id, actif)
+              }}
+            />
             <Link
               href={`/${locale}/ballons/${id}/edit`}
               className={buttonVariants({ variant: 'outline' })}
