@@ -158,14 +158,14 @@ export default async function PiloteNewPage({ params }: Props) {
               </div>
               <div className="space-y-2">
                 <Label>{t('fields.groupesA')}</Label>
-                <div className="flex gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {([1, 2, 3, 4] as const).map((g) => (
                     <div key={g} className="flex items-center gap-2">
                       <input
                         id={`groupeA${g}`}
                         name={`groupeA${g}`}
                         type="checkbox"
-                        className="h-4 w-4 rounded border-input"
+                        className="h-4 w-4 rounded border-input shrink-0"
                       />
                       <Label htmlFor={`groupeA${g}`}>{t(`groupes.A${g}`)}</Label>
                     </div>

@@ -204,7 +204,7 @@ export function PiloteEditForm({ locale, piloteId, pilote }: Props) {
           </div>
           <div className="space-y-2">
             <Label className={labelClassName}>{t('fields.groupesA')}</Label>
-            <div className="flex gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {([1, 2, 3, 4] as const).map((g) => (
                 <div key={g} className="flex items-center gap-2">
                   <input
@@ -212,7 +212,7 @@ export function PiloteEditForm({ locale, piloteId, pilote }: Props) {
                     name={`groupeA${g}`}
                     type="checkbox"
                     defaultChecked={pilote[`groupeA${g}` as keyof typeof pilote] as boolean}
-                    className="h-4 w-4 rounded border-input"
+                    className="h-4 w-4 rounded border-input shrink-0"
                   />
                   <Label htmlFor={`groupeA${g}`}>{t(`groupes.A${g}`)}</Label>
                 </div>
