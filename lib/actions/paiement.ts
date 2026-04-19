@@ -7,6 +7,7 @@ import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { paiementCreateSchema } from '@/lib/schemas/paiement'
 import { computeStatutPaiement } from '@/lib/billet/paiement'
+import { formatZodError } from '@/lib/zod-error'
 
 async function recalcStatutPaiement(billetId: string): Promise<void> {
   const billet = await db.billet.findUniqueOrThrow({ where: { id: billetId } })
@@ -43,8 +44,7 @@ export async function addPaiement(
 
     const result = paiementCreateSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     await db.paiement.create({

@@ -6,6 +6,7 @@ import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { z } from 'zod'
+import { formatZodError } from '@/lib/zod-error'
 
 const equipierSchema = z.object({
   prenom: z.string().min(1, 'Prenom requis'),
@@ -29,8 +30,7 @@ export async function createEquipier(
 
     const result = equipierSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     await db.equipier.create({

@@ -12,6 +12,7 @@ import { buildFicheVolData } from '@/lib/pdf/build-data'
 import { uploadPve } from '@/lib/storage/pve'
 import { validateVolCreation } from '@/lib/vol/validation'
 import { sendCancellationEmails } from '@/lib/email/cancellation'
+import { formatZodError } from '@/lib/zod-error'
 
 function parseVolFormData(formData: FormData) {
   return {
@@ -30,6 +31,14 @@ function parseVolFormData(formData: FormData) {
   }
 }
 
+function resolveAutre(
+  id: string | undefined,
+  autre: string | undefined,
+): { id: string | null; autre: string | null } {
+  if (id === 'AUTRE') return { id: null, autre: autre || null }
+  return { id: id || null, autre: null }
+}
+
 function resolveAutreEntities(rest: {
   equipierId?: string
   equipierAutre?: string
@@ -38,14 +47,16 @@ function resolveAutreEntities(rest: {
   siteDecollageId?: string
   lieuDecollageAutre?: string
 }) {
+  const equipier = resolveAutre(rest.equipierId, rest.equipierAutre)
+  const vehicule = resolveAutre(rest.vehiculeId, rest.vehiculeAutre)
+  const site = resolveAutre(rest.siteDecollageId, rest.lieuDecollageAutre)
   return {
-    equipierId: rest.equipierId && rest.equipierId !== 'AUTRE' ? rest.equipierId : null,
-    equipierAutre: rest.equipierId === 'AUTRE' ? rest.equipierAutre || null : null,
-    vehiculeId: rest.vehiculeId && rest.vehiculeId !== 'AUTRE' ? rest.vehiculeId : null,
-    vehiculeAutre: rest.vehiculeId === 'AUTRE' ? rest.vehiculeAutre || null : null,
-    siteDecollageId:
-      rest.siteDecollageId && rest.siteDecollageId !== 'AUTRE' ? rest.siteDecollageId : null,
-    lieuDecollageAutre: rest.siteDecollageId === 'AUTRE' ? rest.lieuDecollageAutre || null : null,
+    equipierId: equipier.id,
+    equipierAutre: equipier.autre,
+    vehiculeId: vehicule.id,
+    vehiculeAutre: vehicule.autre,
+    siteDecollageId: site.id,
+    lieuDecollageAutre: site.autre,
   }
 }
 
@@ -58,8 +69,7 @@ export async function createVol(locale: string, formData: FormData): Promise<{ e
 
     const result = volCreateSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     const { ballonId, piloteId, date, creneau, ...rest } = result.data
@@ -122,8 +132,7 @@ export async function updateVol(
 
     const result = volCreateSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     const { ballonId, piloteId, date, creneau, ...rest } = result.data
@@ -167,7 +176,7 @@ export async function updateVol(
     })
 
     revalidatePath(`/${locale}/vols/${volId}`)
-    redirect(`/${locale}/vols/${volId}`)
+    return {}
   })
 }
 
@@ -199,8 +208,7 @@ export async function savePostFlight(
 
     const result = volPostFlightSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     await db.vol.update({

@@ -8,6 +8,7 @@ import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { piloteSchema } from '@/lib/schemas/pilote'
 import { encrypt } from '@/lib/crypto'
+import { formatZodError } from '@/lib/zod-error'
 
 function extractPiloteData(formData: FormData) {
   return {
@@ -37,10 +38,6 @@ function extractPiloteData(formData: FormData) {
   }
 }
 
-/**
- * Create a new pilote for the current tenant.
- * Encrypts poids before storing. Redirects to detail page on success.
- */
 export async function createPilote(
   locale: string,
   formData: FormData,
@@ -52,8 +49,7 @@ export async function createPilote(
     const raw = extractPiloteData(formData)
     const result = piloteSchema.safeParse(raw)
     if (!result.success) {
-      const messages = result.error.issues.map((i) => i.message)
-      return { error: messages.join(' — ') }
+      return { error: formatZodError(result.error) }
     }
 
     const { poids, ...rest } = result.data
@@ -69,10 +65,6 @@ export async function createPilote(
   })
 }
 
-/**
- * Update an existing pilote.
- * Re-encrypts poids if provided. Redirects to detail page on success.
- */
 export async function updatePilote(
   id: string,
   locale: string,
@@ -83,8 +75,7 @@ export async function updatePilote(
     const raw = extractPiloteData(formData)
     const result = piloteSchema.safeParse(raw)
     if (!result.success) {
-      const messages = result.error.issues.map((i) => i.message)
-      return { error: messages.join(' — ') }
+      return { error: formatZodError(result.error) }
     }
 
     const { poids, ...rest } = result.data
@@ -100,9 +91,6 @@ export async function updatePilote(
   })
 }
 
-/**
- * Toggle the actif flag of a pilote.
- */
 export async function togglePiloteActif(id: string, actif: boolean): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')

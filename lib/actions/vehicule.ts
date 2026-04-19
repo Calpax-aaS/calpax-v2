@@ -6,6 +6,7 @@ import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { z } from 'zod'
+import { formatZodError } from '@/lib/zod-error'
 
 const vehiculeSchema = z.object({
   nom: z.string().min(1, 'Nom requis'),
@@ -27,8 +28,7 @@ export async function createVehicule(
 
     const result = vehiculeSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Donnees invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     await db.vehicule.create({

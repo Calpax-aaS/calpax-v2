@@ -129,18 +129,17 @@ export function VolCreateForm({
     formData.set('equipierId', selectedEquipierId)
     formData.set('vehiculeId', selectedVehiculeId)
     formData.set('siteDecollageId', selectedSiteId)
-    const result = volId
-      ? await updateVol(volId, locale, formData)
+    const result = isEdit
+      ? await updateVol(volId!, locale, formData)
       : await createVol(locale, formData)
     if (result?.error) {
       setError(result.error)
       toast.error(result.error)
     } else {
       toast.success(t('saveSuccess'))
-      if (volId) {
+      if (isEdit) {
         router.push(`/${locale}/vols/${volId}`)
       }
-      // createVol redirects server-side
     }
   }
 

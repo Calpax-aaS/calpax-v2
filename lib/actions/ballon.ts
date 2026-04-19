@@ -7,6 +7,7 @@ import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { ballonSchema } from '@/lib/schemas/ballon'
+import { formatZodError } from '@/lib/zod-error'
 
 function extractPerformanceChart(formData: FormData): Record<string, number> {
   const chart: Record<string, number> = {}
@@ -37,10 +38,6 @@ function extractBallonData(formData: FormData) {
   }
 }
 
-/**
- * Create a new ballon for the current tenant.
- * Validates with ballonSchema, creates via db, then redirects to the detail page.
- */
 export async function createBallon(
   locale: string,
   formData: FormData,
@@ -52,8 +49,7 @@ export async function createBallon(
     const raw = extractBallonData(formData)
     const result = ballonSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Données invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     const ballon = await db.ballon.create({
@@ -67,10 +63,6 @@ export async function createBallon(
   })
 }
 
-/**
- * Update an existing ballon.
- * Validates with ballonSchema, updates via db, then redirects to the detail page.
- */
 export async function updateBallon(
   id: string,
   locale: string,
@@ -81,8 +73,7 @@ export async function updateBallon(
     const raw = extractBallonData(formData)
     const result = ballonSchema.safeParse(raw)
     if (!result.success) {
-      const firstError = result.error.issues[0]
-      return { error: firstError?.message ?? 'Données invalides' }
+      return { error: formatZodError(result.error) }
     }
 
     await db.ballon.update({
@@ -95,9 +86,6 @@ export async function updateBallon(
   })
 }
 
-/**
- * Toggle the actif flag of a ballon.
- */
 export async function toggleBallonActif(id: string, actif: boolean): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
