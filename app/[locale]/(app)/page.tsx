@@ -206,7 +206,7 @@ export default async function HomePage({ params }: Props) {
                 year: 'numeric',
               })}
               {' — '}
-              {vols.length} vol{vols.length !== 1 ? 's' : ''}
+              {t('flightCount', { count: vols.length })}
             </p>
           </div>
         </div>

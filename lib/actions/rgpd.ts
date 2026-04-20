@@ -17,6 +17,7 @@ export type PassagerSearchResult = {
 
 export async function searchPassagers(query: string): Promise<PassagerSearchResult[]> {
   return requireAuth(async () => {
+    requireRole('ADMIN_CALPAX', 'GERANT')
     if (!query || query.length < 2) return []
 
     const passagers = await db.passager.findMany({

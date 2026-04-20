@@ -49,8 +49,8 @@ const CAN_ORGANIZE: UserRole[] = ['ADMIN_CALPAX', 'GERANT']
 
 function capacityColorClass(count: number, max: number): string {
   if (max === 0) return ''
-  if (count > max) return 'text-red-600'
-  if (count / max >= 0.8) return 'text-amber-600'
+  if (count > max) return 'text-red-700'
+  if (count / max >= 0.8) return 'text-amber-700'
   return 'text-green-700'
 }
 
@@ -65,9 +65,9 @@ const STATUT_VARIANT: Record<string, BadgeVariant> = {
 }
 
 const MASS_COLORS: Record<MassBudget['status'], string> = {
-  OK: 'text-green-600',
-  WARNING: 'text-amber-600',
-  OVER: 'text-red-600',
+  OK: 'text-green-700',
+  WARNING: 'text-amber-700',
+  OVER: 'text-red-700',
 }
 
 const MASS_VARIANT: Record<MassBudget['status'], BadgeVariant> = {
@@ -91,7 +91,7 @@ const GONOGO_VARIANT: Record<WeatherSummary['goNogo'], BadgeVariant> = {
 export function FlightCard({ flight, locale, showActions = true, userRole }: Props) {
   const t = useTranslations('dashboard')
   const tv = useTranslations('vols')
-  const canOrganize = userRole ? CAN_ORGANIZE.includes(userRole) : true
+  const canOrganize = !!userRole && CAN_ORGANIZE.includes(userRole)
 
   return (
     <Card className={cn(flight.meteoAlert && 'border-amber-400 bg-amber-50/50')}>
@@ -179,8 +179,8 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
               </Badge>
             </div>
             {flight.meteoAlert && (
-              <div className="flex items-center gap-2 text-amber-800 font-medium">
-                <AlertTriangle className="h-4 w-4 shrink-0" />
+              <div role="status" className="flex items-center gap-2 text-amber-900 font-medium">
+                <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>{t('meteoAlert')}</span>
               </div>
             )}
