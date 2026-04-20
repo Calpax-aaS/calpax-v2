@@ -349,6 +349,11 @@ function PageFooter({ exploitant }: { exploitant: FicheVolData['exploitant'] }) 
   )
 }
 
+// `children` is typed `string` (not ReactNode) because @react-pdf/renderer's
+// <Text> renders glyphs per node: passing multiple children (e.g. `<>{a}{b}</>`
+// or raw concatenations inside JSX) crashes at render with an obscure "Cannot
+// add a child that doesn't have a YogaNode" error. Use a template literal at
+// the call site (e.g. `{`PASSAGERS (${n})`}`) when the title is dynamic.
 function SectionTitle({ children }: { children: string }) {
   return <Text style={styles.sectionTitle}>{children}</Text>
 }
