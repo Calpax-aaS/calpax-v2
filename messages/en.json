@@ -464,6 +464,8 @@
   },
   "vols": {
     "title": "Flight planning",
+    "kicker": "Weekly view",
+    "detailKicker": "Flight brief",
     "new": "New flight",
     "backToList": "Back to planning",
     "detail": "Flight detail",

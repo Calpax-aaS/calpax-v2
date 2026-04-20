@@ -4,7 +4,6 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { buttonVariants } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { WeekGrid } from '@/components/week-grid'
 import type { VolSummary } from '@/components/week-grid'
@@ -119,15 +118,20 @@ export default async function VolsPage({ params, searchParams }: Props) {
 
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+        <header className="flex flex-wrap items-end justify-between gap-3">
+          <div className="space-y-1">
+            <div className="mono cap text-[11px] text-dusk-700">{t('kicker')}</div>
+            <h1 className="font-display text-3xl font-semibold tracking-tight text-sky-900">
+              {t('title')}
+            </h1>
+          </div>
           <Link
             href={`/${locale}/vols/create`}
             className={cn(buttonVariants({ variant: 'default' }))}
           >
             {t('new')}
           </Link>
-        </div>
+        </header>
 
         {/* Mobile: stacked flight cards */}
         <div className="md:hidden space-y-3">
@@ -151,18 +155,14 @@ export default async function VolsPage({ params, searchParams }: Props) {
 
         {/* Desktop: week grid */}
         <div className="hidden md:block">
-          <Card>
-            <CardContent className="p-4">
-              <WeekGrid
-                weekStart={weekStartStr}
-                vols={weekVols}
-                locale={locale}
-                todayMonday={getMondayOfWeek(todayStr)}
-                emptyActionLabel={t('createFirst')}
-                emptyActionHref={`/${locale}/vols/create`}
-              />
-            </CardContent>
-          </Card>
+          <WeekGrid
+            weekStart={weekStartStr}
+            vols={weekVols}
+            locale={locale}
+            todayMonday={getMondayOfWeek(todayStr)}
+            emptyActionLabel={t('createFirst')}
+            emptyActionHref={`/${locale}/vols/create`}
+          />
         </div>
       </div>
     )
