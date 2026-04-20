@@ -79,6 +79,24 @@
     "loginError": "Erreur de connexion",
     "showPassword": "Afficher le mot de passe",
     "hidePassword": "Masquer le mot de passe",
+    "kicker": "Connexion opérateur",
+    "welcome": "Ravi de vous revoir.",
+    "cockpitAction": "Accéder au cockpit",
+    "notClient": "Pas encore client ?",
+    "requestAccess": "Demander un accès",
+    "footerSerial": "CALPAX © 2026 · LFR 2.4.1",
+    "footerCert": "CERT · EASA AIR-OPS",
+    "hero": {
+      "title": "L'opération\nd'une compagnie,",
+      "titleAccent": "entre vos mains.",
+      "subtitle": "Planning, devis de masse, météo AROME, passagers, conformité EASA. Calpax regroupe l'exploitation quotidienne d'une flotte de montgolfières dans un seul cockpit.",
+      "systemOperational": "SYSTEM · OPERATIONAL",
+      "stats": {
+        "companies": { "value": "38", "label": "COMPAGNIES" },
+        "flights": { "value": "1 240", "label": "VOLS/AN" },
+        "compliance": { "value": "99,2%", "label": "CONFORMITÉ" }
+      }
+    },
     "passwordStrength": {
       "tooShort": "Minimum {min} caractères",
       "veryWeak": "Très faible",

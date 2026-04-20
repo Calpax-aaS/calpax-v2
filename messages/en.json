@@ -79,6 +79,24 @@
     "loginError": "Sign-in failed",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
+    "kicker": "Operator sign in",
+    "welcome": "Welcome back.",
+    "cockpitAction": "Enter the cockpit",
+    "notClient": "Not a customer yet?",
+    "requestAccess": "Request access",
+    "footerSerial": "CALPAX © 2026 · LFR 2.4.1",
+    "footerCert": "CERT · EASA AIR-OPS",
+    "hero": {
+      "title": "A company's\noperation,",
+      "titleAccent": "in your hands.",
+      "subtitle": "Scheduling, mass budgets, AROME weather, passengers, EASA compliance. Calpax brings a balloon fleet's daily operations into a single cockpit.",
+      "systemOperational": "SYSTEM · OPERATIONAL",
+      "stats": {
+        "companies": { "value": "38", "label": "OPERATORS" },
+        "flights": { "value": "1,240", "label": "FLIGHTS/YEAR" },
+        "compliance": { "value": "99.2%", "label": "COMPLIANCE" }
+      }
+    },
     "passwordStrength": {
       "tooShort": "Minimum {min} characters",
       "veryWeak": "Very weak",
