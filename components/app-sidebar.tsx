@@ -17,6 +17,7 @@ import {
   History,
   User,
   LogOut,
+  Globe,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -30,12 +31,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { Globe } from 'lucide-react'
+import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
+import { StatusDot } from '@/components/cockpit/status-dot'
 
 type NavItem = {
   key: string
   href: string
   icon: React.ComponentType<{ className?: string }>
+  badge?: number
 }
 
 type NavGroup = {
@@ -59,7 +62,17 @@ const roleAccess: Record<string, UserRole[]> = {
   audit: ['ADMIN_CALPAX', 'GERANT'],
 }
 
-export function AppSidebar({ userRole }: { userRole?: string }) {
+export function AppSidebar({
+  userRole,
+  exploitantName,
+  inFlightCount = 0,
+  pendingTicketsCount = 0,
+}: {
+  userRole?: string
+  exploitantName?: string | null
+  inFlightCount?: number
+  pendingTicketsCount?: number
+}) {
   const t = useTranslations('nav')
   const locale = useLocale()
   const pathname = usePathname()
@@ -72,7 +85,12 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
     {
       label: t('groups.activity'),
       items: [
-        { key: 'billets', href: `/${locale}/billets`, icon: Ticket },
+        {
+          key: 'billets',
+          href: `/${locale}/billets`,
+          icon: Ticket,
+          badge: pendingTicketsCount > 0 ? pendingTicketsCount : undefined,
+        },
         { key: 'vols', href: `/${locale}/vols`, icon: Plane },
       ],
     },
@@ -107,33 +125,53 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
     }))
     .filter((group) => group.items.length > 0)
 
+  const statusLine = buildStatusLine({ exploitantName, inFlightCount })
+
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-3 px-2 py-2 border-b border-sidebar-border pb-3 mb-1">
-          <img src="/logo.svg" alt="Calpax" className="h-7 w-7" />
-          <span className="text-lg font-bold text-sidebar-primary">Calpax</span>
+        <div className="border-b border-sidebar-border px-2 pb-3 pt-1">
+          <CalpaxWordmark
+            size={18}
+            subtitle={statusLine ?? undefined}
+            wordmarkClassName="text-dusk-200"
+          />
+          {inFlightCount > 0 && (
+            <div className="mono cap mt-2 flex items-center gap-1.5 text-[10px] text-dusk-300">
+              <StatusDot tone="dusk" pulse size={6} />
+              <span>{inFlightCount} en vol</span>
+            </div>
+          )}
         </div>
       </SidebarHeader>
       <SidebarContent>
         {filteredGroups.map((group) => (
           <SidebarGroup key={group.label ?? 'top'}>
             {group.label && (
-              <SidebarGroupLabel className="text-sidebar-primary/60 text-[10px] uppercase tracking-widest">
+              <SidebarGroupLabel className="cap text-[10px] text-sidebar-muted-foreground">
                 {group.label}
               </SidebarGroupLabel>
             )}
             <SidebarGroupContent>
               <SidebarMenu>
-                {group.items.map(({ key, href, icon: Icon }) => {
+                {group.items.map(({ key, href, icon: Icon, badge }) => {
                   const isActive =
                     pathname === href || (href !== `/${locale}` && pathname.startsWith(href))
                   return (
                     <SidebarMenuItem key={key}>
-                      <SidebarMenuButton isActive={isActive} asChild>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        asChild
+                        className="data-[active=true]:border-l-2 data-[active=true]:border-l-dusk-500 data-[active=true]:pl-2"
+                      >
                         <Link href={href}>
                           <Icon className="h-4 w-4" />
-                          <span>{t(key)}</span>
+                          <span className="flex-1">{t(key)}</span>
+                          {badge !== undefined && (
+                            <span className="mono rounded bg-dusk-500 px-1.5 py-px text-[10px] font-medium text-white">
+                              {badge}
+                            </span>
+                          )}
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -184,4 +222,16 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
       </SidebarFooter>
     </Sidebar>
   )
+}
+
+function buildStatusLine({
+  exploitantName,
+  inFlightCount,
+}: {
+  exploitantName?: string | null
+  inFlightCount: number
+}): string | null {
+  if (!exploitantName) return null
+  if (inFlightCount === 0) return exploitantName
+  return exploitantName
 }

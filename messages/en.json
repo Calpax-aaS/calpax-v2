@@ -192,6 +192,8 @@
     "critical": "Critical",
     "daysRemaining": "{days, plural, =0 {Expired} one {# day} other {# days}}",
     "summary": "{count, plural, one {# regulatory alert} other {# regulatory alerts}} ({parts})",
+    "count": "{count, plural, one {# regulatory alert} other {# regulatory alerts}}",
+    "viewAll": "View all",
     "countExpired": "{count, plural, one {# expired} other {# expired}}",
     "countCritical": "{count, plural, one {# critical} other {# critical}}",
     "camoExpiry": "CAMO certificate",
