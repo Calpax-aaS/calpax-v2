@@ -55,6 +55,7 @@
     "connectTitle": "Sign in to your account",
     "appDescription": "Hot air balloon flight management SaaS",
     "footer": "Calpax 2026",
+    "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
     "forgotPasswordTitle": "Reset your password",
     "sendResetLink": "Send reset link",
@@ -720,6 +721,15 @@
     "passwordMismatch": "Passwords do not match",
     "passwordChanged": "Password updated",
     "passwordError": "Error changing password",
+    "sessions": {
+      "title": "Active sessions",
+      "description": "Devices currently signed in to your account. You can revoke a session to sign out that device.",
+      "currentSession": "Current session",
+      "revoke": "Sign out",
+      "revokeConfirm": "Sign out this device? The session will be revoked immediately.",
+      "revokeSuccess": "Session revoked",
+      "empty": "No active sessions."
+    },
     "linkedAccounts": {
       "title": "Sign-in methods",
       "description": "Link one or more accounts to sign in faster. You can remove them at any time.",

@@ -16,6 +16,7 @@ export default function SignInPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [mode, setMode] = useState<Mode>('signin')
@@ -26,7 +27,7 @@ export default function SignInPage() {
     setLoading(true)
     setError(null)
     try {
-      const result = await signIn.email({ email, password })
+      const result = await signIn.email({ email, password, rememberMe })
       if (result.error) {
         setError(result.error.message ?? t('loginError'))
       } else {
@@ -255,7 +256,16 @@ export default function SignInPage() {
                     placeholder={t('passwordPlaceholder')}
                   />
                 </div>
-                <div className="text-right">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="h-3.5 w-3.5 rounded border-border accent-primary"
+                    />
+                    {t('rememberMe')}
+                  </label>
                   <button
                     type="button"
                     onClick={() => {

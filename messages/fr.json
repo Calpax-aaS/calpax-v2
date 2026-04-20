@@ -55,6 +55,7 @@
     "connectTitle": "Connectez-vous à votre compte",
     "appDescription": "SaaS de gestion de vols en montgolfière",
     "footer": "Calpax 2026",
+    "rememberMe": "Se souvenir de moi",
     "forgotPassword": "Mot de passe oublié ?",
     "forgotPasswordTitle": "Réinitialiser votre mot de passe",
     "sendResetLink": "Envoyer un lien de réinitialisation",
@@ -720,6 +721,15 @@
     "passwordMismatch": "Les mots de passe ne correspondent pas",
     "passwordChanged": "Mot de passe mis a jour",
     "passwordError": "Erreur lors du changement de mot de passe",
+    "sessions": {
+      "title": "Sessions actives",
+      "description": "Les appareils actuellement connectés à votre compte. Vous pouvez révoquer une session pour déconnecter l'appareil.",
+      "currentSession": "Session actuelle",
+      "revoke": "Déconnecter",
+      "revokeConfirm": "Déconnecter cet appareil ? La session sera immédiatement révoquée.",
+      "revokeSuccess": "Session révoquée",
+      "empty": "Aucune session active."
+    },
     "linkedAccounts": {
       "title": "Methodes de connexion",
       "description": "Liez un ou plusieurs comptes pour vous connecter plus rapidement. Vous pouvez les retirer a tout moment.",
