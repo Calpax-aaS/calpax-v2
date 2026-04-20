@@ -1,15 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { authClient } from '@/lib/auth-client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { Eye, EyeOff, Loader2, X } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { PasswordStrength } from '@/components/password-strength'
+import { DismissibleError } from '@/components/auth/dismissible-error'
+import { PasswordInput } from '@/components/auth/password-input'
 
 export default function ResetPasswordPage() {
   const t = useTranslations('signin')
+  const locale = useLocale()
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
@@ -17,10 +20,10 @@ export default function ResetPasswordPage() {
 
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const mismatch = !!confirmPassword && !!newPassword && confirmPassword !== newPassword
 
   async function handleReset(e: React.FormEvent) {
     e.preventDefault()
@@ -60,19 +63,7 @@ export default function ResetPasswordPage() {
           {isInvitation ? t('invitationTitle') : t('resetPasswordTitle')}
         </h2>
 
-        {error && (
-          <div className="mb-4 rounded-lg bg-destructive/10 px-4 py-2.5 text-sm text-destructive flex items-start justify-between gap-2">
-            <span>{error}</span>
-            <button
-              type="button"
-              onClick={() => setError(null)}
-              aria-label="Dismiss"
-              className="text-destructive/70 hover:text-destructive"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+        {error && <DismissibleError message={error} onDismiss={() => setError(null)} />}
 
         {success ? (
           <div className="text-center space-y-4">
@@ -81,7 +72,7 @@ export default function ResetPasswordPage() {
             </div>
             <button
               type="button"
-              onClick={() => router.push('/auth/signin')}
+              onClick={() => router.push(`/${locale}/auth/signin`)}
               className="text-sm text-primary hover:underline"
             >
               {t('backToSignin')}
@@ -96,29 +87,17 @@ export default function ResetPasswordPage() {
               >
                 {t('newPasswordLabel')}
               </label>
-              <div className="relative">
-                <input
-                  id="new-password"
-                  name="newPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  autoFocus
-                  required
-                  minLength={12}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder={t('newPasswordPlaceholder')}
-                  className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 pr-10 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((s) => !s)}
-                  aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
+              <PasswordInput
+                id="new-password"
+                name="newPassword"
+                autoComplete="new-password"
+                autoFocus
+                required
+                minLength={12}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder={t('newPasswordPlaceholder')}
+              />
               <PasswordStrength password={newPassword} minLength={12} />
             </div>
             <div className="space-y-1.5">
@@ -128,20 +107,22 @@ export default function ResetPasswordPage() {
               >
                 {t('confirmPasswordLabel')}
               </label>
-              <input
+              <PasswordInput
                 id="confirm-password"
                 name="confirmPassword"
-                type={showPassword ? 'text' : 'password'}
                 autoComplete="new-password"
                 required
                 minLength={12}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder={t('confirmPasswordPlaceholder')}
-                className="w-full bg-secondary/30 border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                invalid={mismatch}
+                describedById={mismatch ? 'confirm-password-error' : undefined}
               />
-              {confirmPassword && newPassword && confirmPassword !== newPassword && (
-                <p className="text-[11px] text-destructive">{t('passwordMismatch')}</p>
+              {mismatch && (
+                <p id="confirm-password-error" className="text-[11px] text-destructive">
+                  {t('passwordMismatch')}
+                </p>
               )}
             </div>
             <button

@@ -138,17 +138,18 @@ export async function updateBillet(
 
     const { passagers, ...billetData } = result.data
 
-    await db.passager.deleteMany({ where: { billetId: id } })
-
-    await db.billet.update({
-      where: { id },
-      data: {
-        ...billetData,
-        passagers: {
-          create: passagers.map((p) => mapPassagerForCreate(p, ctx.exploitantId)),
+    await db.$transaction([
+      db.passager.deleteMany({ where: { billetId: id } }),
+      db.billet.update({
+        where: { id },
+        data: {
+          ...billetData,
+          passagers: {
+            create: passagers.map((p) => mapPassagerForCreate(p, ctx.exploitantId)),
+          },
         },
-      },
-    })
+      }),
+    ])
 
     revalidatePath(`/${locale}/billets/${id}`)
     return {}
