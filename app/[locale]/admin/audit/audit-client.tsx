@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useId } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
@@ -69,21 +69,26 @@ export function AdminAuditClient({
   const [total, setTotal] = useState(0)
   const [pageCount, setPageCount] = useState(0)
 
-  async function load() {
-    const result = await fetchAdminAuditLogs({
+  const exploitantSelectId = useId()
+  const entityTypeSelectId = useId()
+  const actionSelectId = useId()
+
+  useEffect(() => {
+    let cancelled = false
+    fetchAdminAuditLogs({
       exploitantId: exploitantId || undefined,
       entityType: entityType || undefined,
       action: action || undefined,
       page,
+    }).then((result) => {
+      if (cancelled) return
+      setLogs(result.logs as unknown as AuditLog[])
+      setTotal(result.total)
+      setPageCount(result.pageCount)
     })
-    setLogs(result.logs as unknown as AuditLog[])
-    setTotal(result.total)
-    setPageCount(result.pageCount)
-  }
-
-  useEffect(() => {
-    void load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      cancelled = true
+    }
   }, [exploitantId, entityType, action, page])
 
   function formatDate(date: Date) {
@@ -96,8 +101,11 @@ export function AdminAuditClient({
     return JSON.stringify(value)
   }
 
-  const exploitantMap = new Map(exploitants.map((e) => [e.id, e.name]))
-  const adminMap = new Map(admins.map((a) => [a.id, a.name || a.email]))
+  const exploitantMap = useMemo(
+    () => new Map(exploitants.map((e) => [e.id, e.name])),
+    [exploitants],
+  )
+  const adminMap = useMemo(() => new Map(admins.map((a) => [a.id, a.name || a.email])), [admins])
 
   return (
     <Card>
@@ -110,8 +118,11 @@ export function AdminAuditClient({
         {/* Filters */}
         <div className="flex gap-3 items-end flex-wrap">
           <div>
-            <label className="text-sm text-muted-foreground">{ta('exploitant')}</label>
+            <label htmlFor={exploitantSelectId} className="text-sm text-muted-foreground">
+              {ta('exploitant')}
+            </label>
             <select
+              id={exploitantSelectId}
               value={exploitantId}
               onChange={(e) => {
                 setExploitantId(e.target.value)
@@ -128,8 +139,11 @@ export function AdminAuditClient({
             </select>
           </div>
           <div>
-            <label className="text-sm text-muted-foreground">{t('filters.entityType')}</label>
+            <label htmlFor={entityTypeSelectId} className="text-sm text-muted-foreground">
+              {t('filters.entityType')}
+            </label>
             <select
+              id={entityTypeSelectId}
               value={entityType}
               onChange={(e) => {
                 setEntityType(e.target.value)
@@ -146,8 +160,11 @@ export function AdminAuditClient({
             </select>
           </div>
           <div>
-            <label className="text-sm text-muted-foreground">{t('filters.action')}</label>
+            <label htmlFor={actionSelectId} className="text-sm text-muted-foreground">
+              {t('filters.action')}
+            </label>
             <select
+              id={actionSelectId}
               value={action}
               onChange={(e) => {
                 setAction(e.target.value)
@@ -229,7 +246,7 @@ export function AdminAuditClient({
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
             >
-              Precedent
+              {ta('prev')}
             </Button>
             <span className="text-sm py-2">
               {page} / {pageCount}
@@ -240,7 +257,7 @@ export function AdminAuditClient({
               disabled={page >= pageCount}
               onClick={() => setPage(page + 1)}
             >
-              Suivant
+              {ta('next')}
             </Button>
           </div>
         )}

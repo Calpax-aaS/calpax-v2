@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Eye, EyeOff, Loader2, X } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import { authClient, signIn } from '@/lib/auth-client'
+import { DismissibleError } from '@/components/auth/dismissible-error'
+import { PasswordInput } from '@/components/auth/password-input'
 import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
 import { StatusDot } from '@/components/cockpit/status-dot'
 import { TopoPattern } from '@/components/cockpit/topo-pattern'
@@ -13,10 +15,10 @@ type Mode = 'signin' | 'forgot'
 
 export default function SignInPage() {
   const t = useTranslations('signin')
+  const locale = useLocale()
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -58,7 +60,10 @@ export default function SignInPage() {
     setLoading(true)
     setError(null)
     try {
-      await authClient.requestPasswordReset({ email, redirectTo: '/auth/reset-password' })
+      await authClient.requestPasswordReset({
+        email,
+        redirectTo: `/${locale}/auth/reset-password`,
+      })
       setResetSent(true)
     } catch {
       setError(t('resetError'))
@@ -78,11 +83,9 @@ export default function SignInPage() {
         email={email}
         password={password}
         rememberMe={rememberMe}
-        showPassword={showPassword}
         onEmailChange={setEmail}
         onPasswordChange={setPassword}
         onRememberChange={setRememberMe}
-        onTogglePassword={() => setShowPassword((s) => !s)}
         onDismissError={() => setError(null)}
         onSubmitSignin={handleEmailPassword}
         onSubmitForgot={handleForgotPassword}
@@ -185,11 +188,9 @@ type FormPanelProps = {
   email: string
   password: string
   rememberMe: boolean
-  showPassword: boolean
   onEmailChange: (v: string) => void
   onPasswordChange: (v: string) => void
   onRememberChange: (v: boolean) => void
-  onTogglePassword: () => void
   onDismissError: () => void
   onSubmitSignin: (e: React.FormEvent) => void
   onSubmitForgot: (e: React.FormEvent) => void
@@ -208,11 +209,9 @@ function FormPanel(props: FormPanelProps) {
     email,
     password,
     rememberMe,
-    showPassword,
     onEmailChange,
     onPasswordChange,
     onRememberChange,
-    onTogglePassword,
     onDismissError,
     onSubmitSignin,
     onSubmitForgot,
@@ -224,7 +223,7 @@ function FormPanel(props: FormPanelProps) {
   return (
     <section className="relative flex flex-col justify-between bg-sky-0 px-8 py-10 sm:px-12">
       {/* Top: "Not a customer? Request access" */}
-      <div className="flex justify-center md:justify-end text-[11px] text-sky-500">
+      <div className="flex justify-center text-[11px] text-sky-500 md:justify-end">
         <span>{t('notClient')}</span>
         <a
           className="ml-1.5 text-ink-700 underline-offset-2 hover:underline"
@@ -248,19 +247,7 @@ function FormPanel(props: FormPanelProps) {
           {mode === 'forgot' ? t('forgotPasswordTitle') : t('welcome')}
         </h2>
 
-        {error && (
-          <div className="mb-4 flex items-start justify-between gap-2 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            <span>{error}</span>
-            <button
-              type="button"
-              onClick={onDismissError}
-              aria-label="Dismiss"
-              className="text-destructive/70 hover:text-destructive"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+        {error && <DismissibleError message={error} onDismiss={onDismissError} />}
 
         {resetSent ? (
           <ResetSentPanel onBack={onSwitchToSignin} />
@@ -269,12 +256,10 @@ function FormPanel(props: FormPanelProps) {
             email={email}
             password={password}
             rememberMe={rememberMe}
-            showPassword={showPassword}
             loading={loading}
             onEmailChange={onEmailChange}
             onPasswordChange={onPasswordChange}
             onRememberChange={onRememberChange}
-            onTogglePassword={onTogglePassword}
             onSubmit={onSubmitSignin}
             onGoogle={onGoogleSignIn}
             onForgot={onSwitchToForgot}
@@ -303,16 +288,17 @@ function FormPanel(props: FormPanelProps) {
 // Sub-forms
 // ─────────────────────────────────────────────────────────────────────────
 
+const PASSWORD_INPUT_CLASS =
+  'w-full rounded-md border border-sky-200 bg-white px-3 py-2.5 pr-12 text-sm text-sky-900 placeholder:text-sky-400 focus:border-dusk-300 focus:outline-none focus:ring-2 focus:ring-dusk-300/30'
+
 function SigninForm({
   email,
   password,
   rememberMe,
-  showPassword,
   loading,
   onEmailChange,
   onPasswordChange,
   onRememberChange,
-  onTogglePassword,
   onSubmit,
   onGoogle,
   onForgot,
@@ -320,12 +306,10 @@ function SigninForm({
   email: string
   password: string
   rememberMe: boolean
-  showPassword: boolean
   loading: boolean
   onEmailChange: (v: string) => void
   onPasswordChange: (v: string) => void
   onRememberChange: (v: boolean) => void
-  onTogglePassword: () => void
   onSubmit: (e: React.FormEvent) => void
   onGoogle: () => void
   onForgot: () => void
@@ -345,26 +329,19 @@ function SigninForm({
           onChange={onEmailChange}
           placeholder={t('emailPlaceholder')}
         />
-        <div>
-          <Field
+        <div className="space-y-1.5">
+          <label htmlFor="password" className="mono cap block text-[10px] text-sky-500">
+            {t('passwordLabel')}
+          </label>
+          <PasswordInput
             id="password"
-            label={t('passwordLabel')}
-            type={showPassword ? 'text' : 'password'}
+            name="password"
             autoComplete="current-password"
             required
             value={password}
-            onChange={onPasswordChange}
+            onChange={(e) => onPasswordChange(e.target.value)}
             placeholder={t('passwordPlaceholder')}
-            rightAdornment={
-              <button
-                type="button"
-                onClick={onTogglePassword}
-                aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-sky-500 hover:text-sky-700"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            }
+            className={PASSWORD_INPUT_CLASS}
           />
         </div>
         <div className="flex items-center justify-between pt-0.5">
@@ -478,19 +455,17 @@ function ResetSentPanel({ onBack }: { onBack: () => void }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Field primitive (uniform styling for email/password)
+// Field primitive (uniform styling for email)
 // ─────────────────────────────────────────────────────────────────────────
 
 function Field({
   id,
   label,
-  rightAdornment,
   onChange,
   ...inputProps
 }: {
   id: string
   label: string
-  rightAdornment?: React.ReactNode
   onChange: (value: string) => void
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'id' | 'onChange'>) {
   return (
@@ -498,15 +473,12 @@ function Field({
       <label htmlFor={id} className="mono cap block text-[10px] text-sky-500">
         {label}
       </label>
-      <div className="relative">
-        <input
-          {...inputProps}
-          id={id}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-md border border-sky-200 bg-white px-3 py-2.5 text-sm text-sky-900 placeholder:text-sky-400 focus:border-dusk-300 focus:outline-none focus:ring-2 focus:ring-dusk-300/30"
-        />
-        {rightAdornment}
-      </div>
+      <input
+        {...inputProps}
+        id={id}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-md border border-sky-200 bg-white px-3 py-2.5 text-sm text-sky-900 placeholder:text-sky-400 focus:border-dusk-300 focus:outline-none focus:ring-2 focus:ring-dusk-300/30"
+      />
     </div>
   )
 }

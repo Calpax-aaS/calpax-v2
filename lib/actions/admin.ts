@@ -9,6 +9,7 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { sendInvitationEmail } from '@/lib/email/invitation'
+import { logger } from '@/lib/logger'
 import { AuditAction } from '@prisma/client'
 
 export async function revokeSession(sessionId: string) {
@@ -38,7 +39,25 @@ export async function fetchAdminAuditLogs(filters: {
     if (filters.action) where.action = filters.action
 
     const [logs, total] = await Promise.all([
-      basePrisma.auditLog.findMany({ where, orderBy: { createdAt: 'desc' }, take, skip }),
+      basePrisma.auditLog.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take,
+        skip,
+        select: {
+          id: true,
+          exploitantId: true,
+          userId: true,
+          impersonatedBy: true,
+          entityType: true,
+          entityId: true,
+          action: true,
+          field: true,
+          beforeValue: true,
+          afterValue: true,
+          createdAt: true,
+        },
+      }),
       basePrisma.auditLog.count({ where }),
     ])
 
@@ -121,7 +140,10 @@ export async function toggleUserBan(args: {
       if (args.banned) {
         await auth.api.banUser({
           headers: await headers(),
-          body: { userId: args.userId, banReason: args.reason ?? 'Désactivé par un administrateur' },
+          body: {
+            userId: args.userId,
+            banReason: args.reason ?? 'Désactivé par un administrateur',
+          },
         })
       } else {
         await auth.api.unbanUser({
@@ -151,7 +173,10 @@ export async function toggleUserBan(args: {
         },
       })
     } catch (err) {
-      console.warn('toggleUserBan: failed to write audit row', err)
+      logger.error(
+        { err, userId: args.userId, banned: args.banned, actor: ctx.userId },
+        'toggleUserBan: failed to write audit row',
+      )
     }
 
     revalidatePath('/admin/users')

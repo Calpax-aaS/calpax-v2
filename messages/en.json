@@ -10,6 +10,7 @@
     "errorMessage": "An unexpected error occurred. Please try again.",
     "retry": "Try again",
     "backHome": "Back to home",
+    "dismiss": "Dismiss",
     "activate": "Activate",
     "deactivate": "Deactivate",
     "activateConfirm": "Reactivate this item?",
@@ -167,7 +168,9 @@
       "exploitant": "Operator",
       "impersonatedBy": "Impersonated by",
       "all": "All",
-      "noEntries": "No changes"
+      "noEntries": "No changes",
+      "prev": "Previous",
+      "next": "Next"
     },
     "invitations": {
       "title": "Invite a user",
@@ -686,6 +689,7 @@
     "title": "Today's flights",
     "noFlights": "No flights today",
     "goToPlanning": "View planning",
+    "flightCount": "{count, plural, one {# flight} other {# flights}}",
     "passengers": "passengers",
     "capacity": "Passengers",
     "massLabel": "Mass budget",
