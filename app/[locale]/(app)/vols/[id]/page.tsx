@@ -139,41 +139,62 @@ export default async function VolDetailPage({ params }: Props) {
 
     return (
       <div className="space-y-6 pb-20 md:pb-0">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        {/* Cockpit bandeau */}
+        <header className="space-y-3 rounded-lg bg-sky-900 p-5 text-sky-100 shadow-[var(--sh-2)]">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <Link
               href={`/${locale}/vols`}
-              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+              className="mono cap text-[11px] text-dusk-200 transition-colors hover:text-dusk-100"
             >
-              {t('backToList')}
+              &larr; {t('backToList')}
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {formatDateFr(vol.date)} — {t(`creneau.${vol.creneau}`)}
-            </h1>
-            <Badge variant={statutVariant(vol.statut)} className={cn(statutClassName(vol.statut))}>
-              {t(`statut.${vol.statut}`)}
-            </Badge>
+            <div className="mono cap text-[10px] text-sky-400">{t('detailKicker')}</div>
           </div>
-          <div className="flex gap-2">
-            {canEdit && (vol.statut === 'PLANIFIE' || vol.statut === 'CONFIRME') && (
-              <Link
-                href={`/${locale}/vols/${id}/edit`}
-                className={buttonVariants({ variant: 'outline' })}
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div className="space-y-1">
+              <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-dusk-200">
+                {formatDateFr(vol.date)}{' '}
+                <span className="text-white/80">· {t(`creneau.${vol.creneau}`)}</span>
+              </h1>
+              <div className="mono flex items-center gap-3 text-[12px] text-sky-300">
+                <span>{vol.ballon.immatriculation}</span>
+                <span className="opacity-40">·</span>
+                <span>{vol.ballon.nom}</span>
+                <span className="opacity-40">·</span>
+                <span>
+                  {vol.pilote.prenom} {vol.pilote.nom}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={statutVariant(vol.statut)}
+                className={cn(statutClassName(vol.statut))}
               >
-                {t('edit')}
-              </Link>
-            )}
-            {canEdit && vol.statut === 'PLANIFIE' && (
-              <Link
-                href={`/${locale}/vols/${id}/organiser`}
-                className={buttonVariants({ variant: 'outline' })}
-              >
-                {t('organiser')}
-              </Link>
-            )}
+                {t(`statut.${vol.statut}`)}
+              </Badge>
+              {canEdit && (vol.statut === 'PLANIFIE' || vol.statut === 'CONFIRME') && (
+                <Link
+                  href={`/${locale}/vols/${id}/edit`}
+                  className={cn(
+                    buttonVariants({ variant: 'outline', size: 'sm' }),
+                    'border-sky-600 bg-sky-800 text-sky-100 hover:bg-sky-700 hover:text-white',
+                  )}
+                >
+                  {t('edit')}
+                </Link>
+              )}
+              {canEdit && vol.statut === 'PLANIFIE' && (
+                <Link
+                  href={`/${locale}/vols/${id}/organiser`}
+                  className={cn(buttonVariants({ size: 'sm' }))}
+                >
+                  {t('organiser')}
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
+        </header>
 
         {/* Action buttons */}
         <div className="flex items-center gap-3 flex-wrap">

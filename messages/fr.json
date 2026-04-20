@@ -464,6 +464,8 @@
   },
   "vols": {
     "title": "Planning des vols",
+    "kicker": "Vue hebdo",
+    "detailKicker": "Dossier de vol",
     "new": "Nouveau vol",
     "backToList": "Retour au planning",
     "detail": "Détail du vol",
