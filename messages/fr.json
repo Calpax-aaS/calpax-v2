@@ -192,6 +192,8 @@
     "critical": "Critique",
     "daysRemaining": "{days, plural, =0 {Expiré} one {# jour} other {# jours}}",
     "summary": "{count, plural, one {# alerte réglementaire} other {# alertes réglementaires}} ({parts})",
+    "count": "{count, plural, one {# alerte réglementaire} other {# alertes réglementaires}}",
+    "viewAll": "Voir tout",
     "countExpired": "{count, plural, one {# expirée} other {# expirées}}",
     "countCritical": "{count, plural, one {# critique} other {# critiques}}",
     "camoExpiry": "Certificat CAMO",

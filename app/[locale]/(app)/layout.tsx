@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { AlertsBanner } from '@/components/alerts-banner'
+import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
 import { runWithContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulatory/alerts'
@@ -26,8 +27,7 @@ export default async function AppLayout({ children, params }: Props) {
   const exploitantId = user.exploitantId as string
   const role = (user.role as string as UserRole) ?? 'GERANT'
 
-  // Fetch alert count for sidebar badge
-  const alerts = await runWithContext(
+  const { alerts, exploitantName, pendingTicketsCount } = await runWithContext(
     {
       userId: session.user.id,
       exploitantId,
@@ -35,7 +35,7 @@ export default async function AppLayout({ children, params }: Props) {
     },
     async () => {
       const today = new Date()
-      const [ballons, pilotes] = await Promise.all([
+      const [ballons, pilotes, exploitant, ticketsCount] = await Promise.all([
         db.ballon.findMany({
           where: { actif: true },
           select: { id: true, nom: true, immatriculation: true, camoExpiryDate: true, actif: true },
@@ -44,11 +44,18 @@ export default async function AppLayout({ children, params }: Props) {
           where: { actif: true },
           select: { id: true, prenom: true, nom: true, dateExpirationLicence: true, actif: true },
         }),
+        db.exploitant.findFirst({ select: { name: true } }),
+        db.billet.count({ where: { statut: 'EN_ATTENTE' } }).catch(() => 0),
       ])
-      return sortAlerts([
+      const sorted = sortAlerts([
         ...buildBallonAlerts(ballons, today),
         ...buildPiloteAlerts(pilotes, today),
       ])
+      return {
+        alerts: sorted,
+        exploitantName: exploitant?.name ?? null,
+        pendingTicketsCount: ticketsCount,
+      }
     },
   )
 
@@ -56,11 +63,15 @@ export default async function AppLayout({ children, params }: Props) {
 
   return (
     <SidebarProvider>
-      <AppSidebar userRole={role} />
+      <AppSidebar
+        userRole={role}
+        exploitantName={exploitantName}
+        pendingTicketsCount={pendingTicketsCount}
+      />
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-12 items-center gap-2 border-b bg-background px-4 md:hidden">
+        <header className="sticky top-0 z-10 flex h-12 items-center gap-2 border-b border-sky-100 bg-card px-4 md:hidden">
           <SidebarTrigger />
-          <span className="text-sm font-semibold text-primary">Calpax</span>
+          <CalpaxWordmark size={14} />
         </header>
         <AlertsBanner alerts={criticalAlerts} />
         <main className="flex-1 p-6">{children}</main>
