@@ -719,7 +719,44 @@
     "meteoAlert": "Wind forecast above threshold",
     "meteoAlertAction": "Cancel this flight?",
     "cancelMeteo": "Cancel (weather)",
-    "cancelMeteoConfirm": "Cancel this flight due to weather? Passengers will be unassigned and contacts notified by email."
+    "cancelMeteoConfirm": "Cancel this flight due to weather? Passengers will be unassigned and contacts notified by email.",
+    "window": {
+      "title": "Today's flight window",
+      "matin": "Morning",
+      "soir": "Evening",
+      "threshold": "Threshold {value} kt",
+      "noData": "No weather data",
+      "level": {
+        "GO": "GO",
+        "HOLD": "HOLD",
+        "NOGO": "NO-GO"
+      }
+    },
+    "fleet": {
+      "title": "Fleet",
+      "noNextFlight": "No upcoming flight",
+      "camo": {
+        "OK": "CAMO OK",
+        "SOON": "CAMO 30d",
+        "EXPIRED": "CAMO expired",
+        "UNKNOWN": "CAMO ?"
+      },
+      "creneau": {
+        "MATIN": "morning",
+        "SOIR": "evening"
+      }
+    },
+    "upcoming": {
+      "title": "{count, plural, one {Next flight} other {# upcoming flights}}",
+      "col": {
+        "date": "Date",
+        "creneau": "Slot",
+        "ballon": "Balloon",
+        "pilote": "Pilot",
+        "pax": "PAX",
+        "statut": "Status"
+      }
+    }
   },
   "cancellation": {
     "emailSubjectPayeur": "Flight cancelled — {date}",
