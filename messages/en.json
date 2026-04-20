@@ -702,6 +702,18 @@
       "NOGO": "NO-GO",
       "MARGINAL": "Marginal"
     },
+    "kicker": "Today's cockpit",
+    "kpi": {
+      "nextFlight": "NEXT FLIGHT",
+      "nextFlightEmpty": "—",
+      "wind": "MAX WIND",
+      "windEmpty": "—",
+      "windUnit": "kt",
+      "pax": "PAX",
+      "paxCovered": "{booked}/{seats}",
+      "flights": "FLIGHTS",
+      "flightsSub": "Today"
+    },
     "meteoAlert": "Wind forecast above threshold",
     "meteoAlertAction": "Cancel this flight?",
     "cancelMeteo": "Cancel (weather)",

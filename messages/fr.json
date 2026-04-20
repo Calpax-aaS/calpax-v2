@@ -705,7 +705,19 @@
     "meteoAlert": "Vent prévu au-dessus du seuil",
     "meteoAlertAction": "Annuler ce vol ?",
     "cancelMeteo": "Annuler (météo)",
-    "cancelMeteoConfirm": "Annuler ce vol pour raison météo ? Les passagers seront désaffectés et les contacts notifiés par email."
+    "cancelMeteoConfirm": "Annuler ce vol pour raison météo ? Les passagers seront désaffectés et les contacts notifiés par email.",
+    "kicker": "Cockpit du jour",
+    "kpi": {
+      "nextFlight": "PROCHAIN VOL",
+      "nextFlightEmpty": "—",
+      "wind": "VENT MAX",
+      "windEmpty": "—",
+      "windUnit": "kt",
+      "pax": "PAX",
+      "paxCovered": "{booked}/{seats}",
+      "flights": "VOLS",
+      "flightsSub": "Aujourd'hui"
+    }
   },
   "cancellation": {
     "emailSubjectPayeur": "Vol annulé — {date}",
