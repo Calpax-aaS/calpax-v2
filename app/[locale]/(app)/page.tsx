@@ -12,6 +12,8 @@ import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulato
 import { safeDecryptInt } from '@/lib/crypto'
 import { AlertsBanner } from '@/components/alerts-banner'
 import { FlightCard, type FlightCardData } from '@/components/flight-card'
+import { KpiRow, KpiTile } from '@/components/cockpit/kpi-tile'
+import { WindArrow } from '@/components/cockpit/wind-arrow'
 import { Button } from '@/components/ui/button'
 import type { Prisma } from '@prisma/client'
 import type { WeatherForecast, WeatherSummary } from '@/lib/weather/types'
@@ -193,30 +195,73 @@ export default async function HomePage({ params }: Props) {
       }
     })
 
+    // 6. Derive cockpit KPIs from today's data
+    const nextFlight = cards[0] ?? null
+    const maxWindKt = cards.reduce(
+      (max, c) => (c.weather && c.weather.maxWindKt > max ? c.weather.maxWindKt : max),
+      0,
+    )
+    const paxBooked = cards.reduce((sum, c) => sum + c.passagerCount, 0)
+    const paxSeats = cards.reduce((sum, c) => sum + c.passagerMax, 0)
+
+    const dateLabel = today.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-            <p className="text-sm text-muted-foreground">
-              {today.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
-              {' — '}
-              {t('flightCount', { count: vols.length })}
-            </p>
+        {/* Header */}
+        <header className="space-y-1">
+          <div className="mono cap text-[11px] text-dusk-700">{t('kicker')}</div>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h1 className="font-display text-3xl font-semibold tracking-tight text-sky-900">
+              {t('title')}
+            </h1>
+            <div className="mono text-[11px] text-sky-500">
+              <span className="cap">{dateLabel}</span>
+              <span className="mx-2 opacity-50">·</span>
+              <span>{t('flightCount', { count: vols.length })}</span>
+            </div>
           </div>
-        </div>
+        </header>
+
+        {/* KPI row */}
+        <KpiRow>
+          <KpiTile
+            label={t('kpi.nextFlight')}
+            value={nextFlight ? CRENEAU_LABELS[nextFlight.creneau] : t('kpi.nextFlightEmpty')}
+            sub={nextFlight ? `${nextFlight.ballonImmat} · ${nextFlight.ballonNom}` : null}
+            tone={nextFlight ? 'dusk' : 'default'}
+          />
+          <KpiTile
+            label={t('kpi.wind')}
+            value={maxWindKt > 0 ? `${maxWindKt}` : t('kpi.windEmpty')}
+            sub={maxWindKt > 0 ? t('kpi.windUnit') : null}
+            icon={maxWindKt > 0 ? <WindArrow speed={maxWindKt} size={16} /> : null}
+            tone={maxWindKt >= seuilVent ? 'warn' : 'default'}
+          />
+          <KpiTile
+            label={t('kpi.pax')}
+            value={t('kpi.paxCovered', { booked: paxBooked, seats: paxSeats })}
+            tone="default"
+          />
+          <KpiTile
+            label={t('kpi.flights')}
+            value={vols.length}
+            sub={t('kpi.flightsSub')}
+            tone="default"
+          />
+        </KpiRow>
 
         {criticalAlerts.length > 0 && <AlertsBanner alerts={criticalAlerts} />}
 
         {vols.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Plane className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="text-muted-foreground mb-4">{t('noFlights')}</p>
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-sky-200 bg-card py-16 text-center">
+            <Plane className="mb-4 h-12 w-12 text-sky-300" aria-hidden />
+            <p className="mb-4 text-sky-500">{t('noFlights')}</p>
             <Button asChild variant="outline">
               <Link href={`/${locale}/vols`}>{t('goToPlanning')}</Link>
             </Button>
