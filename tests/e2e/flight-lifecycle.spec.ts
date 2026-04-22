@@ -20,7 +20,7 @@ async function signIn(page: Page) {
   await page.goto(`${BASE_URL}/fr/auth/signin`)
   await page.getByRole('textbox', { name: /email/i }).fill(TEST_EMAIL)
   await page.locator('input[name="password"]').fill(TEST_PASSWORD)
-  await page.getByRole('button', { name: /se connecter|sign in/i }).click()
+  await page.getByRole('button', { name: /cockpit|se connecter|sign in/i }).click()
 
   const result = await Promise.race([
     page.waitForURL(/\/(fr|en)\/?$/, { timeout: 20_000 }).then(() => ({ ok: true as const })),
