@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { db } from '@/lib/db'
 import { safeDecryptInt } from '@/lib/crypto'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -70,6 +71,9 @@ function statutPaiementVariant(
 export default async function BilletDetailPage({ params }: Props) {
   const { locale, id } = await params
   return requireAuth(async () => {
+    // Billets hold payer contact + decrypted passenger weights — admin/gerant only.
+    requireRole('ADMIN_CALPAX', 'GERANT')
+
     const tBillets = await getTranslations('billets')
     const tPaiements = await getTranslations('paiements')
     const tPassagers = await getTranslations('passagers')

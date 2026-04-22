@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { canSeePassengerWeight } from '@/lib/auth/rgpd'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { safeDecryptInt } from '@/lib/crypto'
@@ -79,6 +80,13 @@ export default async function VolDetailPage({ params }: Props) {
     if (!vol) notFound()
 
     const tMeteo = await getTranslations('meteo')
+
+    // RGPD: only admin/gerant or the assigned pilote see decrypted passenger weights.
+    const canSeePoids = canSeePassengerWeight({
+      role: ctx.role,
+      piloteUserId: vol.pilote.userId ?? null,
+      currentUserId: ctx.userId,
+    })
 
     const pilotePoidsRaw = vol.pilote.poidsEncrypted
     const pilotePoids = pilotePoidsRaw ? safeDecryptInt(pilotePoidsRaw) : null
@@ -284,20 +292,27 @@ export default async function VolDetailPage({ params }: Props) {
                       </TableHead>
                       <TableHead className={labelClassName}>{tPassagers('fields.nom')}</TableHead>
                       <TableHead className={labelClassName}>{tPassagers('fields.age')}</TableHead>
-                      <TableHead className={labelClassName}>{tPassagers('fields.poids')}</TableHead>
+                      {canSeePoids && (
+                        <TableHead className={labelClassName}>
+                          {tPassagers('fields.poids')}
+                        </TableHead>
+                      )}
                       <TableHead className={labelClassName}>{tPassagers('fields.pmr')}</TableHead>
                       <TableHead className={labelClassName}>{tVolPassagers('billet')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {vol.passagers.map((p) => {
-                      const poids = p.poidsEncrypted ? safeDecryptInt(p.poidsEncrypted) : null
+                      const poids =
+                        canSeePoids && p.poidsEncrypted ? safeDecryptInt(p.poidsEncrypted) : null
                       return (
                         <TableRow key={p.id} className="hover:bg-muted/50">
                           <TableCell>{p.prenom}</TableCell>
                           <TableCell>{p.nom}</TableCell>
                           <TableCell>{p.age ?? '—'}</TableCell>
-                          <TableCell>{poids !== null ? `${poids} kg` : '—'}</TableCell>
+                          {canSeePoids && (
+                            <TableCell>{poids !== null ? `${poids} kg` : '—'}</TableCell>
+                          )}
                           <TableCell>
                             {p.pmr ? tVolPassagers('pmrYes') : tVolPassagers('pmrNo')}
                           </TableCell>
