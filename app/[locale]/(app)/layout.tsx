@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { AlertsBanner } from '@/components/alerts-banner'
+import { ImpersonationBanner } from '@/components/impersonation-banner'
 import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
 import { runWithContext } from '@/lib/context'
 import { db } from '@/lib/db'
@@ -39,6 +40,16 @@ export default async function AppLayout({ children, params }: Props) {
   const role = (user.role as string as UserRole) ?? 'GERANT'
   const showAlerts = canSeeRegulatoryAlerts(role)
 
+  // Better Auth's admin plugin sets `session.session.impersonatedBy` when an
+  // ADMIN_CALPAX is impersonating another user. We show the banner on every
+  // page so the admin can't lose track of their operating context.
+  const sessionMeta = (session as unknown as { session?: { impersonatedBy?: string | null } })
+    .session
+  const impersonatedBy = sessionMeta?.impersonatedBy ?? null
+  const impersonationTargetName = impersonatedBy
+    ? ((user.name as string) ?? (user.email as string) ?? '?')
+    : null
+
   const { criticalAlerts, exploitantName, pendingTicketsCount } = await runWithContext(
     {
       userId: session.user.id,
@@ -68,6 +79,7 @@ export default async function AppLayout({ children, params }: Props) {
         pendingTicketsCount={pendingTicketsCount}
       />
       <SidebarInset>
+        {impersonationTargetName && <ImpersonationBanner targetName={impersonationTargetName} />}
         <header className="sticky top-0 z-10 flex h-12 items-center gap-2 border-b border-sky-100 bg-card px-4 md:hidden">
           <SidebarTrigger />
           <CalpaxWordmark size={14} />
