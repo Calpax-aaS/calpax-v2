@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl'
 import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
+import { PasswordInput } from '@/components/auth/password-input'
 import { PasswordStrength } from '@/components/password-strength'
 import { formLabelClass } from '@/lib/ui'
 
@@ -54,30 +54,22 @@ export function ChangePasswordForm() {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label
-              htmlFor="current-password"
-              className={formLabelClass}
-            >
+            <Label htmlFor="current-password" className={formLabelClass}>
               {t('currentPassword')}
             </Label>
-            <Input
+            <PasswordInput
               id="current-password"
-              type="password"
               required
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">
-            <Label
-              htmlFor="new-password"
-              className={formLabelClass}
-            >
+            <Label htmlFor="new-password" className={formLabelClass}>
               {t('newPassword')}
             </Label>
-            <Input
+            <PasswordInput
               id="new-password"
-              type="password"
               required
               minLength={12}
               value={newPassword}
@@ -86,15 +78,11 @@ export function ChangePasswordForm() {
             <PasswordStrength password={newPassword} minLength={12} />
           </div>
           <div className="space-y-1.5">
-            <Label
-              htmlFor="confirm-password"
-              className={formLabelClass}
-            >
+            <Label htmlFor="confirm-password" className={formLabelClass}>
               {t('confirmPassword')}
             </Label>
-            <Input
+            <PasswordInput
               id="confirm-password"
-              type="password"
               required
               minLength={12}
               value={confirmPassword}

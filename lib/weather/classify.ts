@@ -1,16 +1,19 @@
 import type { HourlyWeather, WindLevel, WeatherSummary } from './types'
 
-export function classifyWind(speedKt: number, seuilKt: number): WindLevel {
-  if (speedKt > seuilKt + 5) return 'DANGER'
-  if (speedKt >= seuilKt) return 'WARNING'
+export function classifyWind(speedKmh: number, seuilKmh: number): WindLevel {
+  if (speedKmh > seuilKmh + 5) return 'DANGER'
+  if (speedKmh >= seuilKmh) return 'WARNING'
   return 'OK'
 }
 
 const ALTITUDES = ['10m', '80m', '120m', '180m'] as const
 const ALTITUDE_KEYS = ['wind10m', 'wind80m', 'wind120m', 'wind180m'] as const
 
-export function summarizeWeather(hours: readonly HourlyWeather[], seuilKt: number): WeatherSummary {
-  let maxWindKt = 0
+export function summarizeWeather(
+  hours: readonly HourlyWeather[],
+  seuilKmh: number,
+): WeatherSummary {
+  let maxWindKmh = 0
   let maxWindAltitude = '10m'
 
   for (const hour of hours) {
@@ -18,8 +21,8 @@ export function summarizeWeather(hours: readonly HourlyWeather[], seuilKt: numbe
       const key = ALTITUDE_KEYS[i]!
       const alt = ALTITUDES[i]!
       const wind = hour[key]
-      if (wind.speed > maxWindKt) {
-        maxWindKt = wind.speed
+      if (wind.speed > maxWindKmh) {
+        maxWindKmh = wind.speed
         maxWindAltitude = alt
       }
     }
@@ -31,9 +34,9 @@ export function summarizeWeather(hours: readonly HourlyWeather[], seuilKt: numbe
       : 0
 
   return {
-    maxWindKt,
+    maxWindKmh,
     maxWindAltitude,
-    level: classifyWind(maxWindKt, seuilKt),
+    level: classifyWind(maxWindKmh, seuilKmh),
     avgTemperature,
   }
 }

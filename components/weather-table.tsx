@@ -91,7 +91,7 @@ export async function WeatherTable({ hours, summary, seuilVent }: Props) {
         <div>
           <span className="font-semibold text-base">{t(`level.${summary.level}`)}</span>
           <span className="ml-3 text-sm">
-            {t('maxWind')}: {summary.maxWindKt} km/h ({summary.maxWindAltitude})
+            {t('maxWind')}: {summary.maxWindKmh} km/h ({summary.maxWindAltitude})
           </span>
         </div>
         <div className="text-sm">

@@ -727,7 +727,7 @@
       "nextFlightEmpty": "—",
       "wind": "MAX WIND",
       "windEmpty": "—",
-      "windUnit": "kt",
+      "windUnit": "km/h",
       "pax": "PAX",
       "paxCovered": "{booked}/{seats}",
       "flights": "FLIGHTS",

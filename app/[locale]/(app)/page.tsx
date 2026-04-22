@@ -141,7 +141,7 @@ export default async function HomePage({ params }: Props) {
       if (hours.length === 0) return null
       const summary = summarizeWeather(hours, seuilVent)
       return {
-        maxWindKt: summary.maxWindKt,
+        maxWindKmh: summary.maxWindKmh,
         maxWindAltitude: summary.maxWindAltitude,
         avgTemperature: summary.avgTemperature,
         goNogo: levelToGoNogo(summary.level),
@@ -282,8 +282,8 @@ export default async function HomePage({ params }: Props) {
 
     // 6. Derive cockpit KPIs from today's data
     const nextFlight = cards[0] ?? null
-    const maxWindKt = cards.reduce(
-      (max, c) => (c.weather && c.weather.maxWindKt > max ? c.weather.maxWindKt : max),
+    const maxWindKmh = cards.reduce(
+      (max, c) => (c.weather && c.weather.maxWindKmh > max ? c.weather.maxWindKmh : max),
       0,
     )
     const paxBooked = cards.reduce((sum, c) => sum + c.passagerCount, 0)
@@ -320,10 +320,10 @@ export default async function HomePage({ params }: Props) {
           />
           <KpiTile
             label={t('kpi.wind')}
-            value={maxWindKt > 0 ? `${maxWindKt}` : t('kpi.windEmpty')}
-            sub={maxWindKt > 0 ? t('kpi.windUnit') : null}
-            icon={maxWindKt > 0 ? <WindArrow speed={maxWindKt} size={16} /> : null}
-            tone={maxWindKt >= seuilVent ? 'warn' : 'default'}
+            value={maxWindKmh > 0 ? `${maxWindKmh}` : t('kpi.windEmpty')}
+            sub={maxWindKmh > 0 ? t('kpi.windUnit') : null}
+            icon={maxWindKmh > 0 ? <WindArrow speed={maxWindKmh} size={16} /> : null}
+            tone={maxWindKmh >= seuilVent ? 'warn' : 'default'}
           />
           <KpiTile
             label={t('kpi.pax')}

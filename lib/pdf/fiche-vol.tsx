@@ -67,7 +67,7 @@ export type FicheVolData = {
       precipitationProb: number
     }[]
     summary: {
-      maxWindKt: number
+      maxWindKmh: number
       maxWindAltitude: string
       level: string
       avgTemperature: number
@@ -657,7 +657,7 @@ function Page3({ data }: { data: FicheVolData }) {
             </Text>
             <View style={styles.meteoBannerRow}>
               <Text style={styles.meteoBannerMeta}>
-                Vent max: {meteo.summary.maxWindKt} km/h ({meteo.summary.maxWindAltitude}) | OAT
+                Vent max: {meteo.summary.maxWindKmh} km/h ({meteo.summary.maxWindAltitude}) | OAT
                 moy: {meteo.summary.avgTemperature}°C
               </Text>
               <Text style={styles.meteoBannerLevel}>{meteo.summary.level}</Text>
