@@ -8,11 +8,22 @@ import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
 import { runWithContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulatory/alerts'
+import type { Alert } from '@/lib/regulatory/alerts'
 import type { UserRole } from '@/lib/context'
 
 type Props = {
   children: React.ReactNode
   params: Promise<{ locale: string }>
+}
+
+/**
+ * Regulatory alerts (CAMO / BFCL) are operational — only roles that can act on
+ * them get the top-bar banner. PILOTE and EQUIPIER are intentionally excluded
+ * (they can't edit ballons / pilotes anyway) and we skip the corresponding DB
+ * query for them.
+ */
+function canSeeRegulatoryAlerts(role: UserRole): boolean {
+  return role === 'ADMIN_CALPAX' || role === 'GERANT'
 }
 
 export default async function AppLayout({ children, params }: Props) {
@@ -26,8 +37,9 @@ export default async function AppLayout({ children, params }: Props) {
   const user = session.user as Record<string, unknown>
   const exploitantId = user.exploitantId as string
   const role = (user.role as string as UserRole) ?? 'GERANT'
+  const showAlerts = canSeeRegulatoryAlerts(role)
 
-  const { alerts, exploitantName, pendingTicketsCount } = await runWithContext(
+  const { criticalAlerts, exploitantName, pendingTicketsCount } = await runWithContext(
     {
       userId: session.user.id,
       exploitantId,
@@ -35,31 +47,18 @@ export default async function AppLayout({ children, params }: Props) {
     },
     async () => {
       const today = new Date()
-      const [ballons, pilotes, exploitant, ticketsCount] = await Promise.all([
-        db.ballon.findMany({
-          where: { actif: true },
-          select: { id: true, nom: true, immatriculation: true, camoExpiryDate: true, actif: true },
-        }),
-        db.pilote.findMany({
-          where: { actif: true },
-          select: { id: true, prenom: true, nom: true, dateExpirationLicence: true, actif: true },
-        }),
+      const [exploitant, ticketsCount, alerts] = await Promise.all([
         db.exploitant.findFirst({ select: { name: true } }),
         db.billet.count({ where: { statut: 'EN_ATTENTE' } }).catch(() => 0),
-      ])
-      const sorted = sortAlerts([
-        ...buildBallonAlerts(ballons, today),
-        ...buildPiloteAlerts(pilotes, today),
+        showAlerts ? fetchCriticalAlerts(today) : Promise.resolve<Alert[]>([]),
       ])
       return {
-        alerts: sorted,
+        criticalAlerts: alerts,
         exploitantName: exploitant?.name ?? null,
         pendingTicketsCount: ticketsCount,
       }
     },
   )
-
-  const criticalAlerts = alerts.filter((a) => a.severity === 'EXPIRED' || a.severity === 'CRITICAL')
 
   return (
     <SidebarProvider>
@@ -78,4 +77,22 @@ export default async function AppLayout({ children, params }: Props) {
       </SidebarInset>
     </SidebarProvider>
   )
+}
+
+async function fetchCriticalAlerts(today: Date): Promise<Alert[]> {
+  const [ballons, pilotes] = await Promise.all([
+    db.ballon.findMany({
+      where: { actif: true },
+      select: { id: true, nom: true, immatriculation: true, camoExpiryDate: true, actif: true },
+    }),
+    db.pilote.findMany({
+      where: { actif: true },
+      select: { id: true, prenom: true, nom: true, dateExpirationLicence: true, actif: true },
+    }),
+  ])
+  const sorted = sortAlerts([
+    ...buildBallonAlerts(ballons, today),
+    ...buildPiloteAlerts(pilotes, today),
+  ])
+  return sorted.filter((a) => a.severity === 'EXPIRED' || a.severity === 'CRITICAL')
 }
