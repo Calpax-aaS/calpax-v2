@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FormSectionsNav } from '@/components/form-sections-nav'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -106,8 +107,17 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
   const isNew = !billetId
   const backHref = isNew ? `/${locale}/billets` : `/${locale}/billets/${billetId}`
 
+  const sections = [
+    { id: 'billet-section-payeur', label: t('sections.payeur') },
+    { id: 'billet-section-planification', label: t('sections.planification') },
+    { id: 'billet-section-passagers', label: t('sections.passagers') },
+    { id: 'billet-section-bon-cadeau', label: t('sections.bonCadeau') },
+  ]
+
   return (
     <form action={handleSubmit} className="space-y-6">
+      <FormSectionsNav sections={sections} />
+
       {error && (
         <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
@@ -115,9 +125,9 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       )}
 
       {/* Section Payeur */}
-      <Card>
+      <Card id="billet-section-payeur" className="scroll-mt-24">
         <CardHeader>
-          <CardTitle className="text-base">Payeur</CardTitle>
+          <CardTitle className="text-base">{t('sections.payeur')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1">
@@ -234,9 +244,9 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       <Separator />
 
       {/* Section Planification */}
-      <Card>
+      <Card id="billet-section-planification" className="scroll-mt-24">
         <CardHeader>
-          <CardTitle className="text-base">Planification</CardTitle>
+          <CardTitle className="text-base">{t('sections.planification')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1">
@@ -401,9 +411,9 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       <Separator />
 
       {/* Section Passagers */}
-      <Card>
+      <Card id="billet-section-passagers" className="scroll-mt-24">
         <CardHeader>
-          <CardTitle className="text-base">Passagers</CardTitle>
+          <CardTitle className="text-base">{t('sections.passagers')}</CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <PassagerTableEditor passagers={passagers} onChange={setPassagers} />
@@ -411,7 +421,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
       </Card>
 
       {/* Bon cadeau section */}
-      <Card>
+      <Card id="billet-section-bon-cadeau" className="scroll-mt-24">
         <CardHeader>
           <div className="flex items-center gap-3">
             <Switch id="estBonCadeau" checked={estBonCadeau} onCheckedChange={setEstBonCadeau} />

@@ -391,6 +391,12 @@
   },
   "billets": {
     "title": "Billets de vol",
+    "sections": {
+      "payeur": "Payeur",
+      "planification": "Planification",
+      "passagers": "Passagers",
+      "bonCadeau": "Bon cadeau"
+    },
     "new": "Nouveau billet",
     "backToList": "Retour à la liste",
     "edit": "Modifier",
