@@ -1,8 +1,10 @@
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AuditAction } from '@prisma/client'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { canSeePassengerWeight } from '@/lib/auth/rgpd'
+import { writeAudit } from '@/lib/audit/write'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { safeDecryptInt } from '@/lib/crypto'
@@ -143,6 +145,29 @@ export default async function VolDetailPage({ params }: Props) {
             qteGaz: vol.qteGaz ?? parseQteGazFromConfig(vol.configGaz ?? vol.ballon.configGaz) ?? 0,
           })
         : null
+
+    // Regulatory traceability: emit an audit row whenever the mass budget is
+    // actually computed (Part-BOP investigations may need to reconstruct what
+    // the operator saw at planning time). No PII — only numeric weights and
+    // the temperature that drove the reading.
+    if (devis) {
+      await writeAudit({
+        exploitantId: vol.exploitantId,
+        userId: ctx.userId,
+        impersonatedBy: ctx.impersonatedBy ?? null,
+        entityType: 'DevisMasse',
+        entityId: vol.id,
+        action: AuditAction.CREATE,
+        afterValue: {
+          chargeEmbarquee: devis.chargeEmbarquee,
+          chargeUtileMax: devis.chargeUtileMax,
+          margeRestante: devis.margeRestante,
+          estSurcharge: devis.estSurcharge,
+          temperatureCelsius: devisTemperature,
+          source: weatherSummary ? 'forecast' : 'default',
+        },
+      })
+    }
 
     const labelClassName = 'text-xs uppercase tracking-wider text-muted-foreground'
 
