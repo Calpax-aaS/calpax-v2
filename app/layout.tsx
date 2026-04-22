@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Archivo, DM_Sans, Geist_Mono } from 'next/font/google'
+import { Archivo, DM_Sans, JetBrains_Mono } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
 
@@ -17,8 +17,8 @@ const archivo = Archivo({
   display: 'swap',
   weight: ['400', '500', '600', '700'],
 })
-// Geist Mono = data tabulaire (immats, heures, masses)
-const geistMono = Geist_Mono({
+// JetBrains Mono = data tabulaire (immats, heures, masses)
+const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
@@ -32,7 +32,7 @@ const geistMono = Geist_Mono({
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={cn('font-sans', dmSans.variable, archivo.variable, geistMono.variable)}>
+    <html className={cn('font-sans', dmSans.variable, archivo.variable, jetbrainsMono.variable)}>
       <body>
         {children}
         <Toaster />
