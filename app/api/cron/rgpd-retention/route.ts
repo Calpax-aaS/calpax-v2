@@ -54,6 +54,8 @@ export async function GET(request: Request): Promise<Response> {
         nom: ANONYMIZED_NAME,
         email: null,
         telephone: null,
+        emailEncrypted: null,
+        telephoneEncrypted: null,
         poidsEncrypted: null,
       },
     })

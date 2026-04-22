@@ -370,6 +370,8 @@ model Passager {
   nom             String
   email           String?
   telephone       String?
+  emailEncrypted     String?
+  telephoneEncrypted String?
   age             Int?
   poidsEncrypted  String?
   pmr             Boolean    @default(false)

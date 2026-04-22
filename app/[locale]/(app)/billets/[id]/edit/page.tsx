@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
-import { decrypt } from '@/lib/crypto'
+import { decrypt, safeDecryptString } from '@/lib/crypto'
 import { BilletForm } from './billet-form'
 import type { PassagerRow } from '@/components/passager-table-editor'
 
@@ -26,8 +26,10 @@ export default async function BilletEditPage({ params }: Props) {
       passagers = billet.passagers.map((p) => ({
         prenom: p.prenom,
         nom: p.nom,
-        email: p.email ?? '',
-        telephone: p.telephone ?? '',
+        // Prefer encrypted column; fall back to plaintext for rows predating
+        // the #4 backfill.
+        email: safeDecryptString(p.emailEncrypted, p.email) ?? '',
+        telephone: safeDecryptString(p.telephoneEncrypted, p.telephone) ?? '',
         age: p.age != null ? String(p.age) : '',
         poids: p.poidsEncrypted
           ? (() => {
