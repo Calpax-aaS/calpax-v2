@@ -714,6 +714,7 @@
     "massOk": "OK",
     "massWarning": "Limite",
     "massOver": "Dépassement",
+    "massTooltip": "{charge} / {max} kg · marge {marge} kg",
     "massUnavailable": "Devis de masse non calculable (pas de passagers ou données météo manquantes)",
     "goNogo": {
       "GO": "GO",

@@ -31,7 +31,7 @@ function toDateOnly(date: Date): string {
 function mapVolToCardData(vol: {
   id: string
   date: Date
-  creneau: string
+  creneau: 'MATIN' | 'SOIR'
   statut: string
   ballon: { nom: string; immatriculation: string; nbPassagerMax: number }
   pilote: { prenom: string; nom: string }
@@ -50,7 +50,7 @@ function mapVolToCardData(vol: {
   return {
     id: vol.id,
     date: toDateOnly(vol.date),
-    creneau: vol.creneau as 'MATIN' | 'SOIR',
+    creneau: vol.creneau,
     statut: vol.statut,
     ballonNom: vol.ballon.nom,
     ballonImmat: vol.ballon.immatriculation,
@@ -107,7 +107,7 @@ export default async function VolsPage({ params, searchParams }: Props) {
     const weekVols: VolSummary[] = volsRaw.map((vol) => ({
       id: vol.id,
       date: toDateOnly(vol.date),
-      creneau: vol.creneau as 'MATIN' | 'SOIR',
+      creneau: vol.creneau,
       ballonNom: vol.ballon.nom,
       piloteInitiales:
         (vol.pilote.prenom[0] ?? '').toUpperCase() + (vol.pilote.nom[0] ?? '').toUpperCase(),

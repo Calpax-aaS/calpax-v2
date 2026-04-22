@@ -126,7 +126,7 @@ export async function GET(request: Request): Promise<Response> {
     const threshold = exp.meteoSeuilVent ?? 15
 
     for (const vol of expVols) {
-      const hours = extractCreneauHours(forecast, vol.creneau as 'MATIN' | 'SOIR')
+      const hours = extractCreneauHours(forecast, vol.creneau)
       const summary = summarizeWeather(hours, threshold)
       const shouldAlert = summary.level !== 'OK'
 

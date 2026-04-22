@@ -8,6 +8,7 @@ import { authClient, signIn } from '@/lib/auth-client'
 import { DismissibleError } from '@/components/auth/dismissible-error'
 import { PasswordInput } from '@/components/auth/password-input'
 import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
+import { MonoLabel } from '@/components/cockpit/mono-label'
 import { StatusDot } from '@/components/cockpit/status-dot'
 import { TopoPattern } from '@/components/cockpit/topo-pattern'
 
@@ -375,7 +376,7 @@ function SigninForm({
 
       <div className="my-4 flex items-center gap-3">
         <div className="h-px flex-1 bg-sky-100" />
-        <span className="mono cap text-[10px] text-sky-500">{t('orContinueWith')}</span>
+        <MonoLabel>{t('orContinueWith')}</MonoLabel>
         <div className="h-px flex-1 bg-sky-100" />
       </div>
 

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Plus } from 'lucide-react'
 import { Chip } from '@/components/cockpit/chip'
+import { MonoLabel } from '@/components/cockpit/mono-label'
 import { MonoValue } from '@/components/cockpit/mono-value'
 import { EmptyState } from '@/components/empty-state'
 import { cn } from '@/lib/utils'
@@ -174,7 +175,7 @@ export function WeekGrid({
               key={day}
               className="flex flex-col items-center gap-0.5 border-b border-r border-sky-100 bg-sky-50 px-2 py-2 last:border-r-0"
             >
-              <div className="mono cap text-[10px] text-sky-500">{DAY_SHORT[i]}</div>
+              <MonoLabel as="div">{DAY_SHORT[i]}</MonoLabel>
               <div className="mono text-[12px] font-medium text-sky-900">
                 {formatShortDate(day)}
               </div>

@@ -101,7 +101,7 @@ export default async function VolDetailPage({ params }: Props) {
           longitude: vol.exploitant.meteoLongitude,
           date: dateStr,
         })
-        weatherHours = extractCreneauHours(forecast, vol.creneau as 'MATIN' | 'SOIR')
+        weatherHours = extractCreneauHours(forecast, vol.creneau)
         weatherSummary = summarizeWeather(weatherHours, seuilVent)
 
         const cached = await db.weatherCache.findUnique({

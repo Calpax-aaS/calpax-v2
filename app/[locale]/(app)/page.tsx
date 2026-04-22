@@ -11,7 +11,8 @@ import { summarizeWeather } from '@/lib/weather/classify'
 import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulatory/alerts'
 import { safeDecryptInt } from '@/lib/crypto'
 import { AlertsBanner } from '@/components/alerts-banner'
-import { FlightCard, type FlightCardData } from '@/components/flight-card'
+import { FlightCard } from '@/components/flight-card'
+import type { FlightCardData, MassBudget } from '@/lib/vol/flight-card-types'
 import { KpiRow, KpiTile } from '@/components/cockpit/kpi-tile'
 import { WindArrow } from '@/components/cockpit/wind-arrow'
 import { GoNogoWindow } from '@/components/cockpit/go-nogo-window'
@@ -21,7 +22,7 @@ import {
   type UpcomingFlight,
 } from '@/components/cockpit/upcoming-flights-table'
 import { Button } from '@/components/ui/button'
-import { formatDateLong } from '@/lib/format'
+import { formatDateLong, formatDateMedium } from '@/lib/format'
 import type { Prisma } from '@prisma/client'
 import type { WeatherForecast, WeatherSummary } from '@/lib/weather/types'
 
@@ -38,12 +39,6 @@ function camoStatusOf(
 
 type Props = {
   params: Promise<{ locale: string }>
-}
-
-type MassBudget = {
-  totalWeight: number
-  maxPayload: number
-  status: 'OK' | 'WARNING' | 'OVER'
 }
 
 type VolWithRelations = Prisma.VolGetPayload<{
@@ -227,12 +222,12 @@ export default async function HomePage({ params }: Props) {
 
     // 5. Map vols to FlightCardData
     const cards: FlightCardData[] = vols.map((vol) => {
-      const weatherSummary = getWeatherForCreneau(vol.creneau as 'MATIN' | 'SOIR')
+      const weatherSummary = getWeatherForCreneau(vol.creneau)
       const forecastTemp = weatherSummary?.avgTemperature ?? null
       return {
         id: vol.id,
         date: todayStr,
-        creneau: vol.creneau as 'MATIN' | 'SOIR',
+        creneau: vol.creneau,
         statut: vol.statut,
         ballonNom: vol.ballon.nom,
         ballonImmat: vol.ballon.immatriculation,
@@ -255,7 +250,7 @@ export default async function HomePage({ params }: Props) {
       if (!nextFlightByBallon.has(uv.ballon.id)) {
         nextFlightByBallon.set(uv.ballon.id, {
           date: uv.date.toISOString().slice(0, 10),
-          creneau: uv.creneau as 'MATIN' | 'SOIR',
+          creneau: uv.creneau,
         })
       }
     }
@@ -272,7 +267,7 @@ export default async function HomePage({ params }: Props) {
     const upcomingFlights: UpcomingFlight[] = upcomingVolsRaw.slice(0, 7).map((uv) => ({
       id: uv.id,
       date: uv.date.toISOString().slice(0, 10),
-      creneau: uv.creneau as 'MATIN' | 'SOIR',
+      creneau: uv.creneau,
       statut: uv.statut,
       ballonImmat: uv.ballon.immatriculation,
       ballonNom: uv.ballon.nom,
@@ -294,7 +289,8 @@ export default async function HomePage({ params }: Props) {
     const paxBooked = cards.reduce((sum, c) => sum + c.passagerCount, 0)
     const paxSeats = cards.reduce((sum, c) => sum + c.passagerMax, 0)
 
-    const dateLabel = formatDateLong(today, locale)
+    const dateLabelLong = formatDateLong(today, locale)
+    const dateLabelShort = formatDateMedium(today, locale)
 
     return (
       <div className="space-y-6">
@@ -306,7 +302,8 @@ export default async function HomePage({ params }: Props) {
               {t('title')}
             </h1>
             <div className="mono text-[11px] text-sky-500">
-              <span className="cap">{dateLabel}</span>
+              <span className="cap hidden sm:inline">{dateLabelLong}</span>
+              <span className="cap sm:hidden">{dateLabelShort}</span>
               <span className="mx-2 opacity-50">·</span>
               <span>{t('flightCount', { count: vols.length })}</span>
             </div>
@@ -349,7 +346,7 @@ export default async function HomePage({ params }: Props) {
 
         {vols.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-sky-200 bg-card py-16 text-center">
-            <Plane className="mb-4 h-12 w-12 text-sky-300" aria-hidden />
+            <Plane className="mb-4 h-12 w-12 text-sky-400" aria-hidden />
             <p className="mb-4 text-sky-500">{t('noFlights')}</p>
             <Button asChild variant="outline">
               <Link href={`/${locale}/vols`}>{t('goToPlanning')}</Link>
