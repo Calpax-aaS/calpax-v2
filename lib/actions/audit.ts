@@ -1,6 +1,7 @@
 'use server'
 
 import { requireAuth } from '@/lib/auth/requireAuth'
+import { requireRole } from '@/lib/auth/requireRole'
 import { db } from '@/lib/db'
 
 type AuditFilters = {
@@ -11,6 +12,12 @@ type AuditFilters = {
 
 export async function fetchAuditLogs(filters: AuditFilters) {
   return requireAuth(async () => {
+    // The tenant-scoped audit viewer is rendered from
+    // `app/[locale]/(app)/audit/page.tsx` which gates by role, but we
+    // duplicate the check here so a direct action POST from a PILOTE /
+    // EQUIPIER still returns ForbiddenError (cf. issue #34).
+    requireRole('ADMIN_CALPAX', 'GERANT')
+
     const page = filters.page ?? 1
     const take = 50
     const skip = (page - 1) * take
