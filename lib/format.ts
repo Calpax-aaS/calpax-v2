@@ -19,6 +19,14 @@ export function formatDateLong(date: Date, locale: string): string {
   })
 }
 
+export function formatDateMedium(date: Date, locale: string): string {
+  return date.toLocaleDateString(localeTag(locale), {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
 export function formatDateTimeShort(date: Date, locale: string): string {
   return date.toLocaleString(localeTag(locale), {
     day: '2-digit',

@@ -58,7 +58,7 @@ export async function buildFicheVolData(
         longitude: vol.exploitant.meteoLongitude,
         date: dateStr,
       })
-      const hours = extractCreneauHours(forecast, vol.creneau as 'MATIN' | 'SOIR')
+      const hours = extractCreneauHours(forecast, vol.creneau)
       const summary = summarizeWeather(hours, seuilVent)
       meteo = { hours, summary, seuilVent }
     } catch {
@@ -76,7 +76,7 @@ export async function buildFicheVolData(
     exploitant: vol.exploitant,
     vol: {
       date: vol.date,
-      creneau: vol.creneau as 'MATIN' | 'SOIR',
+      creneau: vol.creneau,
       lieuDecollage: lieuDecollageDisplay,
       equipier: equipierDisplay,
       vehicule: vehiculeDisplay,

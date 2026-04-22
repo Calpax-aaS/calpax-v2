@@ -2,43 +2,17 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { AlertTriangle, Thermometer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Chip } from '@/components/cockpit/chip'
 import { LoadBar } from '@/components/cockpit/load-bar'
 import { MonoValue } from '@/components/cockpit/mono-value'
 import { WindArrow } from '@/components/cockpit/wind-arrow'
+import { MonoLabel } from '@/components/cockpit/mono-label'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/lib/context'
+import type { FlightCardData, FlightCardWeather, MassBudget } from '@/lib/vol/flight-card-types'
 
-type MassBudget = {
-  totalWeight: number
-  maxPayload: number
-  status: 'OK' | 'WARNING' | 'OVER'
-}
-
-type WeatherSummary = {
-  maxWindKt: number
-  maxWindAltitude: string
-  avgTemperature: number
-  goNogo: 'GO' | 'NOGO' | 'MARGINAL'
-  creneauRange: string
-}
-
-export type FlightCardData = {
-  id: string
-  date: string
-  creneau: 'MATIN' | 'SOIR'
-  statut: string
-  ballonNom: string
-  ballonImmat: string
-  piloteNom: string
-  equipierNom: string | null
-  siteDeco: string | null
-  passagerCount: number
-  passagerMax: number
-  massBudget: MassBudget | null
-  weather: WeatherSummary | null
-  meteoAlert: boolean
-}
+export type { FlightCardData } from '@/lib/vol/flight-card-types'
 
 type Props = {
   flight: FlightCardData
@@ -75,7 +49,7 @@ const MASS_LABEL_KEY: Record<MassBudget['status'], string> = {
   OVER: 'massOver',
 }
 
-const GONOGO_CHIP: Record<WeatherSummary['goNogo'], Parameters<typeof Chip>[0]['tone']> = {
+const GONOGO_CHIP: Record<FlightCardWeather['goNogo'], Parameters<typeof Chip>[0]['tone']> = {
   GO: 'ok',
   NOGO: 'danger',
   MARGINAL: 'warn',
@@ -134,7 +108,7 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
         <MetaField label={tv('fields.equipier')} value={flight.equipierNom ?? '—'} />
         <MetaField label={tv('fields.lieuDecollage')} value={flight.siteDeco ?? '—'} />
         <div className="space-y-1">
-          <div className="mono cap text-[10px] text-sky-500">{t('capacity')}</div>
+          <MonoLabel as="div">{t('capacity')}</MonoLabel>
           <LoadBar
             value={flight.passagerCount}
             max={flight.passagerMax}
@@ -148,10 +122,27 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
       {flight.massBudget ? (
         <div className="space-y-1.5 rounded-md bg-sky-50 px-3 py-2.5">
           <div className="flex items-center justify-between gap-2">
-            <span className="mono cap text-[10px] text-sky-500">{t('massLabel')}</span>
-            <Chip tone={MASS_CHIP[flight.massBudget.status]} size="sm">
-              {t(MASS_LABEL_KEY[flight.massBudget.status])}
-            </Chip>
+            <MonoLabel>{t('massLabel')}</MonoLabel>
+            <TooltipProvider delayDuration={150}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>
+                    <Chip tone={MASS_CHIP[flight.massBudget.status]} size="sm">
+                      {t(MASS_LABEL_KEY[flight.massBudget.status])}
+                    </Chip>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <span className="mono">
+                    {t('massTooltip', {
+                      charge: flight.massBudget.totalWeight,
+                      max: flight.massBudget.maxPayload,
+                      marge: flight.massBudget.maxPayload - flight.massBudget.totalWeight,
+                    })}
+                  </span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <LoadBar
             value={flight.massBudget.totalWeight}
@@ -171,9 +162,9 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
       {/* Weather strip */}
       {flight.weather && (
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md bg-sky-50 px-3 py-2 text-sm">
-          <span className="mono cap text-[10px] text-sky-500">
+          <MonoLabel>
             {tv(`creneau.${flight.creneau}`)} · {flight.weather.creneauRange}
-          </span>
+          </MonoLabel>
           <div className="flex items-center gap-1.5 text-sky-700">
             <WindArrow
               direction={0}
@@ -214,7 +205,7 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
 function MetaField({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-0.5 min-w-0">
-      <div className="mono cap text-[10px] text-sky-500">{label}</div>
+      <MonoLabel as="div">{label}</MonoLabel>
       <div className="truncate font-medium text-sky-900">{value}</div>
     </div>
   )
