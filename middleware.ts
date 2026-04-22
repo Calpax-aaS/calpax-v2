@@ -40,7 +40,16 @@ export default function middleware(request: NextRequest) {
     }
   }
 
-  return intlMiddleware(request)
+  const response = intlMiddleware(request)
+
+  if (isProtectedPath(pathname)) {
+    // Protected routes may serve decrypted PII (poids passagers, coordonnées,
+    // etc.) embedded in RSC payloads. Prevent any shared or browser cache
+    // from retaining those bytes past the session.
+    response.headers.set('Cache-Control', 'private, no-store')
+  }
+
+  return response
 }
 
 export const config = {
