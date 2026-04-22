@@ -13,7 +13,12 @@ export async function requireAuth<T>(fn: () => Promise<T>): Promise<T> {
 
   const user = session.user as Record<string, unknown>
   const exploitantId = user.exploitantId as string
-  const role = (user.role as string) ?? 'GERANT'
+  // Least-privilege fallback: `User.role` is `UserRole NOT NULL` in Prisma
+  // so the DB can't return null, but a session claim without a role (race
+  // condition, legacy cookie) still falls through here. Defaulting to
+  // EQUIPIER keeps the user locked out of elevated pages until the claim
+  // is resolved, matching the sidebar default from issue #35.
+  const role = (user.role as string) ?? 'EQUIPIER'
 
   // ADMIN_CALPAX can operate without a tenant (super-admin actions use adminDb).
   // Today the DB schema enforces exploitantId on all users, but this guard
