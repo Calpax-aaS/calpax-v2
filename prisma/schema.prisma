@@ -394,7 +394,7 @@ model Paiement {
   billet           Billet       @relation(fields: [billetId], references: [id], onDelete: Cascade)
 
   modePaiement     ModePaiement
-  montantTtc       Float
+  montantTtc       Decimal      @db.Decimal(10, 2)
   datePaiement     DateTime
   dateEncaissement DateTime?
   commentaire      String?
