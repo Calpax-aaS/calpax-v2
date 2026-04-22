@@ -391,6 +391,12 @@
   },
   "billets": {
     "title": "Flight tickets",
+    "sections": {
+      "payeur": "Payer",
+      "planification": "Scheduling",
+      "passagers": "Passengers",
+      "bonCadeau": "Gift voucher"
+    },
     "new": "New ticket",
     "backToList": "Back to list",
     "edit": "Edit",
