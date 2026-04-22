@@ -12,9 +12,9 @@ const LEVEL_STYLES: Record<WindowLevel, string> = {
   NOGO: 'bg-red-50 text-[color:var(--destructive)]',
 }
 
-function hourLevel(windKt: number, seuilVent: number): WindowLevel {
-  if (windKt >= seuilVent) return 'NOGO'
-  if (windKt >= seuilVent * 0.75) return 'HOLD'
+function hourLevel(windKmh: number, seuilVent: number): WindowLevel {
+  if (windKmh >= seuilVent) return 'NOGO'
+  if (windKmh >= seuilVent * 0.75) return 'HOLD'
   return 'GO'
 }
 

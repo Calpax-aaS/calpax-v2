@@ -136,7 +136,7 @@ export async function GET(request: Request): Promise<Response> {
           data: { meteoAlert: true },
         })
         logger.info(
-          { volId: vol.id, ballon: vol.ballon.nom, maxWind: summary.maxWindKt, threshold },
+          { volId: vol.id, ballon: vol.ballon.nom, maxWind: summary.maxWindKmh, threshold },
           '[meteo-alert] Vol flagged',
         )
         flagged++
@@ -146,7 +146,7 @@ export async function GET(request: Request): Promise<Response> {
           data: { meteoAlert: false },
         })
         logger.info(
-          { volId: vol.id, ballon: vol.ballon.nom, maxWind: summary.maxWindKt, threshold },
+          { volId: vol.id, ballon: vol.ballon.nom, maxWind: summary.maxWindKmh, threshold },
           '[meteo-alert] Vol cleared',
         )
         cleared++

@@ -22,7 +22,7 @@ export type WeatherForecast = {
 export type WindLevel = 'OK' | 'WARNING' | 'DANGER'
 
 export type WeatherSummary = {
-  maxWindKt: number
+  maxWindKmh: number
   maxWindAltitude: string
   level: WindLevel
   avgTemperature: number

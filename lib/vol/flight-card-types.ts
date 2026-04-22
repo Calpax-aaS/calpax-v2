@@ -9,7 +9,7 @@ export type MassBudget = {
 }
 
 export type FlightCardWeather = {
-  maxWindKt: number
+  maxWindKmh: number
   maxWindAltitude: string
   avgTemperature: number
   goNogo: 'GO' | 'NOGO' | 'MARGINAL'

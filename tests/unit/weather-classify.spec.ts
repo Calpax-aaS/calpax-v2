@@ -67,7 +67,7 @@ describe('summarizeWeather', () => {
       }),
     ]
     const result = summarizeWeather(hours, 15)
-    expect(result.maxWindKt).toBe(22)
+    expect(result.maxWindKmh).toBe(22)
     expect(result.maxWindAltitude).toBe('120m')
     expect(result.level).toBe('DANGER')
   })
@@ -91,9 +91,9 @@ describe('summarizeWeather', () => {
     expect(result.level).toBe('OK')
   })
 
-  it('handles empty hours array (maxWindKt=0, level=OK)', () => {
+  it('handles empty hours array (maxWindKmh=0, level=OK)', () => {
     const result = summarizeWeather([], 15)
-    expect(result.maxWindKt).toBe(0)
+    expect(result.maxWindKmh).toBe(0)
     expect(result.level).toBe('OK')
   })
 })

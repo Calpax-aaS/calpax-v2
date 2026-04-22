@@ -217,8 +217,8 @@ function WeatherStrip({
         {creneauLabel} · {weather.creneauRange}
       </MonoLabel>
       <div className="flex items-center gap-1.5 text-sky-700">
-        <WindArrow direction={0} speed={weather.maxWindKt} size={16} className="text-sky-500" />
-        <MonoValue value={weather.maxWindKt} unit="kt" size={12} />
+        <WindArrow direction={0} speed={weather.maxWindKmh} size={16} className="text-sky-500" />
+        <MonoValue value={weather.maxWindKmh} unit="km/h" size={12} />
         <span className="text-[10px] text-sky-400">({weather.maxWindAltitude})</span>
       </div>
       <div className="flex items-center gap-1 text-sky-700">
