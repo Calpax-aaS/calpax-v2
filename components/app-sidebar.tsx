@@ -114,7 +114,12 @@ export function AppSidebar({
     },
   ]
 
-  const role = (userRole as UserRole) ?? 'GERANT'
+  // Least-privilege default: if the session somehow lacks a role, hide
+  // everything except the EQUIPIER-visible items. Server-side enforcement
+  // is the real line of defense (requireRole in each page / action), but
+  // the sidebar shouldn't advertise items the user can't reach
+  // (cf. issue #35 — fail-open audit).
+  const role = (userRole as UserRole) ?? 'EQUIPIER'
   const filteredGroups = groups
     .map((group) => ({
       ...group,
