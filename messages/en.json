@@ -258,6 +258,7 @@
     "maxWind": "Max wind",
     "avgTemp": "Avg OAT",
     "source": "Source: Open-Meteo.com",
+    "sourceFetchedAt": "Source: Open-Meteo (best match) — updated {date}",
     "fields": {
       "heure": "Hour",
       "vent10m": "Wind 10m",
@@ -508,6 +509,8 @@
     "devis": {
       "title": "Load sheet",
       "temperature": "Temperature (C)",
+      "temperatureDefault": "(default temperature)",
+      "insufficientData": "Insufficient data to compute the load sheet (missing pilot weight or gas quantity).",
       "poidsAVide": "Empty weight",
       "poidsGaz": "Gas loaded",
       "poidsPilote": "Pilot",
@@ -520,6 +523,19 @@
       "conforme": "COMPLIANT",
       "surcharge": "OVERLOADED"
     },
+    "passagers": {
+      "title": "Passengers ({count})",
+      "billet": "Ticket",
+      "pmrYes": "Yes",
+      "pmrNo": "No"
+    },
+    "timeRange": {
+      "MATIN": "05h — 10h",
+      "SOIR": "17h — 22h"
+    },
+    "nouveauVol": "New flight",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
     "organisation": {
       "title": "Flight organisation",
       "billetsDisponibles": "Available tickets",

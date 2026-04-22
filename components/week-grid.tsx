@@ -92,11 +92,13 @@ function Cell({
   creneau,
   vols,
   locale,
+  ariaNewFlight,
 }: {
   date: string
   creneau: 'MATIN' | 'SOIR'
   vols: VolSummary[]
   locale: string
+  ariaNewFlight: string
 }) {
   const cellVols = vols.filter((v) => v.date === date && v.creneau === creneau)
   return (
@@ -107,7 +109,7 @@ function Cell({
       <Link
         href={`/${locale}/vols/create?date=${date}&creneau=${creneau}`}
         className="flex h-6 w-full items-center justify-center rounded text-sky-300 transition-colors hover:bg-sky-100 hover:text-sky-500"
-        aria-label="Nouveau vol"
+        aria-label={ariaNewFlight}
       >
         <Plus className="h-3.5 w-3.5" aria-hidden />
       </Link>
@@ -128,6 +130,9 @@ export function WeekGrid({
   const prevWeek = getMondayOffset(weekStart, -1)
   const nextWeek = getMondayOffset(weekStart, 1)
   const DAY_SHORT = locale === 'fr' ? DAY_SHORT_FR : DAY_SHORT_EN
+  const ariaNewFlight = t('nouveauVol')
+  const ariaPrevWeek = t('prevWeek')
+  const ariaNextWeek = t('nextWeek')
 
   const navClass =
     'mono cap inline-flex items-center rounded-md border border-sky-200 bg-card px-3 py-1.5 text-[11px] text-sky-700 transition-colors hover:border-dusk-300 hover:text-dusk-700'
@@ -139,15 +144,19 @@ export function WeekGrid({
         <Link
           href={`/${locale}/vols?week=${prevWeek}`}
           className={navClass}
-          aria-label="Previous week"
+          aria-label={ariaPrevWeek}
         >
-          &larr;
+          <span aria-hidden>&larr;</span>
         </Link>
         <Link href={`/${locale}/vols?week=${todayMonday}`} className={cn(navClass, 'font-medium')}>
           {t('today')}
         </Link>
-        <Link href={`/${locale}/vols?week=${nextWeek}`} className={navClass} aria-label="Next week">
-          &rarr;
+        <Link
+          href={`/${locale}/vols?week=${nextWeek}`}
+          className={navClass}
+          aria-label={ariaNextWeek}
+        >
+          <span aria-hidden>&rarr;</span>
         </Link>
         <span className="mono ml-2 text-[11px] text-sky-500">
           {t('week')} {formatShortDate(days[0] ?? weekStart)} &ndash;{' '}
@@ -177,7 +186,14 @@ export function WeekGrid({
             <span className="mono cap text-[10px] text-sky-700">{t('creneau.MATIN')}</span>
           </div>
           {days.map((day) => (
-            <Cell key={`matin-${day}`} date={day} creneau="MATIN" vols={vols} locale={locale} />
+            <Cell
+              key={`matin-${day}`}
+              date={day}
+              creneau="MATIN"
+              vols={vols}
+              locale={locale}
+              ariaNewFlight={ariaNewFlight}
+            />
           ))}
 
           {/* SOIR row */}
@@ -185,7 +201,14 @@ export function WeekGrid({
             <span className="mono cap text-[10px] text-sky-700">{t('creneau.SOIR')}</span>
           </div>
           {days.map((day) => (
-            <Cell key={`soir-${day}`} date={day} creneau="SOIR" vols={vols} locale={locale} />
+            <Cell
+              key={`soir-${day}`}
+              date={day}
+              creneau="SOIR"
+              vols={vols}
+              locale={locale}
+              ariaNewFlight={ariaNewFlight}
+            />
           ))}
         </div>
       </div>

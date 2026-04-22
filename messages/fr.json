@@ -258,6 +258,7 @@
     "maxWind": "Vent max",
     "avgTemp": "OAT moy",
     "source": "Source: Open-Meteo.com",
+    "sourceFetchedAt": "Source : Open-Meteo (best match) — maj {date}",
     "fields": {
       "heure": "Heure",
       "vent10m": "Vent 10m",
@@ -508,6 +509,8 @@
     "devis": {
       "title": "Devis de masse",
       "temperature": "Température (C)",
+      "temperatureDefault": "(température par défaut)",
+      "insufficientData": "Données insuffisantes pour calculer le devis de masse (poids pilote ou quantité gaz manquants).",
       "poidsAVide": "Pesée à vide",
       "poidsGaz": "Gaz embarqué",
       "poidsPilote": "Pilote",
@@ -520,6 +523,19 @@
       "conforme": "CONFORME",
       "surcharge": "SURCHARGE"
     },
+    "passagers": {
+      "title": "Passagers ({count})",
+      "billet": "Billet",
+      "pmrYes": "Oui",
+      "pmrNo": "Non"
+    },
+    "timeRange": {
+      "MATIN": "05h — 10h",
+      "SOIR": "17h — 22h"
+    },
+    "nouveauVol": "Nouveau vol",
+    "prevWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
     "organisation": {
       "title": "Organisation du vol",
       "billetsDisponibles": "Billets disponibles",
