@@ -45,3 +45,15 @@ export function safeDecryptInt(encrypted: string | null | undefined, fallback: n
     return fallback
   }
 }
+
+export function safeDecryptString(
+  encrypted: string | null | undefined,
+  fallback: string | null = null,
+): string | null {
+  if (!encrypted) return fallback
+  try {
+    return decrypt(encrypted)
+  } catch {
+    return fallback
+  }
+}

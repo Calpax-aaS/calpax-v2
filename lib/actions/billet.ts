@@ -17,8 +17,12 @@ function mapPassagerForCreate(p: BilletFormData['passagers'][number], exploitant
     exploitantId,
     prenom: p.prenom,
     nom: p.nom,
+    // Dual-write: keep plaintext (legacy) alongside encrypted until a follow-up
+    // migration drops the plaintext columns (cf. issue #4).
     email: p.email || null,
     telephone: p.telephone || null,
+    emailEncrypted: p.email ? encrypt(p.email) : null,
+    telephoneEncrypted: p.telephone ? encrypt(p.telephone) : null,
     age: p.age ?? null,
     poidsEncrypted: p.poids != null ? encrypt(p.poids.toString()) : null,
     pmr: p.pmr,
