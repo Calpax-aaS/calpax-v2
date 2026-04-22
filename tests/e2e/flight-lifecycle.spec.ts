@@ -19,7 +19,7 @@ const BASE_URL = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
 async function signIn(page: Page) {
   await page.goto(`${BASE_URL}/fr/auth/signin`)
   await page.getByRole('textbox', { name: /email/i }).fill(TEST_EMAIL)
-  await page.getByLabel(/mot de passe|password/i).fill(TEST_PASSWORD)
+  await page.locator('input[name="password"]').fill(TEST_PASSWORD)
   await page.getByRole('button', { name: /se connecter|sign in/i }).click()
 
   const result = await Promise.race([

@@ -22,12 +22,12 @@ test('P0 smoke -- full sign-in flow', async ({ page }) => {
 
   // Sign-in form shows email and password inputs
   await expect(page.getByRole('textbox', { name: /email/i })).toBeVisible()
-  await expect(page.getByLabel(/mot de passe|password/i)).toBeVisible()
+  await expect(page.locator('input[name="password"]')).toBeVisible()
   await expect(page.getByRole('button', { name: /se connecter|sign in/i })).toBeVisible()
 
   // Fill and submit
   await page.getByRole('textbox', { name: /email/i }).fill(TEST_EMAIL)
-  await page.getByLabel(/mot de passe|password/i).fill(TEST_PASSWORD)
+  await page.locator('input[name="password"]').fill(TEST_PASSWORD)
   await page.getByRole('button', { name: /se connecter|sign in/i }).click()
 
   // Fail fast if an error message appears instead of waiting for timeout
