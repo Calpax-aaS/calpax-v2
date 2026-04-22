@@ -719,6 +719,43 @@
       "paxCovered": "{booked}/{seats}",
       "flights": "VOLS",
       "flightsSub": "Aujourd'hui"
+    },
+    "window": {
+      "title": "Fenêtre météo du jour",
+      "matin": "Matin",
+      "soir": "Soir",
+      "threshold": "Seuil {value} kt",
+      "noData": "Pas de données météo",
+      "level": {
+        "GO": "GO",
+        "HOLD": "HOLD",
+        "NOGO": "NO-GO"
+      }
+    },
+    "fleet": {
+      "title": "Flotte",
+      "noNextFlight": "Aucun vol programmé",
+      "camo": {
+        "OK": "CAMO OK",
+        "SOON": "CAMO 30j",
+        "EXPIRED": "CAMO expiré",
+        "UNKNOWN": "CAMO ?"
+      },
+      "creneau": {
+        "MATIN": "matin",
+        "SOIR": "soir"
+      }
+    },
+    "upcoming": {
+      "title": "{count, plural, one {Prochain vol} other {# prochains vols}}",
+      "col": {
+        "date": "Date",
+        "creneau": "Créneau",
+        "ballon": "Ballon",
+        "pilote": "Pilote",
+        "pax": "PAX",
+        "statut": "Statut"
+      }
     }
   },
   "cancellation": {

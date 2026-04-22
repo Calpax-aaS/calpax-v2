@@ -14,9 +14,26 @@ import { AlertsBanner } from '@/components/alerts-banner'
 import { FlightCard, type FlightCardData } from '@/components/flight-card'
 import { KpiRow, KpiTile } from '@/components/cockpit/kpi-tile'
 import { WindArrow } from '@/components/cockpit/wind-arrow'
+import { GoNogoWindow } from '@/components/cockpit/go-nogo-window'
+import { FleetRow, type FleetBallon } from '@/components/cockpit/fleet-row'
+import {
+  UpcomingFlightsTable,
+  type UpcomingFlight,
+} from '@/components/cockpit/upcoming-flights-table'
 import { Button } from '@/components/ui/button'
 import type { Prisma } from '@prisma/client'
 import type { WeatherForecast, WeatherSummary } from '@/lib/weather/types'
+
+function camoStatusOf(
+  camoExpiryDate: Date | null | undefined,
+  now: Date,
+): FleetBallon['camoStatus'] {
+  if (!camoExpiryDate) return 'UNKNOWN'
+  const days = Math.floor((camoExpiryDate.getTime() - now.getTime()) / 86_400_000)
+  if (days < 0) return 'EXPIRED'
+  if (days <= 30) return 'SOON'
+  return 'OK'
+}
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -138,6 +155,44 @@ export default async function HomePage({ params }: Props) {
       }
     }
 
+    // 4a. Fetch upcoming vols (excluding today) for fleet next-flight and upcoming table
+    const UPCOMING_LOOKAHEAD_DAYS = 60
+    const upcomingLookaheadEnd = new Date(today)
+    upcomingLookaheadEnd.setDate(upcomingLookaheadEnd.getDate() + UPCOMING_LOOKAHEAD_DAYS)
+
+    const upcomingWhere = buildVolWhereForRole(
+      {
+        date: { gt: today, lte: upcomingLookaheadEnd },
+        statut: { not: 'ANNULE' as const },
+      },
+      ctx.role,
+      ctx.userId,
+    )
+
+    const upcomingVolsRaw = await db.vol.findMany({
+      where: upcomingWhere,
+      include: {
+        ballon: { select: { id: true, nom: true, immatriculation: true, nbPassagerMax: true } },
+        pilote: { select: { prenom: true, nom: true } },
+        _count: { select: { passagers: true } },
+      },
+      orderBy: [{ date: 'asc' }, { creneau: 'asc' }],
+      take: 30,
+    })
+
+    // 4b. All active ballons for Fleet row (independent of today's vols)
+    const fleetBallons = await db.ballon.findMany({
+      where: { actif: true },
+      select: {
+        id: true,
+        nom: true,
+        immatriculation: true,
+        camoExpiryDate: true,
+        actif: true,
+      },
+      orderBy: { immatriculation: 'asc' },
+    })
+
     // 4. Build regulatory alerts filtered to today's entities
     const todayBallonIds = [...new Set(vols.map((v) => v.ballonId))]
     const todayPiloteIds = [...new Set(vols.map((v) => v.piloteId))]
@@ -194,6 +249,42 @@ export default async function HomePage({ params }: Props) {
         meteoAlert: vol.meteoAlert,
       }
     })
+
+    // 5b. Derive Fleet row: next flight per active ballon
+    const nextFlightByBallon = new Map<string, { date: string; creneau: 'MATIN' | 'SOIR' }>()
+    for (const uv of upcomingVolsRaw) {
+      if (!nextFlightByBallon.has(uv.ballon.id)) {
+        nextFlightByBallon.set(uv.ballon.id, {
+          date: uv.date.toISOString().slice(0, 10),
+          creneau: uv.creneau as 'MATIN' | 'SOIR',
+        })
+      }
+    }
+    const fleetRows: FleetBallon[] = fleetBallons.map((b) => ({
+      id: b.id,
+      nom: b.nom,
+      immat: b.immatriculation,
+      actif: b.actif,
+      camoStatus: camoStatusOf(b.camoExpiryDate, today),
+      nextFlight: nextFlightByBallon.get(b.id) ?? null,
+    }))
+
+    // 5c. Build 7 next upcoming flights
+    const upcomingFlights: UpcomingFlight[] = upcomingVolsRaw.slice(0, 7).map((uv) => ({
+      id: uv.id,
+      date: uv.date.toISOString().slice(0, 10),
+      creneau: uv.creneau as 'MATIN' | 'SOIR',
+      statut: uv.statut,
+      ballonImmat: uv.ballon.immatriculation,
+      ballonNom: uv.ballon.nom,
+      piloteNom: `${uv.pilote.prenom} ${uv.pilote.nom}`,
+      passagerCount: uv._count.passagers,
+      passagerMax: uv.ballon.nbPassagerMax,
+    }))
+
+    // 5d. Weather hours for GO/HOLD/NOGO window
+    const matinHours = forecast ? extractCreneauHours(forecast, 'MATIN') : []
+    const soirHours = forecast ? extractCreneauHours(forecast, 'SOIR') : []
 
     // 6. Derive cockpit KPIs from today's data
     const nextFlight = cards[0] ?? null
@@ -258,6 +349,10 @@ export default async function HomePage({ params }: Props) {
 
         {criticalAlerts.length > 0 && <AlertsBanner alerts={criticalAlerts} />}
 
+        {forecast && (
+          <GoNogoWindow matinHours={matinHours} soirHours={soirHours} seuilVent={seuilVent} />
+        )}
+
         {vols.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-sky-200 bg-card py-16 text-center">
             <Plane className="mb-4 h-12 w-12 text-sky-300" aria-hidden />
@@ -273,6 +368,10 @@ export default async function HomePage({ params }: Props) {
             ))}
           </div>
         )}
+
+        <FleetRow ballons={fleetRows} locale={locale} />
+
+        <UpcomingFlightsTable flights={upcomingFlights} locale={locale} />
       </div>
     )
   })
