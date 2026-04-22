@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { AlertTriangle, Thermometer } from 'lucide-react'
@@ -8,6 +9,7 @@ import { LoadBar } from '@/components/cockpit/load-bar'
 import { MonoValue } from '@/components/cockpit/mono-value'
 import { WindArrow } from '@/components/cockpit/wind-arrow'
 import { MonoLabel } from '@/components/cockpit/mono-label'
+import { WeatherStripSkeleton } from '@/components/cockpit/weather-strip-skeleton'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/lib/context'
 import type { FlightCardData, FlightCardWeather, MassBudget } from '@/lib/vol/flight-card-types'
@@ -159,30 +161,19 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
         <div className="text-xs italic text-sky-400">{t('massUnavailable')}</div>
       )}
 
-      {/* Weather strip */}
+      {/* Weather strip — wrapped in Suspense so a descendant can `use()` a
+          weather promise and fall back to the skeleton. Today `flight.weather`
+          is pre-computed server-side, so the boundary is a no-op; it stays
+          here for when the dashboard moves weather fetching into a streaming
+          boundary (see #48 follow-up). */}
       {flight.weather && (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md bg-sky-50 px-3 py-2 text-sm">
-          <MonoLabel>
-            {tv(`creneau.${flight.creneau}`)} · {flight.weather.creneauRange}
-          </MonoLabel>
-          <div className="flex items-center gap-1.5 text-sky-700">
-            <WindArrow
-              direction={0}
-              speed={flight.weather.maxWindKt}
-              size={16}
-              className="text-sky-500"
-            />
-            <MonoValue value={flight.weather.maxWindKt} unit="kt" size={12} />
-            <span className="text-[10px] text-sky-400">({flight.weather.maxWindAltitude})</span>
-          </div>
-          <div className="flex items-center gap-1 text-sky-700">
-            <Thermometer className="h-3.5 w-3.5 text-sky-500" aria-hidden />
-            <MonoValue value={flight.weather.avgTemperature} unit="°C" size={12} />
-          </div>
-          <Chip tone={GONOGO_CHIP[flight.weather.goNogo]} size="sm" className="ml-auto">
-            {t(`goNogo.${flight.weather.goNogo}`)}
-          </Chip>
-        </div>
+        <Suspense fallback={<WeatherStripSkeleton />}>
+          <WeatherStrip
+            weather={flight.weather}
+            creneauLabel={tv(`creneau.${flight.creneau}`)}
+            goNogoLabel={t(`goNogo.${flight.weather.goNogo}`)}
+          />
+        </Suspense>
       )}
 
       {/* Actions */}
@@ -207,6 +198,36 @@ function MetaField({ label, value }: { label: string; value: string }) {
     <div className="space-y-0.5 min-w-0">
       <MonoLabel as="div">{label}</MonoLabel>
       <div className="truncate font-medium text-sky-900">{value}</div>
+    </div>
+  )
+}
+
+function WeatherStrip({
+  weather,
+  creneauLabel,
+  goNogoLabel,
+}: {
+  weather: FlightCardWeather
+  creneauLabel: string
+  goNogoLabel: string
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md bg-sky-50 px-3 py-2 text-sm">
+      <MonoLabel>
+        {creneauLabel} · {weather.creneauRange}
+      </MonoLabel>
+      <div className="flex items-center gap-1.5 text-sky-700">
+        <WindArrow direction={0} speed={weather.maxWindKt} size={16} className="text-sky-500" />
+        <MonoValue value={weather.maxWindKt} unit="kt" size={12} />
+        <span className="text-[10px] text-sky-400">({weather.maxWindAltitude})</span>
+      </div>
+      <div className="flex items-center gap-1 text-sky-700">
+        <Thermometer className="h-3.5 w-3.5 text-sky-500" aria-hidden />
+        <MonoValue value={weather.avgTemperature} unit="°C" size={12} />
+      </div>
+      <Chip tone={GONOGO_CHIP[weather.goNogo]} size="sm" className="ml-auto">
+        {goNogoLabel}
+      </Chip>
     </div>
   )
 }
