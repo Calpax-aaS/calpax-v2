@@ -88,7 +88,7 @@ describe('billet tenant isolation', () => {
 
     const paiements = await asUser(A, 'GERANT', async () => db.paiement.findMany())
     expect(paiements).toHaveLength(1)
-    expect(paiements[0]?.montantTtc).toBe(5000)
+    expect(Number(paiements[0]?.montantTtc)).toBe(5000)
   })
 
   it('create injects exploitantId automatically for billet', async () => {
