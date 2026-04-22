@@ -8,6 +8,17 @@ import type { OpenMeteoResponse } from './parse'
 
 const CACHE_TTL_MS = 30 * 60 * 1000 // 30 minutes
 
+/**
+ * Per-instance in-flight deduplication: coalesces concurrent `getWeather()`
+ * calls for the same `(exploitantId, date)` so a cache-miss burst only hits
+ * Open-Meteo once. Entries are removed as soon as the promise settles.
+ *
+ * This is intentionally in-memory (Map) — a single Vercel serverless
+ * invocation rarely needs more, and cross-instance coalescing would require
+ * Redis which isn't in the stack today.
+ */
+const inFlight = new Map<string, Promise<WeatherForecast>>()
+
 type GetWeatherParams = {
   exploitantId: string
   latitude: number
@@ -17,6 +28,24 @@ type GetWeatherParams = {
 }
 
 export async function getWeather(params: GetWeatherParams): Promise<WeatherForecast> {
+  const { exploitantId, date, forceRefresh } = params
+
+  if (!forceRefresh) {
+    const pending = inFlight.get(`${exploitantId}:${date}`)
+    if (pending) return pending
+  }
+
+  const promise = getWeatherUncoalesced(params)
+  const key = `${exploitantId}:${date}`
+  inFlight.set(key, promise)
+  try {
+    return await promise
+  } finally {
+    inFlight.delete(key)
+  }
+}
+
+async function getWeatherUncoalesced(params: GetWeatherParams): Promise<WeatherForecast> {
   const { exploitantId, latitude, longitude, date, forceRefresh } = params
 
   try {
