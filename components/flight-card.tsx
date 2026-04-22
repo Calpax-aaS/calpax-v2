@@ -107,7 +107,7 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
       {flight.meteoAlert && (
         <div
           role="status"
-          className="-mx-4 -mt-4 flex items-center gap-2 border-b border-dusk-200 bg-dusk-50 px-4 py-2 text-xs font-medium text-dusk-700"
+          className="-mx-4 -mt-4 flex items-center gap-2 border-b border-dusk-300 bg-dusk-100 px-4 py-2 text-xs font-medium text-dusk-800"
         >
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden />
           <span>{t('meteoAlert')}</span>
@@ -128,8 +128,8 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
         </Chip>
       </div>
 
-      {/* Meta grid 2x2 */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+      {/* Meta grid: 1 col on narrow phones, 2 cols from ~380px up */}
+      <div className="grid grid-cols-1 gap-x-4 gap-y-3 text-sm min-[380px]:grid-cols-2">
         <MetaField label={tv('fields.pilote')} value={flight.piloteNom} />
         <MetaField label={tv('fields.equipier')} value={flight.equipierNom ?? '—'} />
         <MetaField label={tv('fields.lieuDecollage')} value={flight.siteDeco ?? '—'} />

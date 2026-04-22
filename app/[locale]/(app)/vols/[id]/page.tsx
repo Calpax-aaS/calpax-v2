@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { formatDateFr } from '@/lib/format'
+import { formatDateFr, formatDateTimeShort } from '@/lib/format'
 import { VolActions } from './vol-actions'
 import { MeteoAlertBanner } from '@/components/meteo-alert-banner'
 import { WeatherTable } from '@/components/weather-table'
@@ -60,6 +60,7 @@ export default async function VolDetailPage({ params }: Props) {
   return requireAuth(async () => {
     const t = await getTranslations('vols')
     const tPassagers = await getTranslations('passagers')
+    const tVolPassagers = await getTranslations('vols.passagers')
     const ctx = getContext()
     const canEdit = ctx.role === 'ADMIN_CALPAX' || ctx.role === 'GERANT'
 
@@ -266,7 +267,9 @@ export default async function VolDetailPage({ params }: Props) {
         {/* Passagers card */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Passagers ({vol.passagers.length})</CardTitle>
+            <CardTitle className="text-base">
+              {tVolPassagers('title', { count: vol.passagers.length })}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {vol.passagers.length === 0 ? (
@@ -283,7 +286,7 @@ export default async function VolDetailPage({ params }: Props) {
                       <TableHead className={labelClassName}>{tPassagers('fields.age')}</TableHead>
                       <TableHead className={labelClassName}>{tPassagers('fields.poids')}</TableHead>
                       <TableHead className={labelClassName}>{tPassagers('fields.pmr')}</TableHead>
-                      <TableHead className={labelClassName}>Billet</TableHead>
+                      <TableHead className={labelClassName}>{tVolPassagers('billet')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -295,7 +298,9 @@ export default async function VolDetailPage({ params }: Props) {
                           <TableCell>{p.nom}</TableCell>
                           <TableCell>{p.age ?? '—'}</TableCell>
                           <TableCell>{poids !== null ? `${poids} kg` : '—'}</TableCell>
-                          <TableCell>{p.pmr ? 'Oui' : 'Non'}</TableCell>
+                          <TableCell>
+                            {p.pmr ? tVolPassagers('pmrYes') : tVolPassagers('pmrNo')}
+                          </TableCell>
                           <TableCell className="text-muted-foreground text-xs">
                             {p.billet.reference}
                           </TableCell>
@@ -334,13 +339,8 @@ export default async function VolDetailPage({ params }: Props) {
             </CardTitle>
             {weatherFetchedAt && (
               <p className="text-xs text-muted-foreground">
-                Source : Open-Meteo (best match) — maj{' '}
-                {weatherFetchedAt.toLocaleString('fr-FR', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
+                {tMeteo('sourceFetchedAt', {
+                  date: formatDateTimeShort(weatherFetchedAt, locale),
                 })}
               </p>
             )}
@@ -363,15 +363,12 @@ export default async function VolDetailPage({ params }: Props) {
           </CardHeader>
           <CardContent>
             {devis === null ? (
-              <p className="text-muted-foreground text-sm">
-                Donnees insuffisantes pour calculer le devis de masse (poids pilote ou quantite gaz
-                manquants).
-              </p>
+              <p className="text-muted-foreground text-sm">{t('devis.insufficientData')}</p>
             ) : (
               <div className="space-y-4">
                 <p className="text-xs text-muted-foreground">
                   {t('devis.temperature')} : {devisTemperature} C
-                  {weatherSummary ? '' : ' (temperature par defaut)'}
+                  {weatherSummary ? '' : ` ${t('devis.temperatureDefault')}`}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
                   <div>

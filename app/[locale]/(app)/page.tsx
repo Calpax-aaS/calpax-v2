@@ -21,6 +21,7 @@ import {
   type UpcomingFlight,
 } from '@/components/cockpit/upcoming-flights-table'
 import { Button } from '@/components/ui/button'
+import { formatDateLong } from '@/lib/format'
 import type { Prisma } from '@prisma/client'
 import type { WeatherForecast, WeatherSummary } from '@/lib/weather/types'
 
@@ -90,6 +91,7 @@ export default async function HomePage({ params }: Props) {
 
   return requireAuth(async () => {
     const t = await getTranslations('dashboard')
+    const tVols = await getTranslations('vols')
     const ctx = getContext()
 
     const today = new Date()
@@ -135,10 +137,7 @@ export default async function HomePage({ params }: Props) {
 
     const seuilVent = exploitant.meteoSeuilVent ?? 15
 
-    const CRENEAU_LABELS: Record<string, string> = {
-      MATIN: '05h — 10h',
-      SOIR: '17h — 22h',
-    }
+    const creneauRange = (creneau: 'MATIN' | 'SOIR') => tVols(`timeRange.${creneau}`)
 
     // Helper: get weather summary per créneau
     function getWeatherForCreneau(creneau: 'MATIN' | 'SOIR'): FlightCardData['weather'] {
@@ -151,7 +150,7 @@ export default async function HomePage({ params }: Props) {
         maxWindAltitude: summary.maxWindAltitude,
         avgTemperature: summary.avgTemperature,
         goNogo: levelToGoNogo(summary.level),
-        creneauRange: CRENEAU_LABELS[creneau] ?? '',
+        creneauRange: creneauRange(creneau),
       }
     }
 
@@ -295,12 +294,7 @@ export default async function HomePage({ params }: Props) {
     const paxBooked = cards.reduce((sum, c) => sum + c.passagerCount, 0)
     const paxSeats = cards.reduce((sum, c) => sum + c.passagerMax, 0)
 
-    const dateLabel = today.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
+    const dateLabel = formatDateLong(today, locale)
 
     return (
       <div className="space-y-6">
@@ -323,7 +317,7 @@ export default async function HomePage({ params }: Props) {
         <KpiRow>
           <KpiTile
             label={t('kpi.nextFlight')}
-            value={nextFlight ? CRENEAU_LABELS[nextFlight.creneau] : t('kpi.nextFlightEmpty')}
+            value={nextFlight ? creneauRange(nextFlight.creneau) : t('kpi.nextFlightEmpty')}
             sub={nextFlight ? `${nextFlight.ballonImmat} · ${nextFlight.ballonNom}` : null}
             tone={nextFlight ? 'dusk' : 'default'}
           />
