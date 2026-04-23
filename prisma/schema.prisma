@@ -211,6 +211,8 @@ enum AuditAction {
   PASSWORD_RESET
   PASSWORD_CHANGED
   ACCOUNT_LOCKED
+  EXPORT_PII
+  ANONYMIZE_PII
 }
 
 enum TypePlannif {

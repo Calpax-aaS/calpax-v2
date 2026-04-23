@@ -1,7 +1,10 @@
 'use server'
 
+import { AuditAction } from '@prisma/client'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
+import { writeAudit } from '@/lib/audit/write'
+import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { decrypt, safeDecryptString } from '@/lib/crypto'
 
@@ -14,6 +17,18 @@ export type PassagerSearchResult = {
   billetReference: string
   billetId: string
 }
+
+const selectFields = {
+  id: true,
+  prenom: true,
+  nom: true,
+  email: true,
+  telephone: true,
+  emailEncrypted: true,
+  telephoneEncrypted: true,
+  billetId: true,
+  billet: { select: { reference: true } },
+} as const
 
 /**
  * Reads the encrypted column first (authoritative post-#4 backfill) and
@@ -89,12 +104,13 @@ export async function searchPassagers(query: string): Promise<PassagerSearchResu
       billetReference: p.billet.reference,
       billetId: p.billetId,
     }))
-  }) as Promise<PassagerSearchResult[]>
+  })
 }
 
 export async function exportPassagerData(passagerId: string): Promise<string> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
+    const ctx = getContext()
     const passager = await db.passager.findUniqueOrThrow({
       where: { id: passagerId },
       include: { billet: { include: { paiements: true } } },
@@ -133,13 +149,26 @@ export async function exportPassagerData(passagerId: string): Promise<string> {
       exportedAt: new Date().toISOString(),
     }
 
+    // GDPR Art. 30: record every export of personal data. No PII in the log;
+    // just the fact that the export happened, who triggered it and which
+    // record was touched.
+    await writeAudit({
+      exploitantId: ctx.exploitantId,
+      userId: ctx.userId,
+      impersonatedBy: ctx.impersonatedBy ?? null,
+      entityType: 'Passager',
+      entityId: passager.id,
+      action: AuditAction.EXPORT_PII,
+    })
+
     return JSON.stringify(data, null, 2)
-  }) as Promise<string>
+  })
 }
 
 export async function anonymisePassager(passagerId: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
+    const ctx = getContext()
     await db.passager.update({
       where: { id: passagerId },
       data: {
@@ -154,18 +183,19 @@ export async function anonymisePassager(passagerId: string): Promise<{ error?: s
         pmr: false,
       },
     })
+
+    // GDPR Art. 17: the underlying UPDATE is already captured by the audit
+    // extension, but we emit an explicit ANONYMIZE_PII row so right-to-erasure
+    // events stay trivially queryable regardless of which fields changed.
+    await writeAudit({
+      exploitantId: ctx.exploitantId,
+      userId: ctx.userId,
+      impersonatedBy: ctx.impersonatedBy ?? null,
+      entityType: 'Passager',
+      entityId: passagerId,
+      action: AuditAction.ANONYMIZE_PII,
+    })
+
     return {}
   })
 }
-
-const selectFields = {
-  id: true,
-  prenom: true,
-  nom: true,
-  email: true,
-  telephone: true,
-  emailEncrypted: true,
-  telephoneEncrypted: true,
-  billetId: true,
-  billet: { select: { reference: true } },
-} as const
