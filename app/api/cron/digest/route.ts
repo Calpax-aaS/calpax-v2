@@ -1,26 +1,20 @@
 import { basePrisma } from '@/lib/db/base'
 import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulatory/alerts'
 import { sendDigestEmail } from '@/lib/email/digest'
+import { verifyCronRequest } from '@/lib/auth/cron'
 import { logger } from '@/lib/logger'
+
+// 6 day cooldown: weekly schedule in vercel.json (Mon 07:00 UTC).
+const MIN_INTERVAL_MS = 6 * 24 * 60 * 60 * 1000
 
 /**
  * Weekly digest cron endpoint.
  * Called by Vercel Cron every Monday at 07:00 UTC.
- * Requires Authorization: Bearer <CRON_SECRET> header.
+ * Requires Authorization: Bearer <CRON_SECRET> header + per-endpoint cooldown.
  */
 export async function GET(request: Request): Promise<Response> {
-  const authHeader = request.headers.get('Authorization')
-  const cronSecret = process.env.CRON_SECRET
-
-  if (!cronSecret) {
-    logger.error('CRON_SECRET is not configured')
-    return Response.json({ error: 'Server misconfiguration' }, { status: 500 })
-  }
-
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    logger.warn('Unauthorized cron digest request')
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const guard = await verifyCronRequest(request, 'digest', { minIntervalMs: MIN_INTERVAL_MS })
+  if (!guard.ok) return guard.response
 
   const today = new Date()
 
