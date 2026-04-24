@@ -322,7 +322,16 @@ export default async function HomePage({ params }: Props) {
             label={t('kpi.wind')}
             value={maxWindKmh > 0 ? `${maxWindKmh}` : t('kpi.windEmpty')}
             sub={maxWindKmh > 0 ? t('kpi.windUnit') : null}
-            icon={maxWindKmh > 0 ? <WindArrow speed={maxWindKmh} size={16} /> : null}
+            icon={
+              maxWindKmh > 0 ? (
+                <WindArrow
+                  speed={maxWindKmh}
+                  unit="km/h"
+                  label={t('windAriaLabelKpi', { speed: maxWindKmh })}
+                  size={16}
+                />
+              ) : null
+            }
             tone={maxWindKmh >= seuilVent ? 'warn' : 'default'}
           />
           <KpiTile

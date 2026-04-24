@@ -730,6 +730,8 @@
       "MARGINAL": "Limite"
     },
     "meteoAlert": "Vent prévu au-dessus du seuil",
+    "windAriaLabel": "Vent maximum {speed} km/h à {altitude}",
+    "windAriaLabelKpi": "Vent maximum {speed} km/h",
     "meteoAlertAction": "Annuler ce vol ?",
     "cancelMeteo": "Annuler (météo)",
     "cancelMeteoConfirm": "Annuler ce vol pour raison météo ? Les passagers seront désaffectés et les contacts notifiés par email.",
