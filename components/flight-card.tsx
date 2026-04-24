@@ -116,6 +116,7 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
             max={flight.passagerMax}
             tone={CAPACITY_TONE(flight.passagerCount, flight.passagerMax)}
             showText
+            ariaLabel={t('capacity')}
           />
         </div>
       </div>
@@ -151,6 +152,7 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
             max={flight.massBudget.maxPayload}
             tone={MASS_TONE[flight.massBudget.status]}
             height={6}
+            ariaLabel={t('massLabel')}
           />
           <div className="flex justify-between text-[11px]">
             <MonoValue value={flight.massBudget.totalWeight} unit="kg" size={11} />
@@ -172,6 +174,10 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
             weather={flight.weather}
             creneauLabel={tv(`creneau.${flight.creneau}`)}
             goNogoLabel={t(`goNogo.${flight.weather.goNogo}`)}
+            windLabel={t('windAriaLabel', {
+              speed: flight.weather.maxWindKmh,
+              altitude: flight.weather.maxWindAltitude,
+            })}
           />
         </Suspense>
       )}
@@ -206,10 +212,12 @@ function WeatherStrip({
   weather,
   creneauLabel,
   goNogoLabel,
+  windLabel,
 }: {
   weather: FlightCardWeather
   creneauLabel: string
   goNogoLabel: string
+  windLabel: string
 }) {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md bg-sky-50 px-3 py-2 text-sm">
@@ -217,7 +225,14 @@ function WeatherStrip({
         {creneauLabel} · {weather.creneauRange}
       </MonoLabel>
       <div className="flex items-center gap-1.5 text-sky-700">
-        <WindArrow direction={0} speed={weather.maxWindKmh} size={16} className="text-sky-500" />
+        <WindArrow
+          direction={0}
+          speed={weather.maxWindKmh}
+          unit="km/h"
+          label={windLabel}
+          size={16}
+          className="text-sky-500"
+        />
         <MonoValue value={weather.maxWindKmh} unit="km/h" size={12} />
         <span className="text-[10px] text-sky-400">({weather.maxWindAltitude})</span>
       </div>

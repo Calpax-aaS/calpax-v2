@@ -1,26 +1,35 @@
 /**
- * Flèche de vent — direction en degrés (0 = Nord), vitesse en nœuds.
- * Une barbule supplémentaire apparaît au-dessus de 12 kt (intensité).
+ * Flèche de vent — direction en degrés (0 = Nord), vitesse dans l'unité
+ * demandée par l'appelant (par défaut kt). Une barbule supplémentaire
+ * apparaît au-dessus de 12 kt d'intensité relative (pour illustrer fort
+ * vent, peu importe l'unité affichée).
  */
 export function WindArrow({
   direction = 0,
   speed = 0,
   size = 22,
+  unit = 'kt',
+  label,
   className,
 }: {
   direction?: number
   speed?: number
   size?: number
+  unit?: string
+  /** Override complet du aria-label. Si omis, construit depuis speed/unit/direction. */
+  label?: string
   className?: string
 }) {
   const intensity = Math.min(1, speed / 25)
+  const ariaLabel = label ?? `${Math.round(speed)} ${unit}, ${Math.round(direction)}°`
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
       className={className}
-      aria-label={`Vent ${Math.round(speed)}kt ${Math.round(direction)}°`}
+      role="img"
+      aria-label={ariaLabel}
     >
       <g transform={`rotate(${direction} 12 12)`}>
         <line x1="12" y1="20" x2="12" y2="5" stroke="currentColor" strokeWidth="1.4" />

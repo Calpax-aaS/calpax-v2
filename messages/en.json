@@ -742,6 +742,8 @@
       "flightsSub": "Today"
     },
     "meteoAlert": "Wind forecast above threshold",
+    "windAriaLabel": "Max wind {speed} km/h at {altitude}",
+    "windAriaLabelKpi": "Max wind {speed} km/h",
     "meteoAlertAction": "Cancel this flight?",
     "cancelMeteo": "Cancel (weather)",
     "cancelMeteoConfirm": "Cancel this flight due to weather? Passengers will be unassigned and contacts notified by email.",
