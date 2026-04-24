@@ -42,7 +42,6 @@ async function seedBilletPassager(exploitantId: string) {
       billetId: billet.id,
       prenom: 'Jean',
       nom: 'Dupont',
-      email: 'jean.dupont@test.local',
       emailEncrypted: encrypt('jean.dupont@test.local'),
       poidsEncrypted: encrypt('78'),
     },
@@ -122,8 +121,8 @@ describe('rgpd audit trail', () => {
     const after = await basePrisma.passager.findUniqueOrThrow({ where: { id: passager.id } })
     expect(after.prenom).toBe('SUPPRIME')
     expect(after.nom).toBe('SUPPRIME')
-    expect(after.email).toBeNull()
     expect(after.emailEncrypted).toBeNull()
+    expect(after.telephoneEncrypted).toBeNull()
     expect(after.poidsEncrypted).toBeNull()
   })
 

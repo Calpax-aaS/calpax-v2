@@ -26,10 +26,8 @@ export default async function BilletEditPage({ params }: Props) {
       passagers = billet.passagers.map((p) => ({
         prenom: p.prenom,
         nom: p.nom,
-        // Prefer encrypted column; fall back to plaintext for rows predating
-        // the #4 backfill.
-        email: safeDecryptString(p.emailEncrypted, p.email) ?? '',
-        telephone: safeDecryptString(p.telephoneEncrypted, p.telephone) ?? '',
+        email: safeDecryptString(p.emailEncrypted) ?? '',
+        telephone: safeDecryptString(p.telephoneEncrypted) ?? '',
         age: p.age != null ? String(p.age) : '',
         poids: p.poidsEncrypted
           ? (() => {

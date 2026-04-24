@@ -22,34 +22,11 @@ const selectFields = {
   id: true,
   prenom: true,
   nom: true,
-  email: true,
-  telephone: true,
   emailEncrypted: true,
   telephoneEncrypted: true,
   billetId: true,
   billet: { select: { reference: true } },
 } as const
-
-/**
- * Reads the encrypted column first (authoritative post-#4 backfill) and
- * falls back to the legacy plaintext column until the follow-up migration
- * drops it.
- */
-function readPassagerEmail(p: {
-  emailEncrypted: string | null
-  email: string | null
-}): string | null {
-  if (p.emailEncrypted) return safeDecryptString(p.emailEncrypted, p.email)
-  return p.email
-}
-
-function readPassagerPhone(p: {
-  telephoneEncrypted: string | null
-  telephone: string | null
-}): string | null {
-  if (p.telephoneEncrypted) return safeDecryptString(p.telephoneEncrypted, p.telephone)
-  return p.telephone
-}
 
 export async function searchPassagers(query: string): Promise<PassagerSearchResult[]> {
   return requireAuth(async () => {
@@ -81,8 +58,8 @@ export async function searchPassagers(query: string): Promise<PassagerSearchResu
 
     const lowerQuery = query.toLowerCase()
     const emailMatches = recentForPiiScan.filter((p) => {
-      const email = readPassagerEmail(p)
-      const phone = readPassagerPhone(p)
+      const email = safeDecryptString(p.emailEncrypted)
+      const phone = safeDecryptString(p.telephoneEncrypted)
       return (
         (email?.toLowerCase().includes(lowerQuery) ?? false) || (phone?.includes(query) ?? false)
       )
@@ -99,8 +76,8 @@ export async function searchPassagers(query: string): Promise<PassagerSearchResu
       id: p.id,
       prenom: p.prenom,
       nom: p.nom,
-      email: readPassagerEmail(p),
-      telephone: readPassagerPhone(p),
+      email: safeDecryptString(p.emailEncrypted),
+      telephone: safeDecryptString(p.telephoneEncrypted),
       billetReference: p.billet.reference,
       billetId: p.billetId,
     }))
@@ -130,8 +107,8 @@ export async function exportPassagerData(passagerId: string): Promise<string> {
       passager: {
         prenom: passager.prenom,
         nom: passager.nom,
-        email: readPassagerEmail(passager),
-        telephone: readPassagerPhone(passager),
+        email: safeDecryptString(passager.emailEncrypted),
+        telephone: safeDecryptString(passager.telephoneEncrypted),
         age: passager.age,
         poids,
         pmr: passager.pmr,
@@ -174,8 +151,6 @@ export async function anonymisePassager(passagerId: string): Promise<{ error?: s
       data: {
         prenom: 'SUPPRIME',
         nom: 'SUPPRIME',
-        email: null,
-        telephone: null,
         emailEncrypted: null,
         telephoneEncrypted: null,
         age: null,
