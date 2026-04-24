@@ -842,6 +842,47 @@
       "unlinkSuccess": "Compte delie",
       "unlinkError": "Impossible de delier ce compte",
       "linkError": "Impossible de lier ce compte"
+    },
+    "twoFactor": {
+      "title": "Double authentification (2FA)",
+      "active": "Active",
+      "description": "Ajoute une étape de vérification à votre connexion via une application d'authentification (Google Authenticator, 1Password, Authy, etc.).",
+      "passwordLabel": "Mot de passe actuel",
+      "enableButton": "Activer la 2FA",
+      "enabling": "Activation…",
+      "enableError": "Impossible d'activer la 2FA. Vérifiez votre mot de passe.",
+      "setupStep1": "Scannez ce QR code avec votre application d'authentification.",
+      "qrAlt": "QR code pour configurer la 2FA dans votre application d'authentification",
+      "manualEntry": "Saisie manuelle (si vous ne pouvez pas scanner)",
+      "backupCodesTitle": "Codes de secours à usage unique",
+      "backupCodesWarning": "Conservez ces codes dans un endroit sûr. Chacun ne peut servir qu'une fois si vous perdez l'accès à votre application d'authentification. Ils ne seront plus affichés.",
+      "copyBackupCodes": "Copier les codes",
+      "backupCodesCopied": "Codes copiés dans le presse-papier",
+      "setupStep2": "Pour valider l'activation, entrez le code à 6 chiffres affiché dans votre application.",
+      "codeLabel": "Code à 6 chiffres",
+      "verifyButton": "Valider et activer",
+      "verifying": "Vérification…",
+      "verifyError": "Code invalide. Réessayez.",
+      "verifySuccess": "Double authentification activée",
+      "verifiedHint": "C'est bon. Votre prochaine connexion demandera un code à 6 chiffres.",
+      "enabledHint": "La 2FA est active sur votre compte. Pour la désactiver, confirmez votre mot de passe.",
+      "disableButton": "Désactiver la 2FA",
+      "disabling": "Désactivation…",
+      "disableConfirm": "Désactiver la double authentification ? Vous pourrez la réactiver plus tard.",
+      "disableSuccess": "Double authentification désactivée",
+      "disableError": "Impossible de désactiver la 2FA. Vérifiez votre mot de passe."
     }
+  },
+  "twoFactor": {
+    "title": "Deuxième facteur",
+    "totpHint": "Entrez le code à 6 chiffres affiché dans votre application d'authentification.",
+    "backupHint": "Entrez l'un de vos codes de secours (usage unique).",
+    "codeLabel": "Code à 6 chiffres",
+    "backupCodeLabel": "Code de secours",
+    "verify": "Valider",
+    "invalidCode": "Code invalide. Réessayez.",
+    "useBackup": "Je n'ai pas accès à mon application — utiliser un code de secours",
+    "useTotp": "Revenir au code de l'application",
+    "backToSignin": "Retour à la page de connexion"
   }
 }

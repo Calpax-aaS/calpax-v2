@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { ChangePasswordForm } from '@/components/change-password-form'
 import { LinkedAccounts } from '@/components/linked-accounts'
 import { MySessionsCard } from '@/components/my-sessions-card'
+import { TwoFactorCard } from '@/components/auth/two-factor-card'
 import { getMySessions } from '@/lib/actions/session'
 
 export default async function ProfilPage() {
@@ -93,6 +94,8 @@ export default async function ProfilPage() {
         <LinkedAccounts linkedProviders={linkedProviders} hasCredential={hasCredential} />
 
         <ChangePasswordForm />
+
+        {hasCredential && <TwoFactorCard enabled={user.twoFactorEnabled === true} />}
 
         <MySessionsCard sessions={sessions} />
       </div>

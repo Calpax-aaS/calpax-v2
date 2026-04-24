@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { magicLink } from 'better-auth/plugins/magic-link'
 import { admin } from 'better-auth/plugins/admin'
+import { twoFactor } from 'better-auth/plugins/two-factor'
 import { basePrisma } from '@/lib/db/base'
 import { authBeforeHook, authAfterHook } from '@/lib/auth/hooks'
 import { Resend } from 'resend'
@@ -90,6 +91,22 @@ export const auth = betterAuth({
       },
     }),
     admin(),
+    // #15: TOTP 2FA via authenticator apps (Google Authenticator, 1Password…).
+    // Backup codes are encrypted at rest; the TOTP secret is encrypted by
+    // the plugin using BETTER_AUTH_SECRET. Setup + signin challenge are
+    // wired in the profile page and /auth/two-factor respectively.
+    twoFactor({
+      issuer: 'Calpax',
+      totpOptions: {
+        period: 30,
+        digits: 6,
+      },
+      backupCodeOptions: {
+        amount: 10,
+        length: 10,
+        storeBackupCodes: 'encrypted',
+      },
+    }),
   ],
   // Request lifecycle hooks for audit logging + account lockout.
   // Defined in lib/auth/hooks.ts.
