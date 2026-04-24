@@ -76,3 +76,29 @@ test('Cache-Control: no-store on protected app routes', async ({ page }) => {
   expect(response, 'expected a response for the dashboard').not.toBeNull()
   expect(response!.headers()['cache-control']).toContain('no-store')
 })
+
+/**
+ * API routes that serve PDFs embedding decrypted passenger PII
+ * (poids, email, telephone). `requireRole` runs before the DB lookup,
+ * so a bogus vol id is enough to prove an EQUIPIER is rejected before
+ * any data would be exposed.
+ */
+const PII_PDF_API_ROUTES = ['/api/vols/fake-vol-id/pve', '/api/vols/fake-vol-id/fiche-vol']
+
+test.describe.serial('RBAC — API PII PDFs', () => {
+  test('EQUIPIER is refused on PVE and fiche-vol APIs', async ({ page, request }) => {
+    await signIn(page, 'equipier@cameronfrance.com')
+    // Piggy-back on the session cookie from the Playwright page context.
+    const cookies = await page.context().cookies()
+    const cookieHeader = cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
+    for (const route of PII_PDF_API_ROUTES) {
+      const res = await request.get(route, { headers: { cookie: cookieHeader } })
+      expect(res.status(), `EQUIPIER should not reach ${route}`).not.toBe(200)
+      // The handler may surface ForbiddenError as 403 or (without a global
+      // error boundary) bubble to 500. Either way, no PDF body is returned.
+      const ct = res.headers()['content-type'] ?? ''
+      expect(ct, `${route} must not return a PDF to EQUIPIER`).not.toContain('application/pdf')
+    }
+  })
+})
