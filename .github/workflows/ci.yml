@@ -218,19 +218,6 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
 
-      # -----------------------------------------------------------------------
-      # TEMPORARY (#4 / follow-up #67): one-off backfill to encrypt existing
-      # plaintext Passager email/telephone into the new encrypted columns.
-      # Idempotent — rows already encrypted are skipped.
-      # REMOVE THIS STEP in the #67 cleanup PR once the plaintext columns
-      # are dropped.
-      # -----------------------------------------------------------------------
-      - name: Backfill passager PII (#4 — remove after #67)
-        run: pnpm exec tsx scripts/backfill-passager-pii.ts
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
-
       - name: Notify Vercel — migrate
         if: always()
         uses: 'vercel/repository-dispatch/actions/status@v1'

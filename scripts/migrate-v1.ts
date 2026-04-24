@@ -656,8 +656,14 @@ async function migratePassagers(
           billetId,
           prenom: str(row['prenom']).trim() || 'Passager',
           nom: str(row['nom']).trim() || `v1#${v1Id}`,
-          email: nullIfEmpty(row['email']),
-          telephone: nullIfEmpty(row['telephone']),
+          emailEncrypted: (() => {
+            const v = nullIfEmpty(row['email'])
+            return v ? encrypt(v) : null
+          })(),
+          telephoneEncrypted: (() => {
+            const v = nullIfEmpty(row['telephone'])
+            return v ? encrypt(v) : null
+          })(),
           age: row['age'] ? parseInt(str(row['age']), 10) || null : null,
           poidsEncrypted,
           pmr: row['pmr'] === '1',
