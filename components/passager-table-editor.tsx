@@ -122,7 +122,14 @@ export function PassagerTableEditor({ passagers, onChange }: Props) {
                 />
               </TableCell>
               <TableCell>
-                <Button type="button" variant="ghost" size="sm" onClick={() => removeRow(i)}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeRow(i)}
+                  aria-label={t('removeRow')}
+                  title={t('removeRow')}
+                >
                   X
                 </Button>
               </TableCell>
@@ -131,7 +138,7 @@ export function PassagerTableEditor({ passagers, onChange }: Props) {
         </TableBody>
       </Table>
       <Button type="button" variant="outline" size="sm" onClick={addRow}>
-        + Passager
+        + {t('addRow')}
       </Button>
     </div>
   )

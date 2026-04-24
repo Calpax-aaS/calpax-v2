@@ -586,7 +586,9 @@
       "age": "Age",
       "poids": "Weight (kg)",
       "pmr": "PRM"
-    }
+    },
+    "addRow": "Add passenger",
+    "removeRow": "Remove passenger"
   },
   "paiements": {
     "title": "Payments",
