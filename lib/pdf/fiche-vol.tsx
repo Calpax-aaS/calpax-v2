@@ -372,7 +372,7 @@ function KV({ label, value }: { label: string; value: string }) {
 // ---------------------------------------------------------------------------
 
 function Page1({ data }: { data: FicheVolData }) {
-  const { exploitant, vol, ballon, pilote, passagers, temperatureCelsius, isPve } = data
+  const { exploitant, vol, ballon, pilote, passagers, temperatureCelsius } = data
 
   const devis = calculerDevisMasse({
     ballon: {

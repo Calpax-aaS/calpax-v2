@@ -78,10 +78,6 @@ export function InvitationForm({
     }
   }
 
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR')
-  }
-
   return (
     <div className="space-y-6">
       <Card>

@@ -12,7 +12,7 @@ import { logger } from '@/lib/logger'
  * already anonymised stay anonymised (replacement strings are the same).
  *
  * What's anonymised:
- *  - Passager: prenom, nom, email, telephone, poidsEncrypted → scrubbed
+ *  - Passager: prenom, nom, emailEncrypted, telephoneEncrypted, poidsEncrypted → scrubbed
  *  - Billet: payeurCiv/Prenom/Nom/Email/Telephone/Adresse/Cp/Ville → scrubbed
  *
  * What's preserved for audit / financial records:
@@ -52,8 +52,6 @@ export async function GET(request: Request): Promise<Response> {
       data: {
         prenom: ANONYMIZED_FIRSTNAME,
         nom: ANONYMIZED_NAME,
-        email: null,
-        telephone: null,
         emailEncrypted: null,
         telephoneEncrypted: null,
         poidsEncrypted: null,

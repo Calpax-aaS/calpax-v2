@@ -211,6 +211,8 @@ enum AuditAction {
   PASSWORD_RESET
   PASSWORD_CHANGED
   ACCOUNT_LOCKED
+  EXPORT_PII
+  ANONYMIZE_PII
 }
 
 enum TypePlannif {
@@ -366,15 +368,13 @@ model Passager {
   billetId        String
   billet          Billet     @relation(fields: [billetId], references: [id], onDelete: Cascade)
 
-  prenom          String
-  nom             String
-  email           String?
-  telephone       String?
+  prenom             String
+  nom                String
   emailEncrypted     String?
   telephoneEncrypted String?
-  age             Int?
-  poidsEncrypted  String?
-  pmr             Boolean    @default(false)
+  age                Int?
+  poidsEncrypted     String?
+  pmr                Boolean    @default(false)
 
   volId           String?
   vol             Vol?       @relation(fields: [volId], references: [id])
