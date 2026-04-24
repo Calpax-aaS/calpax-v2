@@ -1,16 +1,22 @@
 'use client'
 
-import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { Eye } from 'lucide-react'
+import { stopImpersonation } from '@/lib/admin/impersonation-actions'
 
 type Props = {
   /**
    * Name displayed after "Connecté en tant que" — typically the impersonated
    * user's name when Better Auth's admin plugin is active, or an exploitant
-   * name for tenant-level impersonation.
+   * name for tenant-level impersonation (#59).
    */
   targetName: string
+  /**
+   * Distinguishes user-level impersonation (Better Auth admin plugin) from
+   * exploitant-level impersonation (#59 cookie). Drives whether "Revenir"
+   * runs the cookie-clearing server action or just links back to /admin.
+   */
+  kind: 'user' | 'exploitant'
 }
 
 /**
@@ -22,9 +28,13 @@ type Props = {
  * ~ 7.5:1 luminance ratio — WCAG AAA. Sticky top-0 z-40 so it stays
  * visible above the mobile header and content scroll.
  */
-export function ImpersonationBanner({ targetName }: Props) {
+export function ImpersonationBanner({ targetName, kind }: Props) {
   const locale = useLocale()
   const t = useTranslations('impersonation')
+
+  async function handleExit() {
+    await stopImpersonation(locale)
+  }
 
   return (
     <div
@@ -35,15 +45,27 @@ export function ImpersonationBanner({ targetName }: Props) {
       <div className="flex items-center gap-2">
         <Eye className="h-4 w-4 shrink-0" aria-hidden="true" />
         <span>
-          {t('connectedAs')} <strong>{targetName}</strong>
+          {kind === 'exploitant' ? t('connectedAsExploitant') : t('connectedAs')}{' '}
+          <strong>{targetName}</strong>
         </span>
       </div>
-      <Link
-        href={`/${locale}/admin`}
-        className="whitespace-nowrap rounded-md bg-amber-600 px-3 py-1.5 text-sm font-bold text-white transition-colors hover:bg-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-      >
-        {t('exit')}
-      </Link>
+      {kind === 'exploitant' ? (
+        <form action={handleExit}>
+          <button
+            type="submit"
+            className="whitespace-nowrap rounded-md bg-amber-600 px-3 py-1.5 text-sm font-bold text-white transition-colors hover:bg-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          >
+            {t('exit')}
+          </button>
+        </form>
+      ) : (
+        <a
+          href={`/${locale}/admin`}
+          className="whitespace-nowrap rounded-md bg-amber-600 px-3 py-1.5 text-sm font-bold text-white transition-colors hover:bg-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          {t('exit')}
+        </a>
+      )}
     </div>
   )
 }

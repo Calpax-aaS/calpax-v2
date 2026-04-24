@@ -10,8 +10,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { startImpersonation } from '@/lib/admin/impersonation-actions'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -105,9 +105,16 @@ export default async function AdminDashboardPage({ params }: Props) {
                     <TableCell className="text-center">{exp._count.users}</TableCell>
                     <TableCell className="text-center">{exp._count.vols}</TableCell>
                     <TableCell>
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/${locale}?impersonate=${exp.id}`}>{t('impersonate')}</Link>
-                      </Button>
+                      <form
+                        action={async () => {
+                          'use server'
+                          await startImpersonation(exp.id, locale)
+                        }}
+                      >
+                        <Button type="submit" variant="outline" size="sm">
+                          {t('impersonate')}
+                        </Button>
+                      </form>
                     </TableCell>
                   </TableRow>
                 ))}
