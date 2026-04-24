@@ -1,25 +1,20 @@
 import { basePrisma } from '@/lib/db/base'
 import { sendRappelEmail } from '@/lib/email/rappels'
+import { verifyCronRequest } from '@/lib/auth/cron'
 import { logger } from '@/lib/logger'
+
+// 20 hour cooldown: daily schedule in vercel.json (07:00 UTC). Slightly under
+// 24h to give Vercel some scheduling tolerance.
+const MIN_INTERVAL_MS = 20 * 60 * 60 * 1000
 
 /**
  * Daily billet reminder cron endpoint.
  * Called by Vercel Cron every day at 07:00 UTC.
- * Requires Authorization: Bearer <CRON_SECRET> header.
+ * Requires Authorization: Bearer <CRON_SECRET> header + per-endpoint cooldown.
  */
 export async function GET(request: Request): Promise<Response> {
-  const authHeader = request.headers.get('Authorization')
-  const cronSecret = process.env.CRON_SECRET
-
-  if (!cronSecret) {
-    logger.error('CRON_SECRET is not configured')
-    return Response.json({ error: 'Server misconfiguration' }, { status: 500 })
-  }
-
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    logger.warn('Unauthorized cron rappels request')
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const guard = await verifyCronRequest(request, 'rappels', { minIntervalMs: MIN_INTERVAL_MS })
+  if (!guard.ok) return guard.response
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)

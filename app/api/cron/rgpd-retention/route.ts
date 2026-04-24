@@ -1,7 +1,12 @@
 import { AuditAction } from '@prisma/client'
 import { basePrisma } from '@/lib/db/base'
 import { writeAudit } from '@/lib/audit/write'
+import { verifyCronRequest } from '@/lib/auth/cron'
 import { logger } from '@/lib/logger'
+
+// 6 day cooldown: weekly schedule in vercel.json (Mon 06:00 UTC). A leaked
+// secret can only trigger a full scrub pass at that cadence, not in a loop.
+const MIN_INTERVAL_MS = 6 * 24 * 60 * 60 * 1000
 
 /**
  * RGPD 5-year retention cron. Anonymises PII on Billets + Passagers whose
@@ -23,18 +28,10 @@ import { logger } from '@/lib/logger'
  * Requires `Authorization: Bearer $CRON_SECRET`.
  */
 export async function GET(request: Request): Promise<Response> {
-  const authHeader = request.headers.get('Authorization')
-  const cronSecret = process.env.CRON_SECRET
-
-  if (!cronSecret) {
-    logger.error('CRON_SECRET is not configured')
-    return Response.json({ error: 'Server misconfiguration' }, { status: 500 })
-  }
-
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    logger.warn('Unauthorized rgpd-retention cron request')
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const guard = await verifyCronRequest(request, 'rgpd-retention', {
+    minIntervalMs: MIN_INTERVAL_MS,
+  })
+  if (!guard.ok) return guard.response
 
   const now = new Date()
   const cutoff = new Date(now)

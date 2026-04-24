@@ -3,29 +3,26 @@ import { fetchWeatherFromAPI } from '@/lib/weather/open-meteo'
 import { parseOpenMeteoResponse, type OpenMeteoResponse } from '@/lib/weather/parse'
 import { extractCreneauHours } from '@/lib/weather/extract'
 import { summarizeWeather } from '@/lib/weather/classify'
+import { verifyCronRequest } from '@/lib/auth/cron'
 import { logger } from '@/lib/logger'
 
 const CACHE_TTL_MS = 30 * 60 * 1000 // 30 minutes
 
+// 15 min cooldown: supports any cadence ≥ every-15-min, caps abuse of a leaked
+// CRON_SECRET to ~96 invocations/day even though current Vercel schedule is
+// once-daily at 05:00 UTC (cf. vercel.json).
+const MIN_INTERVAL_MS = 15 * 60 * 1000
+
 /**
  * Weather alert cron endpoint.
- * Runs every 30 minutes between 03:00 and 18:00 UTC.
  * Flags or clears meteoAlert on vols scheduled for today based on wind threshold.
- * Requires Authorization: Bearer <CRON_SECRET> header.
+ * Requires Authorization: Bearer <CRON_SECRET> header + per-endpoint cooldown.
  */
 export async function GET(request: Request): Promise<Response> {
-  const authHeader = request.headers.get('Authorization')
-  const cronSecret = process.env.CRON_SECRET
-
-  if (!cronSecret) {
-    logger.error('CRON_SECRET is not configured')
-    return Response.json({ error: 'Server misconfiguration' }, { status: 500 })
-  }
-
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    logger.warn('Unauthorized cron meteo-alert request')
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const guard = await verifyCronRequest(request, 'meteo-alert', {
+    minIntervalMs: MIN_INTERVAL_MS,
+  })
+  if (!guard.ok) return guard.response
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)

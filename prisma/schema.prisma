@@ -553,3 +553,13 @@ model WeatherCache {
   @@index([exploitantId])
   @@map("weather_cache")
 }
+
+// Tracks successful cron endpoint invocations so the route handlers can
+// enforce a per-endpoint cooldown on top of the Bearer-secret check.
+// Not tenant-scoped: crons run at the platform level, one row per endpoint.
+model CronInvocation {
+  endpoint     String   @id
+  lastInvokedAt DateTime @default(now())
+
+  @@map("cron_invocation")
+}
