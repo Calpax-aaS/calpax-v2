@@ -3,7 +3,7 @@
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
 import { db } from '@/lib/db'
-import { decrypt, safeDecryptString } from '@/lib/crypto'
+import { safeDecryptInt, safeDecryptString } from '@/lib/crypto'
 
 export type PassagerSearchResult = {
   id: string
@@ -89,7 +89,7 @@ export async function searchPassagers(query: string): Promise<PassagerSearchResu
       billetReference: p.billet.reference,
       billetId: p.billetId,
     }))
-  }) as Promise<PassagerSearchResult[]>
+  })
 }
 
 export async function exportPassagerData(passagerId: string): Promise<string> {
@@ -100,15 +100,7 @@ export async function exportPassagerData(passagerId: string): Promise<string> {
       include: { billet: { include: { paiements: true } } },
     })
 
-    const poids = passager.poidsEncrypted
-      ? (() => {
-          try {
-            return parseInt(decrypt(passager.poidsEncrypted))
-          } catch {
-            return null
-          }
-        })()
-      : null
+    const poids = passager.poidsEncrypted ? safeDecryptInt(passager.poidsEncrypted, 0) : null
 
     const data = {
       passager: {
@@ -134,7 +126,7 @@ export async function exportPassagerData(passagerId: string): Promise<string> {
     }
 
     return JSON.stringify(data, null, 2)
-  }) as Promise<string>
+  })
 }
 
 export async function anonymisePassager(passagerId: string): Promise<{ error?: string }> {

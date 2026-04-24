@@ -14,10 +14,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const creneau = vol.creneau.toLowerCase()
     const filename = `${dateStr}-${creneau}-${vol.immatriculation}-PVE.pdf`
 
+    // PVE PDF embeds passenger names + weights (PII). Disable any caching so
+    // shared caches and the browser disk cache never persist a copy.
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'private, no-store, no-cache, must-revalidate',
       },
     })
   })
