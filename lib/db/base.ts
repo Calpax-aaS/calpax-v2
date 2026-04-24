@@ -1,6 +1,7 @@
 import { Pool } from 'pg'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { logger } from '@/lib/logger'
 
 declare global {
   var __prismaBase: PrismaClient | undefined
@@ -15,12 +16,13 @@ function createClient(): PrismaClient {
     !connectionString.includes('127.0.0.1') && !connectionString.includes('localhost')
   const caCert = process.env.SUPABASE_CA_CERT?.replace(/\\n/g, '\n')
   if (isRemote) {
-    console.log(
-      `[db] SSL mode: ${caCert ? 'CA cert verified (rejectUnauthorized: true)' : 'unverified (rejectUnauthorized: false)'}`,
+    logger.info(
+      { sslVerified: !!caCert },
+      caCert ? 'db connection: CA cert verified' : 'db connection: TLS without CA verification',
     )
     if (!caCert && process.env.NODE_ENV === 'production') {
-      console.warn(
-        '[db] WARNING: Remote DB connection without CA cert verification. Set SUPABASE_CA_CERT for secure connections.',
+      logger.warn(
+        'db connection: remote DB without CA cert verification — set SUPABASE_CA_CERT for secure connections',
       )
     }
   }

@@ -6,7 +6,7 @@ import { requireRole } from '@/lib/auth/requireRole'
 import { writeAudit } from '@/lib/audit/write'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
-import { decrypt, safeDecryptString } from '@/lib/crypto'
+import { safeDecryptInt, safeDecryptString } from '@/lib/crypto'
 
 export type PassagerSearchResult = {
   id: string
@@ -93,15 +93,7 @@ export async function exportPassagerData(passagerId: string): Promise<string> {
       include: { billet: { include: { paiements: true } } },
     })
 
-    const poids = passager.poidsEncrypted
-      ? (() => {
-          try {
-            return parseInt(decrypt(passager.poidsEncrypted))
-          } catch {
-            return null
-          }
-        })()
-      : null
+    const poids = passager.poidsEncrypted ? safeDecryptInt(passager.poidsEncrypted, 0) : null
 
     const data = {
       passager: {

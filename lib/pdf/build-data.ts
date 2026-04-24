@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { decrypt } from '@/lib/crypto'
+import { safeDecryptInt } from '@/lib/crypto'
 import { getWeather } from '@/lib/weather/cache'
 import { extractCreneauHours } from '@/lib/weather/extract'
 import { summarizeWeather } from '@/lib/weather/classify'
@@ -35,13 +35,13 @@ export async function buildFicheVolData(
     },
   })
 
-  const pilotePoids = vol.pilote.poidsEncrypted ? parseInt(decrypt(vol.pilote.poidsEncrypted)) : 80
+  const pilotePoids = safeDecryptInt(vol.pilote.poidsEncrypted, 80)
 
   const passagers = vol.passagers.map((p) => ({
     prenom: p.prenom,
     nom: p.nom,
     age: p.age,
-    poids: p.poidsEncrypted ? parseInt(decrypt(p.poidsEncrypted)) : 0,
+    poids: safeDecryptInt(p.poidsEncrypted, 0),
     pmr: p.pmr,
     billetReference: p.billet.reference,
   }))
