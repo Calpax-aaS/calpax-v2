@@ -1,6 +1,7 @@
 {
   "impersonation": {
     "connectedAs": "Viewing as",
+    "connectedAsExploitant": "Viewing data for",
     "exit": "Exit"
   },
   "common": {

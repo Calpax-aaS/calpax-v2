@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
@@ -9,6 +9,10 @@ import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
 import { runWithContext } from '@/lib/context'
 import { db } from '@/lib/db'
 import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulatory/alerts'
+import {
+  IMPERSONATION_COOKIE_NAME,
+  verifyImpersonationCookie,
+} from '@/lib/auth/impersonation-cookie'
 import type { Alert } from '@/lib/regulatory/alerts'
 import type { UserRole } from '@/lib/context'
 
@@ -36,19 +40,42 @@ export default async function AppLayout({ children, params }: Props) {
   }
 
   const user = session.user as Record<string, unknown>
-  const exploitantId = user.exploitantId as string
+  const sessionExploitantId = user.exploitantId as string
   const role = (user.role as string as UserRole) ?? 'GERANT'
   const showAlerts = canSeeRegulatoryAlerts(role)
 
-  // Better Auth's admin plugin sets `session.session.impersonatedBy` when an
-  // ADMIN_CALPAX is impersonating another user. We show the banner on every
-  // page so the admin can't lose track of their operating context.
+  // Two flavours of impersonation can be active simultaneously, but only one
+  // wins for the layout banner — exploitant-level (cookie) takes precedence
+  // since it changes the data we render on this very page.
+  //
+  // 1. Better Auth admin plugin → user-level: `session.session.impersonatedBy`
+  // 2. ADMIN_CALPAX → exploitant cookie (#59): signed cookie carrying target
+  //    exploitantId; honoured by `requireAuth` for downstream queries.
   const sessionMeta = (session as unknown as { session?: { impersonatedBy?: string | null } })
     .session
-  const impersonatedBy = sessionMeta?.impersonatedBy ?? null
-  const impersonationTargetName = impersonatedBy
-    ? ((user.name as string) ?? (user.email as string) ?? '?')
-    : null
+  const userImpersonatedBy = sessionMeta?.impersonatedBy ?? null
+
+  let impersonationKind: 'user' | 'exploitant' | null = null
+  let impersonationTargetName: string | null = null
+  let exploitantId = sessionExploitantId
+
+  if (role === 'ADMIN_CALPAX') {
+    const cookieStore = await cookies()
+    const claim = verifyImpersonationCookie(cookieStore.get(IMPERSONATION_COOKIE_NAME)?.value)
+    if (claim && claim.adminUserId === session.user.id) {
+      impersonationKind = 'exploitant'
+      // Name is snapshotted in the cookie at start time; may go stale within
+      // the 4h TTL if the exploitant is renamed. Acceptable trade-off vs. a
+      // cross-tenant DB hit on every page render.
+      impersonationTargetName = claim.targetName
+      exploitantId = claim.targetExploitantId
+    }
+  }
+
+  if (!impersonationKind && userImpersonatedBy) {
+    impersonationKind = 'user'
+    impersonationTargetName = (user.name as string) ?? (user.email as string) ?? '?'
+  }
 
   const { criticalAlerts, exploitantName, pendingTicketsCount } = await runWithContext(
     {
@@ -79,7 +106,9 @@ export default async function AppLayout({ children, params }: Props) {
         pendingTicketsCount={pendingTicketsCount}
       />
       <SidebarInset>
-        {impersonationTargetName && <ImpersonationBanner targetName={impersonationTargetName} />}
+        {impersonationKind && impersonationTargetName && (
+          <ImpersonationBanner targetName={impersonationTargetName} kind={impersonationKind} />
+        )}
         <header className="sticky top-0 z-10 flex h-12 items-center gap-2 border-b border-sky-100 bg-card px-4 md:hidden">
           <SidebarTrigger />
           <CalpaxWordmark size={14} />

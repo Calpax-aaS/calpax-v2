@@ -233,6 +233,8 @@ enum AuditAction {
   ACCOUNT_LOCKED
   EXPORT_PII
   ANONYMIZE_PII
+  IMPERSONATE_START
+  IMPERSONATE_STOP
 }
 
 enum TypePlannif {
