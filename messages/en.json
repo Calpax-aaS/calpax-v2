@@ -842,6 +842,47 @@
       "unlinkSuccess": "Account unlinked",
       "unlinkError": "Unable to unlink this account",
       "linkError": "Unable to link this account"
+    },
+    "twoFactor": {
+      "title": "Two-factor authentication (2FA)",
+      "active": "Active",
+      "description": "Adds a verification step to your sign-in via an authenticator app (Google Authenticator, 1Password, Authy, etc.).",
+      "passwordLabel": "Current password",
+      "enableButton": "Enable 2FA",
+      "enabling": "Enabling…",
+      "enableError": "Unable to enable 2FA. Check your password.",
+      "setupStep1": "Scan this QR code with your authenticator app.",
+      "qrAlt": "QR code to set up 2FA in your authenticator app",
+      "manualEntry": "Manual entry (if you cannot scan)",
+      "backupCodesTitle": "Single-use backup codes",
+      "backupCodesWarning": "Save these codes somewhere safe. Each one can be used once if you lose access to your authenticator app. They won't be shown again.",
+      "copyBackupCodes": "Copy codes",
+      "backupCodesCopied": "Codes copied to clipboard",
+      "setupStep2": "To confirm, enter the 6-digit code shown in your authenticator app.",
+      "codeLabel": "6-digit code",
+      "verifyButton": "Confirm and enable",
+      "verifying": "Verifying…",
+      "verifyError": "Invalid code. Try again.",
+      "verifySuccess": "Two-factor authentication enabled",
+      "verifiedHint": "Done. Your next sign-in will ask for a 6-digit code.",
+      "enabledHint": "2FA is active on your account. To disable, confirm your password.",
+      "disableButton": "Disable 2FA",
+      "disabling": "Disabling…",
+      "disableConfirm": "Disable two-factor authentication? You can re-enable it later.",
+      "disableSuccess": "Two-factor authentication disabled",
+      "disableError": "Unable to disable 2FA. Check your password."
     }
+  },
+  "twoFactor": {
+    "title": "Second factor",
+    "totpHint": "Enter the 6-digit code shown in your authenticator app.",
+    "backupHint": "Enter one of your backup codes (single-use).",
+    "codeLabel": "6-digit code",
+    "backupCodeLabel": "Backup code",
+    "verify": "Verify",
+    "invalidCode": "Invalid code. Try again.",
+    "useBackup": "I don't have access to my app — use a backup code",
+    "useTotp": "Back to authenticator code",
+    "backToSignin": "Back to sign-in"
   }
 }
