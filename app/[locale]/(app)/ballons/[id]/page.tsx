@@ -65,7 +65,7 @@ export default async function BallonDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">Informations générales</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 {t('fields.immatriculation')}
@@ -127,7 +127,7 @@ export default async function BallonDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">CAMO &amp; Navigabilité</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             {ballon.camoOrganisme && (
               <div>
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">

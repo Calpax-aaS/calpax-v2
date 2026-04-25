@@ -55,7 +55,7 @@ export default async function BallonNewPage({ params }: Props) {
                 <Label htmlFor="volumeM3">{t('fields.volumeM3')} *</Label>
                 <Input id="volumeM3" name="volumeM3" type="number" min="1" required />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <Label htmlFor="nbPassagerMax">{t('fields.nbPassagerMax')} *</Label>
                   <Input id="nbPassagerMax" name="nbPassagerMax" type="number" min="1" required />
@@ -73,7 +73,7 @@ export default async function BallonNewPage({ params }: Props) {
                 <Input id="manexAnnexRef" name="manexAnnexRef" required />
                 <p className="text-xs text-muted-foreground">{t('fields.manexAnnexRefHint')}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <Label htmlFor="mtom">{t('fields.mtom')}</Label>
                   <Input id="mtom" name="mtom" type="number" min="0" />

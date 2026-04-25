@@ -109,7 +109,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
               required
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="nbPassagerMax" className={labelClassName}>
                 {t('fields.nbPassagerMax')} *
@@ -154,7 +154,7 @@ export function BallonEditForm({ locale, ballonId, ballon, performanceChart }: P
             />
             <p className="text-xs text-muted-foreground">{t('fields.manexAnnexRefHint')}</p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="mtom" className={labelClassName}>
                 {t('fields.mtom')}

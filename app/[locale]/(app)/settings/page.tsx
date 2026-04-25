@@ -99,7 +99,7 @@ export default async function SettingsPage() {
                 <Label htmlFor="adresse">{t('fields.adresse')}</Label>
                 <Input id="adresse" name="adresse" defaultValue={exploitant.adresse ?? ''} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <Label htmlFor="codePostal">{t('fields.codePostal')}</Label>
                   <Input
@@ -158,7 +158,7 @@ export default async function SettingsPage() {
               <CardTitle className="text-base">{t('meteoSection')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <Label htmlFor="meteoLatitude">{t('fields.meteoLatitude')}</Label>
                   <Input

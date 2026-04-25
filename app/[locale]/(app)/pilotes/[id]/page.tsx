@@ -63,7 +63,7 @@ export default async function PiloteDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">Identité</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             {pilote.email && (
               <div>
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -95,7 +95,7 @@ export default async function PiloteDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">Licence BFCL</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 {t('fields.licenceBfcl')}
@@ -127,7 +127,7 @@ export default async function PiloteDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">{t('sections.classesBfcl')}</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 {t('fields.classesBfcl')}
