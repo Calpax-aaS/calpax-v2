@@ -715,6 +715,7 @@
   "dashboard": {
     "title": "Today's flights",
     "noFlights": "No flights today",
+    "noFlightsHint": "Enjoy a quiet day, or plan ahead.",
     "goToPlanning": "View planning",
     "flightCount": "{count, plural, one {# flight} other {# flights}}",
     "passengers": "passengers",

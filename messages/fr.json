@@ -715,6 +715,7 @@
   "dashboard": {
     "title": "Vols du jour",
     "noFlights": "Aucun vol aujourd'hui",
+    "noFlightsHint": "Profitez d'une journée tranquille, ou planifiez la suite.",
     "goToPlanning": "Voir le planning",
     "flightCount": "{count, plural, one {# vol} other {# vols}}",
     "passengers": "passagers",

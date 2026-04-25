@@ -356,7 +356,8 @@ export default async function HomePage({ params }: Props) {
         {vols.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-sky-200 bg-card py-16 text-center">
             <Plane className="mb-4 h-12 w-12 text-sky-400" aria-hidden />
-            <p className="mb-4 text-sky-500">{t('noFlights')}</p>
+            <p className="mb-1 text-base font-medium text-sky-700">{t('noFlights')}</p>
+            <p className="mb-4 text-sm text-sky-500">{t('noFlightsHint')}</p>
             <Button asChild variant="outline">
               <Link href={`/${locale}/vols`}>{t('goToPlanning')}</Link>
             </Button>
