@@ -1,6 +1,7 @@
 import { Prisma, AuditAction } from '@prisma/client'
 import { basePrisma } from './base'
 import { tryGetContext } from '@/lib/context'
+import { logger } from '@/lib/logger'
 
 function modelAccessor(model: string): string {
   return model.charAt(0).toLowerCase() + model.slice(1)
@@ -132,7 +133,12 @@ export const auditExtension = Prisma.defineExtension({
             })
           }
         } catch (err) {
-          console.warn('audit-extension: failed to write audit row', err)
+          // Audit-trail integrity matters for RGPD compliance — surface as
+          // error so it shows up in monitoring instead of silently dropping.
+          logger.error(
+            { err, model, operation, exploitantId, userId },
+            'audit-extension: failed to write audit row',
+          )
         }
 
         return result

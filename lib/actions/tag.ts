@@ -33,9 +33,23 @@ export async function deleteTag(tagId: string): Promise<{ error?: string }> {
   })
 }
 
+// BilletTag is UNTENANTED (join table without exploitantId column), so the
+// tenant extension cannot auto-scope it. Validate that both ids belong to the
+// caller's tenant via tenant-scoped reads before touching the join row.
+async function assertBothInTenant(billetId: string, tagId: string): Promise<boolean> {
+  const [billet, tag] = await Promise.all([
+    db.billet.findUnique({ where: { id: billetId }, select: { id: true } }),
+    db.tag.findUnique({ where: { id: tagId }, select: { id: true } }),
+  ])
+  return billet !== null && tag !== null
+}
+
 export async function addTagToBillet(billetId: string, tagId: string): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
+    if (!(await assertBothInTenant(billetId, tagId))) {
+      return { error: 'Billet ou tag introuvable' }
+    }
     const { basePrisma } = await import('@/lib/db/base')
     try {
       await basePrisma.billetTag.create({ data: { billetId, tagId } })
@@ -53,6 +67,9 @@ export async function removeTagFromBillet(
 ): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
+    if (!(await assertBothInTenant(billetId, tagId))) {
+      return { error: 'Billet ou tag introuvable' }
+    }
     const { basePrisma } = await import('@/lib/db/base')
     await basePrisma.billetTag.delete({
       where: { billetId_tagId: { billetId, tagId } },
