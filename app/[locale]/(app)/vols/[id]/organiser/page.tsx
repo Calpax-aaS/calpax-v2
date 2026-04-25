@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
+import { formatDateLong } from '@/lib/format'
 import { safeDecryptInt } from '@/lib/crypto'
 import { calculerDevisMasse } from '@/lib/vol/devis-masse'
 import { parseQteGazFromConfig } from '@/lib/vol/parse-config-gaz'
@@ -24,15 +25,6 @@ import { BilletAssignCard } from '@/components/billet-assign-card'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
-}
-
-function formatDateLong(date: Date): string {
-  return date.toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  })
 }
 
 export default async function OrganiserVolPage({ params }: Props) {
@@ -119,7 +111,7 @@ export default async function OrganiserVolPage({ params }: Props) {
 
         {/* Session info */}
         <p className="text-sm text-muted-foreground">
-          {formatDateLong(vol.date)} — {t(`creneau.${vol.creneau}`)}
+          {formatDateLong(vol.date, locale)} — {t(`creneau.${vol.creneau}`)}
           {isMultiBallon && ` — ${sessionVols.length} ballons`}
         </p>
 

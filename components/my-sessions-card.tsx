@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { toast } from 'sonner'
 import { Loader2, Monitor, Smartphone } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { revokeMySession, type MySession } from '@/lib/actions/session'
+import { formatDateTimeShort } from '@/lib/format'
 
 type Props = {
   sessions: MySession[]
@@ -34,6 +35,7 @@ function deviceLabel(ua: string | null): { label: string; icon: typeof Monitor }
 
 export function MySessionsCard({ sessions }: Props) {
   const t = useTranslations('profil.sessions')
+  const locale = useLocale()
   const [pending, startTransition] = useTransition()
   const [revokingId, setRevokingId] = useState<string | null>(null)
   const [revoked, setRevoked] = useState<Set<string>>(new Set())
@@ -50,13 +52,6 @@ export function MySessionsCard({ sessions }: Props) {
         toast.success(t('revokeSuccess'))
         setRevoked((prev) => new Set(prev).add(sessionId))
       }
-    })
-  }
-
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
     })
   }
 
@@ -89,7 +84,7 @@ export function MySessionsCard({ sessions }: Props) {
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {s.ipAddress ?? '—'} · {formatDate(s.createdAt)}
+                      {s.ipAddress ?? '—'} · {formatDateTimeShort(s.createdAt, locale)}
                     </p>
                   </div>
                   {!s.isCurrent && (
