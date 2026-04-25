@@ -144,7 +144,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label
                 htmlFor="payeurPrenom"
@@ -214,7 +214,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
               defaultValue={defaultValues?.payeurAdresse ?? ''}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label
                 htmlFor="payeurCp"
@@ -286,7 +286,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
             />
           </div>
           {showDates && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1">
                 <Label
                   htmlFor="dateVolDeb"
@@ -317,7 +317,7 @@ export function BilletForm({ locale, billetId, defaultValues, defaultPassagers }
               </div>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label
                 htmlFor="dateValidite"

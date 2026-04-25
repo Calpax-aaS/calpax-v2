@@ -51,7 +51,7 @@ export function PaiementForm({ billetId, locale }: Props) {
   return (
     <form action={handleSubmit} className="border rounded p-4 space-y-3">
       {error && <div className="text-red-600 text-sm">{error}</div>}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <Label className={labelClassName}>{t('fields.modePaiement')}</Label>
           <Select value={modePaiement} onValueChange={setModePaiement}>

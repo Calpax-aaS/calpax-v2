@@ -139,7 +139,7 @@ export default async function BilletDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">Payeur</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 {tBillets('fields.payeurPrenom')}
@@ -185,7 +185,7 @@ export default async function BilletDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle className="text-base">Planification</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 {tBillets('fields.typePlannif')}

@@ -155,7 +155,7 @@ export function VolCreateForm({
           <CardTitle className="text-base">Informations du vol</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="date" className={labelClassName}>
                 {t('fields.date')} *
@@ -236,7 +236,7 @@ export function VolCreateForm({
           <CardTitle className="text-base">Logistique</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Equipier */}
             <div className="space-y-1">
               <Label className={labelClassName}>{t('fields.equipier')}</Label>
@@ -316,7 +316,7 @@ export function VolCreateForm({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="configGaz" className={labelClassName}>
                 {t('fields.configGaz')}

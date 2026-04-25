@@ -39,7 +39,7 @@ export function PostVolForm({ volId, locale }: Props) {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Decollage */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="decoLieu">{t('postVol.decoLieu')} *</Label>
               <Input id="decoLieu" name="decoLieu" required />
@@ -51,7 +51,7 @@ export function PostVolForm({ volId, locale }: Props) {
           </div>
 
           {/* Atterrissage */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="atterLieu">{t('postVol.atterLieu')} *</Label>
               <Input id="atterLieu" name="atterLieu" required />
@@ -63,7 +63,7 @@ export function PostVolForm({ volId, locale }: Props) {
           </div>
 
           {/* Gaz et distance */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="gasConso">{t('postVol.gasConso')}</Label>
               <Input id="gasConso" name="gasConso" type="number" min="0" step="1" />
