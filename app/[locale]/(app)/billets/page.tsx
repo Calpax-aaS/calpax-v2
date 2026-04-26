@@ -16,48 +16,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { EmptyState } from '@/components/empty-state'
-import type { StatutBillet, StatutPaiement } from '@prisma/client'
+import { formatEuros } from '@/lib/format'
+import { statutBilletVariant, statutPaiementVariant } from '@/lib/ui'
 
 type Props = {
   params: Promise<{ locale: string }>
-}
-
-function formatEuros(euros: number): string {
-  return euros.toFixed(2) + ' EUR'
-}
-
-function statutVariant(statut: StatutBillet): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'EN_ATTENTE':
-      return 'outline'
-    case 'PLANIFIE':
-      return 'default'
-    case 'VOLE':
-      return 'secondary'
-    case 'ANNULE':
-    case 'REMBOURSE':
-    case 'EXPIRE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
-}
-
-function statutPaiementVariant(
-  statut: StatutPaiement,
-): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'EN_ATTENTE':
-      return 'outline'
-    case 'SOLDE':
-      return 'default'
-    case 'PARTIEL':
-      return 'secondary'
-    case 'REMBOURSE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
 }
 
 export default async function BilletsPage({ params }: Props) {
@@ -140,7 +103,7 @@ export default async function BilletsPage({ params }: Props) {
                       <TableCell>{billet._count.passagers}</TableCell>
                       <TableCell>{formatEuros(Number(billet.montantTtc))}</TableCell>
                       <TableCell>
-                        <Badge variant={statutVariant(billet.statut)}>
+                        <Badge variant={statutBilletVariant(billet.statut)}>
                           {t(`statut.${billet.statut}`)}
                         </Badge>
                       </TableCell>

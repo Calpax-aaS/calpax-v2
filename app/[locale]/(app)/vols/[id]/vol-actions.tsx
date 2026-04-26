@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { cn } from '@/lib/utils'
 import { cancelVol, archivePve } from '@/lib/actions/vol'
 import { confirmerVol } from '@/lib/actions/organisation'
@@ -17,31 +19,46 @@ type Props = {
 
 export function VolActions({ volId, locale, statut, canEdit = true }: Props) {
   const t = useTranslations('vols')
+  const [, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  async function handleCancel() {
-    const confirmed = window.confirm(t('confirmCancel'))
-    if (!confirmed) return
-    const result = await cancelVol(volId, locale)
-    if (result?.error) {
-      setError(result.error)
-    }
+  function handleCancel() {
+    setError(null)
+    startTransition(async () => {
+      const result = await cancelVol(volId, locale)
+      if (result?.error) {
+        setError(result.error)
+        toast.error(result.error)
+        return
+      }
+      toast.success(t('cancel'))
+    })
   }
 
-  async function handleConfirmer() {
-    const result = await confirmerVol(volId, locale)
-    if (result?.error) {
-      setError(result.error)
-    }
+  function handleConfirmer() {
+    setError(null)
+    startTransition(async () => {
+      const result = await confirmerVol(volId, locale)
+      if (result?.error) {
+        setError(result.error)
+        toast.error(result.error)
+        return
+      }
+      toast.success(t('confirmer'))
+    })
   }
 
-  async function handleArchive() {
-    const confirmed = window.confirm(t('confirmArchive'))
-    if (!confirmed) return
-    const result = await archivePve(volId, locale)
-    if (result?.error) {
-      setError(result.error)
-    }
+  function handleArchive() {
+    setError(null)
+    startTransition(async () => {
+      const result = await archivePve(volId, locale)
+      if (result?.error) {
+        setError(result.error)
+        toast.error(result.error)
+        return
+      }
+      toast.success(t('archivePve'))
+    })
   }
 
   const showFiche = statut === 'CONFIRME' || statut === 'TERMINE'
@@ -72,9 +89,13 @@ export function VolActions({ volId, locale, statut, canEdit = true }: Props) {
         </Button>
       )}
       {canEdit && statut === 'TERMINE' && (
-        <Button size="sm" onClick={handleArchive}>
-          {t('archivePve')}
-        </Button>
+        <ConfirmDialog
+          title={t('confirmArchiveTitle')}
+          description={t('confirmArchive')}
+          confirmLabel={t('archivePve')}
+          onConfirm={handleArchive}
+          trigger={<Button size="sm">{t('archivePve')}</Button>}
+        />
       )}
       {statut === 'ARCHIVE' && (
         <a
@@ -86,9 +107,18 @@ export function VolActions({ volId, locale, statut, canEdit = true }: Props) {
         </a>
       )}
       {canEdit && statut !== 'ARCHIVE' && statut !== 'ANNULE' && (
-        <Button variant="destructive" size="sm" onClick={handleCancel}>
-          {t('cancel')}
-        </Button>
+        <ConfirmDialog
+          title={t('confirmCancelTitle')}
+          description={t('confirmCancel')}
+          confirmLabel={t('cancel')}
+          destructive
+          onConfirm={handleCancel}
+          trigger={
+            <Button variant="destructive" size="sm">
+              {t('cancel')}
+            </Button>
+          }
+        />
       )}
     </div>
   )

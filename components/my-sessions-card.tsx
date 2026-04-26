@@ -7,6 +7,7 @@ import { Loader2, Monitor, Smartphone } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { revokeMySession, type MySession } from '@/lib/actions/session'
 import { formatDateTimeShort } from '@/lib/format'
 
@@ -41,7 +42,6 @@ export function MySessionsCard({ sessions }: Props) {
   const [revoked, setRevoked] = useState<Set<string>>(new Set())
 
   function handleRevoke(sessionId: string) {
-    if (!window.confirm(t('revokeConfirm'))) return
     setRevokingId(sessionId)
     startTransition(async () => {
       const result = await revokeMySession(sessionId)
@@ -88,15 +88,19 @@ export function MySessionsCard({ sessions }: Props) {
                     </p>
                   </div>
                   {!s.isCurrent && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={isRevoking}
-                      onClick={() => handleRevoke(s.id)}
-                    >
-                      {isRevoking && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
-                      {t('revoke')}
-                    </Button>
+                    <ConfirmDialog
+                      title={t('revokeConfirmTitle')}
+                      description={t('revokeConfirm')}
+                      confirmLabel={t('revoke')}
+                      destructive
+                      onConfirm={() => handleRevoke(s.id)}
+                      trigger={
+                        <Button variant="outline" size="sm" disabled={isRevoking}>
+                          {isRevoking && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+                          {t('revoke')}
+                        </Button>
+                      }
+                    />
                   )}
                 </li>
               )

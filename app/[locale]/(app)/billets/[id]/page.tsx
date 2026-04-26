@@ -18,54 +18,16 @@ import {
 } from '@/components/ui/table'
 import { PaiementForm } from '@/components/paiement-form'
 import { cn } from '@/lib/utils'
-import { formatDateFr } from '@/lib/format'
-import type { StatutBillet, StatutPaiement } from '@prisma/client'
+import { formatDateFr, formatEuros } from '@/lib/format'
+import { statutBilletVariant, statutPaiementVariant } from '@/lib/ui'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
 }
 
-function formatEuros(euros: number): string {
-  return euros.toFixed(2) + ' EUR'
-}
-
 function formatDate(date: Date | null | undefined): string {
   if (!date) return '—'
   return formatDateFr(date)
-}
-
-function statutVariant(statut: StatutBillet): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'EN_ATTENTE':
-      return 'outline'
-    case 'PLANIFIE':
-      return 'default'
-    case 'VOLE':
-      return 'secondary'
-    case 'ANNULE':
-    case 'REMBOURSE':
-    case 'EXPIRE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
-}
-
-function statutPaiementVariant(
-  statut: StatutPaiement,
-): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'EN_ATTENTE':
-      return 'outline'
-    case 'SOLDE':
-      return 'default'
-    case 'PARTIEL':
-      return 'secondary'
-    case 'REMBOURSE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
 }
 
 export default async function BilletDetailPage({ params }: Props) {
@@ -103,7 +65,7 @@ export default async function BilletDetailPage({ params }: Props) {
               {tBillets('backToList')}
             </Link>
             <h1 className="text-3xl font-bold tracking-tight">{billet.reference}</h1>
-            <Badge variant={statutVariant(billet.statut)}>
+            <Badge variant={statutBilletVariant(billet.statut)}>
               {tBillets(`statut.${billet.statut}`)}
             </Badge>
             <Badge variant={statutPaiementVariant(billet.statutPaiement)}>

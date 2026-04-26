@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { toggleUserBan } from '@/lib/actions/admin'
 import { Ban, CircleCheck } from 'lucide-react'
 
@@ -17,15 +18,12 @@ export function UserBanButton({ userId, banned }: Props) {
   const [pending, startTransition] = useTransition()
   const [optimisticBanned, setOptimisticBanned] = useState(banned)
 
-  function handleClick() {
-    const next = !optimisticBanned
-    if (next && !confirm(t('banConfirm'))) return
-
+  function applyToggle(next: boolean) {
     startTransition(async () => {
       setOptimisticBanned(next)
       const result = await toggleUserBan({ userId, banned: next })
       if (result.error) {
-        setOptimisticBanned(!next) // revert
+        setOptimisticBanned(!next)
         toast.error(result.error)
         return
       }
@@ -33,25 +31,34 @@ export function UserBanButton({ userId, banned }: Props) {
     })
   }
 
+  if (optimisticBanned) {
+    return (
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        disabled={pending}
+        onClick={() => applyToggle(false)}
+      >
+        <CircleCheck className="h-3.5 w-3.5 mr-1" />
+        {t('unban')}
+      </Button>
+    )
+  }
+
   return (
-    <Button
-      type="button"
-      size="sm"
-      variant={optimisticBanned ? 'outline' : 'ghost'}
-      disabled={pending}
-      onClick={handleClick}
-    >
-      {optimisticBanned ? (
-        <>
-          <CircleCheck className="h-3.5 w-3.5 mr-1" />
-          {t('unban')}
-        </>
-      ) : (
-        <>
+    <ConfirmDialog
+      title={t('banConfirmTitle')}
+      description={t('banConfirm')}
+      confirmLabel={t('ban')}
+      destructive
+      onConfirm={() => applyToggle(true)}
+      trigger={
+        <Button type="button" size="sm" variant="ghost" disabled={pending}>
           <Ban className="h-3.5 w-3.5 mr-1" />
           {t('ban')}
-        </>
-      )}
-    </Button>
+        </Button>
+      }
+    />
   )
 }

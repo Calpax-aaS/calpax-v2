@@ -11,8 +11,26 @@ const resendApiKey = process.env.RESEND_API_KEY
 const resend =
   resendApiKey && resendApiKey !== 'resend-key-not-configured' ? new Resend(resendApiKey) : null
 
+// Better Auth signs sessions, magic-link tokens, and TOTP secrets with this key.
+// We require at least 32 bytes of entropy to keep HMAC-SHA256 outputs sound and
+// to deter brute-force on encrypted blobs (TOTP secrets, backup codes).
+function resolveAuthSecret(): string {
+  const secret = process.env.BETTER_AUTH_SECRET ?? process.env.AUTH_SECRET
+  if (!secret || secret.length < 32) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'BETTER_AUTH_SECRET must be set to at least 32 characters in production. Generate one with `openssl rand -base64 32`.',
+      )
+    }
+    console.warn(
+      '[auth] BETTER_AUTH_SECRET is missing or shorter than 32 characters. This is unsafe outside local development.',
+    )
+  }
+  return secret ?? ''
+}
+
 export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET ?? process.env.AUTH_SECRET,
+  secret: resolveAuthSecret(),
   baseURL:
     process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
   trustedOrigins: ['https://calpax.fr', 'https://www.calpax.fr'],

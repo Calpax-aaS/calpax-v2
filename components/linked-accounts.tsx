@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Check, Link2, Unlink } from 'lucide-react'
 
 type Props = {
@@ -60,7 +61,6 @@ export function LinkedAccounts({ linkedProviders, hasCredential }: Props) {
   }
 
   async function handleUnlink(provider: 'google') {
-    if (!confirm(t('unlinkConfirm'))) return
     setLoading(provider)
     try {
       const result = await authClient.unlinkAccount({ providerId: provider })
@@ -123,15 +123,25 @@ export function LinkedAccounts({ linkedProviders, hasCredential }: Props) {
               </div>
             </div>
             {googleLinked ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleUnlink('google')}
-                disabled={loading === 'google' || (!hasCredential && linkedProviders.length === 1)}
-              >
-                <Unlink className="h-3.5 w-3.5 mr-1" />
-                {t('unlink')}
-              </Button>
+              <ConfirmDialog
+                title={t('unlinkConfirmTitle')}
+                description={t('unlinkConfirm')}
+                confirmLabel={t('unlink')}
+                destructive
+                onConfirm={() => handleUnlink('google')}
+                trigger={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={
+                      loading === 'google' || (!hasCredential && linkedProviders.length === 1)
+                    }
+                  >
+                    <Unlink className="h-3.5 w-3.5 mr-1" />
+                    {t('unlink')}
+                  </Button>
+                }
+              />
             ) : (
               <Button
                 variant="outline"

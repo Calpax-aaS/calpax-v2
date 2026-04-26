@@ -160,7 +160,7 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
           </div>
         </div>
       ) : (
-        <div className="text-xs italic text-sky-400">{t('massUnavailable')}</div>
+        <div className="text-xs italic text-sky-600">{t('massUnavailable')}</div>
       )}
 
       {/* Weather strip — wrapped in Suspense so a descendant can `use()` a
@@ -234,7 +234,7 @@ function WeatherStrip({
           className="text-sky-500"
         />
         <MonoValue value={weather.maxWindKmh} unit="km/h" size={12} />
-        <span className="text-[10px] text-sky-400">({weather.maxWindAltitude})</span>
+        <span className="text-[10px] text-sky-600">({weather.maxWindAltitude})</span>
       </div>
       <div className="flex items-center gap-1 text-sky-700">
         <Thermometer className="h-3.5 w-3.5 text-sky-500" aria-hidden />

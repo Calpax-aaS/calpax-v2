@@ -6,7 +6,8 @@ import { requireRole } from '@/lib/auth/requireRole'
 import { writeAudit } from '@/lib/audit/write'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
-import { safeDecryptInt, safeDecryptString } from '@/lib/crypto'
+import { decrypt, safeDecryptString } from '@/lib/crypto'
+import { logger } from '@/lib/logger'
 
 export type PassagerSearchResult = {
   id: string
@@ -93,7 +94,21 @@ export async function exportPassagerData(passagerId: string): Promise<string> {
       include: { billet: { include: { paiements: true } } },
     })
 
-    const poids = passager.poidsEncrypted ? safeDecryptInt(passager.poidsEncrypted, 0) : null
+    // RGPD Art. 15: a data-subject access request must reflect what we actually
+    // hold. Returning a fallback (e.g. 0) on a corrupt blob would silently
+    // misrepresent the truth, so we surface it as null and log the corruption.
+    let poids: number | null = null
+    if (passager.poidsEncrypted) {
+      try {
+        const parsed = parseInt(decrypt(passager.poidsEncrypted), 10)
+        poids = Number.isNaN(parsed) ? null : parsed
+      } catch (err) {
+        logger.error(
+          { err, passagerId: passager.id },
+          'rgpd: failed to decrypt poidsEncrypted during PII export',
+        )
+      }
+    }
 
     const data = {
       passager: {

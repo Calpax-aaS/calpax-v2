@@ -16,26 +16,10 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { formatDateFr } from '@/lib/format'
-import type { StatutVol } from '@prisma/client'
+import { statutVolVariant } from '@/lib/ui'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
-}
-
-function statutVariant(statut: StatutVol): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'PLANIFIE':
-    case 'CONFIRME':
-      return 'default'
-    case 'TERMINE':
-      return 'secondary'
-    case 'ARCHIVE':
-      return 'outline'
-    case 'ANNULE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
 }
 
 function truncate(text: string | null, max: number): string {
@@ -163,7 +147,7 @@ export default async function BallonJournalPage({ params }: Props) {
                         {vol.pilote.prenom} {vol.pilote.nom}
                       </TableCell>
                       <TableCell>
-                        <Badge variant={statutVariant(vol.statut)}>
+                        <Badge variant={statutVolVariant(vol.statut)}>
                           {tVols(`statut.${vol.statut}`)}
                         </Badge>
                       </TableCell>

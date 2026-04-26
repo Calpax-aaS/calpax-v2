@@ -7,6 +7,7 @@ import { X, Plus } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { createTag, deleteTag } from '@/lib/actions/tag'
 
 type TagData = { id: string; nom: string; couleur: string | null }
@@ -34,7 +35,6 @@ export function TagManager({ tags }: { tags: TagData[] }) {
   }
 
   function handleDelete(tagId: string) {
-    if (!confirm(t('deleteConfirm'))) return
     startTransition(async () => {
       const result = await deleteTag(tagId)
       if (result.error) {
@@ -58,13 +58,23 @@ export function TagManager({ tags }: { tags: TagData[] }) {
             style={tag.couleur ? { borderColor: tag.couleur, color: tag.couleur } : undefined}
           >
             {tag.nom}
-            <button
-              onClick={() => handleDelete(tag.id)}
-              className="ml-1 rounded-full p-0.5 hover:bg-muted"
-              disabled={pending}
-            >
-              <X className="h-3 w-3" />
-            </button>
+            <ConfirmDialog
+              title={t('deleteConfirmTitle')}
+              description={t('deleteConfirm')}
+              confirmLabel={t('delete')}
+              destructive
+              onConfirm={() => handleDelete(tag.id)}
+              trigger={
+                <button
+                  type="button"
+                  aria-label={t('delete')}
+                  className="ml-1 rounded-full p-0.5 hover:bg-muted disabled:opacity-50"
+                  disabled={pending}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              }
+            />
           </Badge>
         ))}
       </div>

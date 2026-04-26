@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { formatDateFr, formatDateTimeShort } from '@/lib/format'
+import { statutVolVariant } from '@/lib/ui'
 import { VolActions } from './vol-actions'
 import { MeteoAlertBanner } from '@/components/meteo-alert-banner'
 import { WeatherTable } from '@/components/weather-table'
@@ -34,23 +35,6 @@ import type { StatutVol } from '@prisma/client'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
-}
-
-function statutVariant(statut: StatutVol): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'PLANIFIE':
-      return 'default'
-    case 'CONFIRME':
-      return 'default'
-    case 'TERMINE':
-      return 'secondary'
-    case 'ARCHIVE':
-      return 'outline'
-    case 'ANNULE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
 }
 
 function statutClassName(statut: StatutVol): string {
@@ -202,7 +186,7 @@ export default async function VolDetailPage({ params }: Props) {
             </div>
             <div className="flex items-center gap-2">
               <Badge
-                variant={statutVariant(vol.statut)}
+                variant={statutVolVariant(vol.statut)}
                 className={cn(statutClassName(vol.statut))}
               >
                 {t(`statut.${vol.statut}`)}

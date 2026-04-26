@@ -1,5 +1,7 @@
+import { getTranslations } from 'next-intl/server'
 import { Badge } from '@/components/ui/badge'
 import { computeAlertSeverity } from '@/lib/regulatory/alerts'
+import { formatDateFr } from '@/lib/format'
 
 interface ExpiryBadgeProps {
   date: Date
@@ -8,29 +10,27 @@ interface ExpiryBadgeProps {
 
 const severityConfig: Record<
   string,
-  { label: string; variant: 'success' | 'warning' | 'critical' | 'destructive' | 'outline' }
+  {
+    labelKey: 'valid' | 'warning' | 'critical' | 'expired'
+    variant: 'success' | 'warning' | 'critical' | 'destructive'
+  }
 > = {
-  OK: { label: 'Valide', variant: 'success' },
-  WARNING: { label: 'Attention', variant: 'warning' },
-  CRITICAL: { label: 'Critique', variant: 'critical' },
-  EXPIRED: { label: 'Expiré', variant: 'destructive' },
+  OK: { labelKey: 'valid', variant: 'success' },
+  WARNING: { labelKey: 'warning', variant: 'warning' },
+  CRITICAL: { labelKey: 'critical', variant: 'critical' },
+  EXPIRED: { labelKey: 'expired', variant: 'destructive' },
 }
 
-export function ExpiryBadge({ date, type }: ExpiryBadgeProps) {
+export async function ExpiryBadge({ date, type }: ExpiryBadgeProps) {
+  const t = await getTranslations('alerts')
   const severity = computeAlertSeverity(date, type)
-  const { label, variant } = severityConfig[severity] ?? {
-    label: severity,
-    variant: 'outline' as const,
-  }
-  const dateStr = date.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
+  const config = severityConfig[severity]
+  const label = config ? t(config.labelKey) : severity
+  const variant = config?.variant ?? 'outline'
 
   return (
     <Badge variant={variant}>
-      {label} — {dateStr}
+      {label} — {formatDateFr(date)}
     </Badge>
   )
 }

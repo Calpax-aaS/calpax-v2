@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { fetchAuditLogs } from '@/lib/actions/audit'
+import { formatDateTimeFr } from '@/lib/format'
 
 const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'AUTH']
 const ACTIONS = [
@@ -62,10 +63,6 @@ export function AuditClient() {
     void load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, action, page])
-
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   function formatJson(value: unknown): string {
     if (value === null || value === undefined) return '—'
@@ -136,7 +133,7 @@ export function AuditClient() {
           <TableBody>
             {logs.map((log) => (
               <TableRow key={String(log.id)}>
-                <TableCell className="text-xs">{formatDate(log.createdAt)}</TableCell>
+                <TableCell className="text-xs">{formatDateTimeFr(log.createdAt)}</TableCell>
                 <TableCell>
                   <Badge variant="outline">{log.entityType}</Badge>{' '}
                   <span className="text-xs text-muted-foreground">{log.entityId.slice(0, 8)}</span>

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { formatDateTimeFr } from '@/lib/format'
 import { UserBanButton } from './user-ban-button'
 
 export default async function AdminUsersPage() {
@@ -31,11 +32,6 @@ export default async function AdminUsersPage() {
     select: { userId: true, createdAt: true },
   })
   const lastLoginMap = new Map(latestSessions.map((s) => [s.userId, s.createdAt]))
-
-  function formatDate(date: Date | null): string {
-    if (!date) return '--'
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   return (
     <div className="space-y-6">
@@ -75,7 +71,9 @@ export default async function AdminUsersPage() {
                     </TableCell>
                     <TableCell>{user.exploitant.name}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {formatDate(lastLoginMap.get(user.id) ?? null)}
+                      {lastLoginMap.get(user.id)
+                        ? formatDateTimeFr(lastLoginMap.get(user.id)!)
+                        : '--'}
                     </TableCell>
                     <TableCell>
                       {user.banned ? (

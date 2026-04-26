@@ -15,7 +15,13 @@
     "activate": "Activate",
     "deactivate": "Deactivate",
     "activateConfirm": "Reactivate this item?",
-    "deactivateConfirm": "Deactivate this item? It will no longer be available for new flights."
+    "activateConfirmTitle": "Reactivate?",
+    "deactivateConfirm": "Deactivate this item? It will no longer be available for new flights.",
+    "deactivateConfirmTitle": "Deactivate?",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
   },
   "home": {
     "signedInAs": "Signed in as {name} — Operator {exploitant}",
@@ -146,6 +152,7 @@
       "banned": "Disabled",
       "ban": "Disable",
       "unban": "Reactivate",
+      "banConfirmTitle": "Disable this user?",
       "banConfirm": "Disable this user? Their active sessions will be revoked and they will no longer be able to sign in.",
       "banSuccess": "User disabled",
       "unbanSuccess": "User reactivated",
@@ -212,6 +219,8 @@
     "title": "Regulatory alerts",
     "expired": "Expired",
     "critical": "Critical",
+    "valid": "Valid",
+    "warning": "Warning",
     "daysRemaining": "{days, plural, =0 {Expired} one {# day} other {# days}}",
     "summary": "{count, plural, one {# regulatory alert} other {# regulatory alerts}} ({parts})",
     "count": "{count, plural, one {# regulatory alert} other {# regulatory alerts}}",
@@ -478,6 +487,7 @@
     "backToList": "Back to planning",
     "detail": "Flight detail",
     "cancel": "Cancel flight",
+    "confirmCancelTitle": "Cancel this flight?",
     "confirmCancel": "Cancel this flight? Passengers will be unassigned.",
     "organiser": "Organise",
     "confirmer": "Confirm flight",
@@ -575,6 +585,7 @@
     "downloadFiche": "Download flight sheet",
     "downloadPve": "Download PVE",
     "archivePve": "Archive as PVE",
+    "confirmArchiveTitle": "Archive this flight?",
     "confirmArchive": "Generate final PVE and archive this flight?",
     "postVolLink": "Post-flight entry"
   },
@@ -708,6 +719,7 @@
       "view": "View",
       "export": "Export (JSON)",
       "anonymise": "Anonymise",
+      "confirmAnonymiseTitle": "Anonymise this passenger?",
       "confirmAnonymise": "This action is irreversible. Personal data will be deleted. Confirm?"
     },
     "anonymised": "Data anonymised"
@@ -747,6 +759,7 @@
     "windAriaLabelKpi": "Max wind {speed} km/h",
     "meteoAlertAction": "Cancel this flight?",
     "cancelMeteo": "Cancel (weather)",
+    "cancelMeteoTitle": "Cancel this flight due to weather?",
     "cancelMeteoConfirm": "Cancel this flight due to weather? Passengers will be unassigned and contacts notified by email.",
     "window": {
       "title": "Today's flight window",
@@ -796,6 +809,7 @@
     "name": "Tag name",
     "color": "Color",
     "delete": "Delete",
+    "deleteConfirmTitle": "Delete this tag?",
     "deleteConfirm": "Delete this tag? It will be removed from all tickets.",
     "noTags": "No tags",
     "addToBillet": "Add a tag",
@@ -825,6 +839,7 @@
       "description": "Devices currently signed in to your account. You can revoke a session to sign out that device.",
       "currentSession": "Current session",
       "revoke": "Sign out",
+      "revokeConfirmTitle": "Sign out this device?",
       "revokeConfirm": "Sign out this device? The session will be revoked immediately.",
       "revokeSuccess": "Session revoked",
       "empty": "No active sessions."
@@ -839,6 +854,7 @@
       "active": "Active",
       "link": "Link",
       "unlink": "Unlink",
+      "unlinkConfirmTitle": "Unlink this account?",
       "unlinkConfirm": "Are you sure you want to unlink this account? You will not be able to sign in with this method anymore.",
       "unlinkSuccess": "Account unlinked",
       "unlinkError": "Unable to unlink this account",
@@ -869,6 +885,7 @@
       "enabledHint": "2FA is active on your account. To disable, confirm your password.",
       "disableButton": "Disable 2FA",
       "disabling": "Disabling…",
+      "disableConfirmTitle": "Disable two-factor authentication?",
       "disableConfirm": "Disable two-factor authentication? You can re-enable it later.",
       "disableSuccess": "Two-factor authentication disabled",
       "disableError": "Unable to disable 2FA. Check your password."
