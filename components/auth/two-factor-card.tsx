@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { PasswordInput } from '@/components/auth/password-input'
 import { authClient } from '@/lib/auth-client'
 import { formLabelClass } from '@/lib/ui'
@@ -76,9 +77,7 @@ export function TwoFactorCard({ enabled }: Props) {
     }
   }
 
-  async function handleDisable(e: React.FormEvent) {
-    e.preventDefault()
-    if (!confirm(t('disableConfirm'))) return
+  async function handleDisable() {
     setLoading(true)
     setError(null)
     try {
@@ -208,7 +207,7 @@ export function TwoFactorCard({ enabled }: Props) {
         )}
 
         {view.kind === 'enabled' && (
-          <form onSubmit={handleDisable} className="space-y-3">
+          <div className="space-y-3">
             <p className="text-sm">{t('enabledHint')}</p>
             <div>
               <Label htmlFor="tfa-password-disable" className={formLabelClass}>
@@ -222,10 +221,19 @@ export function TwoFactorCard({ enabled }: Props) {
                 disabled={loading}
               />
             </div>
-            <Button type="submit" variant="destructive" disabled={loading || !password}>
-              {loading ? t('disabling') : t('disableButton')}
-            </Button>
-          </form>
+            <ConfirmDialog
+              title={t('disableConfirmTitle')}
+              description={t('disableConfirm')}
+              confirmLabel={t('disableButton')}
+              destructive
+              onConfirm={handleDisable}
+              trigger={
+                <Button type="button" variant="destructive" disabled={loading || !password}>
+                  {loading ? t('disabling') : t('disableButton')}
+                </Button>
+              }
+            />
+          </div>
         )}
       </CardContent>
     </Card>

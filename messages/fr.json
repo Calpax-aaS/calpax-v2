@@ -15,7 +15,13 @@
     "activate": "Activer",
     "deactivate": "Désactiver",
     "activateConfirm": "Réactiver cet élément ?",
-    "deactivateConfirm": "Désactiver cet élément ? Il ne sera plus sélectionnable pour les nouveaux vols."
+    "activateConfirmTitle": "Réactiver ?",
+    "deactivateConfirm": "Désactiver cet élément ? Il ne sera plus sélectionnable pour les nouveaux vols.",
+    "deactivateConfirmTitle": "Désactiver ?",
+    "yes": "Oui",
+    "no": "Non",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
   },
   "home": {
     "signedInAs": "Connecté en tant que {name} — Exploitant {exploitant}",
@@ -146,6 +152,7 @@
       "banned": "Désactivé",
       "ban": "Désactiver",
       "unban": "Réactiver",
+      "banConfirmTitle": "Désactiver cet utilisateur ?",
       "banConfirm": "Désactiver cet utilisateur ? Ses sessions actives seront révoquées et il ne pourra plus se connecter.",
       "banSuccess": "Utilisateur désactivé",
       "unbanSuccess": "Utilisateur réactivé",
@@ -212,6 +219,8 @@
     "title": "Alertes réglementaires",
     "expired": "Expiré",
     "critical": "Critique",
+    "valid": "Valide",
+    "warning": "Attention",
     "daysRemaining": "{days, plural, =0 {Expiré} one {# jour} other {# jours}}",
     "summary": "{count, plural, one {# alerte réglementaire} other {# alertes réglementaires}} ({parts})",
     "count": "{count, plural, one {# alerte réglementaire} other {# alertes réglementaires}}",
@@ -478,6 +487,7 @@
     "backToList": "Retour au planning",
     "detail": "Détail du vol",
     "cancel": "Annuler le vol",
+    "confirmCancelTitle": "Annuler ce vol ?",
     "confirmCancel": "Annuler ce vol ? Les passagers seront désaffectés.",
     "organiser": "Organiser",
     "confirmer": "Confirmer le vol",
@@ -575,6 +585,7 @@
     "downloadFiche": "Télécharger PVE",
     "downloadPve": "Télécharger PVE",
     "archivePve": "Archiver comme PVE",
+    "confirmArchiveTitle": "Archiver ce vol ?",
     "confirmArchive": "Générer le PVE final et archiver ce vol ?",
     "postVolLink": "Saisie post-vol"
   },
@@ -708,6 +719,7 @@
       "view": "Consulter",
       "export": "Exporter (JSON)",
       "anonymise": "Anonymiser",
+      "confirmAnonymiseTitle": "Anonymiser ce passager ?",
       "confirmAnonymise": "Cette action est irréversible. Les données personnelles seront supprimées. Confirmer ?"
     },
     "anonymised": "Données anonymisées"
@@ -735,6 +747,7 @@
     "windAriaLabelKpi": "Vent maximum {speed} km/h",
     "meteoAlertAction": "Annuler ce vol ?",
     "cancelMeteo": "Annuler (météo)",
+    "cancelMeteoTitle": "Annuler ce vol pour cause météo ?",
     "cancelMeteoConfirm": "Annuler ce vol pour raison météo ? Les passagers seront désaffectés et les contacts notifiés par email.",
     "kicker": "Cockpit du jour",
     "kpi": {
@@ -796,6 +809,7 @@
     "name": "Nom du tag",
     "color": "Couleur",
     "delete": "Supprimer",
+    "deleteConfirmTitle": "Supprimer ce tag ?",
     "deleteConfirm": "Supprimer ce tag ? Il sera retiré de tous les billets.",
     "noTags": "Aucun tag",
     "addToBillet": "Ajouter un tag",
@@ -825,6 +839,7 @@
       "description": "Les appareils actuellement connectés à votre compte. Vous pouvez révoquer une session pour déconnecter l'appareil.",
       "currentSession": "Session actuelle",
       "revoke": "Déconnecter",
+      "revokeConfirmTitle": "Déconnecter cet appareil ?",
       "revokeConfirm": "Déconnecter cet appareil ? La session sera immédiatement révoquée.",
       "revokeSuccess": "Session révoquée",
       "empty": "Aucune session active."
@@ -839,6 +854,7 @@
       "active": "Active",
       "link": "Lier",
       "unlink": "Delier",
+      "unlinkConfirmTitle": "Delier ce compte ?",
       "unlinkConfirm": "Etes-vous sur de vouloir delier ce compte ? Vous ne pourrez plus vous connecter avec cette methode.",
       "unlinkSuccess": "Compte delie",
       "unlinkError": "Impossible de delier ce compte",
@@ -869,6 +885,7 @@
       "enabledHint": "La 2FA est active sur votre compte. Pour la désactiver, confirmez votre mot de passe.",
       "disableButton": "Désactiver la 2FA",
       "disabling": "Désactivation…",
+      "disableConfirmTitle": "Désactiver la double authentification ?",
       "disableConfirm": "Désactiver la double authentification ? Vous pourrez la réactiver plus tard.",
       "disableSuccess": "Double authentification désactivée",
       "disableError": "Impossible de désactiver la 2FA. Vérifiez votre mot de passe."

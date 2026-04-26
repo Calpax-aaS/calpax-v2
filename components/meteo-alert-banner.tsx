@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { cancelVol } from '@/lib/actions/vol'
 
 type Props = {
@@ -17,7 +18,6 @@ export function MeteoAlertBanner({ volId, locale }: Props) {
   const [pending, startTransition] = useTransition()
 
   function handleCancel() {
-    if (!confirm(t('cancelMeteoConfirm'))) return
     startTransition(async () => {
       const result = await cancelVol(volId, locale, 'Météo')
       if (result?.error) {
@@ -32,9 +32,18 @@ export function MeteoAlertBanner({ volId, locale }: Props) {
       <span className="flex-1">
         {t('meteoAlert')} — {t('meteoAlertAction')}
       </span>
-      <Button size="sm" variant="destructive" onClick={handleCancel} disabled={pending}>
-        {t('cancelMeteo')}
-      </Button>
+      <ConfirmDialog
+        title={t('cancelMeteoTitle')}
+        description={t('cancelMeteoConfirm')}
+        confirmLabel={t('cancelMeteo')}
+        destructive
+        onConfirm={handleCancel}
+        trigger={
+          <Button size="sm" variant="destructive" disabled={pending}>
+            {t('cancelMeteo')}
+          </Button>
+        }
+      />
     </div>
   )
 }

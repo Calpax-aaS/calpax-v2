@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import {
   searchPassagers,
   exportPassagerData,
@@ -43,7 +44,6 @@ export function RgpdClient() {
   }
 
   async function handleAnonymise(passagerId: string) {
-    if (!confirm(t('actions.confirmAnonymise'))) return
     await anonymisePassager(passagerId)
     await handleSearch()
   }
@@ -86,9 +86,18 @@ export function RgpdClient() {
                   <Button size="sm" variant="outline" onClick={() => handleExport(r.id)}>
                     {t('actions.export')}
                   </Button>
-                  <Button size="sm" variant="destructive" onClick={() => handleAnonymise(r.id)}>
-                    {t('actions.anonymise')}
-                  </Button>
+                  <ConfirmDialog
+                    title={t('actions.confirmAnonymiseTitle')}
+                    description={t('actions.confirmAnonymise')}
+                    confirmLabel={t('actions.anonymise')}
+                    destructive
+                    onConfirm={() => handleAnonymise(r.id)}
+                    trigger={
+                      <Button size="sm" variant="destructive">
+                        {t('actions.anonymise')}
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ))}

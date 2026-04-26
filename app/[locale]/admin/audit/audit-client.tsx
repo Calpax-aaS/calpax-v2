@@ -14,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { fetchAdminAuditLogs } from '@/lib/actions/admin'
+import { formatDateTimeFr } from '@/lib/format'
 
 const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'AUTH']
 const ACTIONS = [
@@ -90,10 +91,6 @@ export function AdminAuditClient({
       cancelled = true
     }
   }, [exploitantId, entityType, action, page])
-
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   function formatJson(value: unknown): string {
     if (value === null || value === undefined) return '--'
@@ -202,7 +199,7 @@ export function AdminAuditClient({
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={String(log.id)}>
-                  <TableCell className="text-xs">{formatDate(log.createdAt)}</TableCell>
+                  <TableCell className="text-xs">{formatDateTimeFr(log.createdAt)}</TableCell>
                   <TableCell className="text-xs">
                     {log.exploitantId ? (exploitantMap.get(log.exploitantId) ?? '--') : '--'}
                   </TableCell>

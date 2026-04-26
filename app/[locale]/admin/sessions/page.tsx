@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { formatDateTimeFr } from '@/lib/format'
 import { RevokeSessionButton } from './revoke-button'
 
 export default async function AdminSessionsPage() {
@@ -21,10 +22,6 @@ export default async function AdminSessionsPage() {
     },
     orderBy: { createdAt: 'desc' },
   })
-
-  function formatDate(date: Date): string {
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   function truncateUA(ua: string | null): string {
     if (!ua) return '--'
@@ -66,8 +63,8 @@ export default async function AdminSessionsPage() {
                     <TableCell className="text-xs max-w-48 truncate">
                       {truncateUA(session.userAgent)}
                     </TableCell>
-                    <TableCell className="text-xs">{formatDate(session.createdAt)}</TableCell>
-                    <TableCell className="text-xs">{formatDate(session.expiresAt)}</TableCell>
+                    <TableCell className="text-xs">{formatDateTimeFr(session.createdAt)}</TableCell>
+                    <TableCell className="text-xs">{formatDateTimeFr(session.expiresAt)}</TableCell>
                     <TableCell>
                       <RevokeSessionButton sessionId={session.id} />
                     </TableCell>
