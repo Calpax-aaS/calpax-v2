@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useMemo, useId } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -14,8 +15,9 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { fetchAdminAuditLogs } from '@/lib/actions/admin'
+import { formatDateTimeShort } from '@/lib/format'
 
-const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'AUTH']
+const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'Exploitant']
 const ACTIONS = [
   'CREATE',
   'UPDATE',
@@ -26,6 +28,10 @@ const ACTIONS = [
   'PASSWORD_RESET',
   'PASSWORD_CHANGED',
   'ACCOUNT_LOCKED',
+  'EXPORT_PII',
+  'ANONYMIZE_PII',
+  'IMPERSONATE_START',
+  'IMPERSONATE_STOP',
 ]
 
 type AuditLog = {
@@ -61,6 +67,7 @@ export function AdminAuditClient({
 }) {
   const t = useTranslations('audit')
   const ta = useTranslations('admin.audit')
+  const locale = useLocale()
   const [exploitantId, setExploitantId] = useState('')
   const [entityType, setEntityType] = useState('')
   const [action, setAction] = useState('')
@@ -91,14 +98,17 @@ export function AdminAuditClient({
     }
   }, [exploitantId, entityType, action, page])
 
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR')
-  }
-
   function formatJson(value: unknown): string {
-    if (value === null || value === undefined) return '--'
+    if (value === null || value === undefined) return '—'
     if (typeof value === 'string') return value
     return JSON.stringify(value)
+  }
+
+  /** True for UPDATE rows where the audit-extension recorded a single field
+   *  change (one row per modified field). For these we render the before /
+   *  after columns as a colour-coded inline diff rather than raw JSON. */
+  function isFieldDiff(log: AuditLog): boolean {
+    return log.action === 'UPDATE' && log.field !== null
   }
 
   const exploitantMap = useMemo(
@@ -202,9 +212,11 @@ export function AdminAuditClient({
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={String(log.id)}>
-                  <TableCell className="text-xs">{formatDate(log.createdAt)}</TableCell>
                   <TableCell className="text-xs">
-                    {log.exploitantId ? (exploitantMap.get(log.exploitantId) ?? '--') : '--'}
+                    {formatDateTimeShort(log.createdAt, locale)}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {log.exploitantId ? (exploitantMap.get(log.exploitantId) ?? '—') : '—'}
                   </TableCell>
                   <TableCell className="text-xs">
                     {log.impersonatedBy ? (
@@ -212,7 +224,7 @@ export function AdminAuditClient({
                         {adminMap.get(log.impersonatedBy) ?? log.impersonatedBy.slice(0, 8)}
                       </Badge>
                     ) : (
-                      '--'
+                      '—'
                     )}
                   </TableCell>
                   <TableCell>
@@ -224,13 +236,32 @@ export function AdminAuditClient({
                   <TableCell>
                     <Badge>{log.action}</Badge>
                   </TableCell>
-                  <TableCell>{log.field ?? '--'}</TableCell>
-                  <TableCell className="max-w-32 truncate text-xs">
-                    {formatJson(log.beforeValue)}
-                  </TableCell>
-                  <TableCell className="max-w-32 truncate text-xs">
-                    {formatJson(log.afterValue)}
-                  </TableCell>
+                  <TableCell className="font-mono text-xs">{log.field ?? '—'}</TableCell>
+                  {isFieldDiff(log) ? (
+                    <TableCell colSpan={2} className="text-xs">
+                      <div className="flex items-center gap-2 font-mono">
+                        <span className="rounded bg-red-50 px-1.5 py-0.5 text-red-700 line-through">
+                          {formatJson(log.beforeValue)}
+                        </span>
+                        <ArrowRight
+                          className="h-3 w-3 shrink-0 text-muted-foreground"
+                          aria-hidden
+                        />
+                        <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-emerald-700">
+                          {formatJson(log.afterValue)}
+                        </span>
+                      </div>
+                    </TableCell>
+                  ) : (
+                    <>
+                      <TableCell className="max-w-32 truncate text-xs">
+                        {formatJson(log.beforeValue)}
+                      </TableCell>
+                      <TableCell className="max-w-32 truncate text-xs">
+                        {formatJson(log.afterValue)}
+                      </TableCell>
+                    </>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
