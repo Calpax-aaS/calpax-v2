@@ -14,15 +14,18 @@ type Props = {
   sessions: MySession[]
 }
 
-function deviceLabel(ua: string | null): { label: string; icon: typeof Monitor } {
-  if (!ua) return { label: 'Inconnu', icon: Monitor }
+function deviceLabel(
+  ua: string | null,
+  unknownLabel: string,
+): { label: string; icon: typeof Monitor } {
+  if (!ua) return { label: unknownLabel, icon: Monitor }
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(ua)
   const browser =
     (ua.match(/Chrome\/[\d.]+/)?.[0] && 'Chrome') ||
     (ua.match(/Firefox\/[\d.]+/)?.[0] && 'Firefox') ||
     (ua.match(/Safari\/[\d.]+/)?.[0] && 'Safari') ||
     (ua.match(/Edg\/[\d.]+/)?.[0] && 'Edge') ||
-    'Navigateur'
+    unknownLabel
   const os =
     (ua.includes('Windows') && 'Windows') ||
     (ua.includes('Macintosh') && 'macOS') ||
@@ -35,6 +38,7 @@ function deviceLabel(ua: string | null): { label: string; icon: typeof Monitor }
 
 export function MySessionsCard({ sessions }: Props) {
   const t = useTranslations('profil.sessions')
+  const tc = useTranslations('common')
   const locale = useLocale()
   const [pending, startTransition] = useTransition()
   const [revokingId, setRevokingId] = useState<string | null>(null)
@@ -69,7 +73,7 @@ export function MySessionsCard({ sessions }: Props) {
         ) : (
           <ul className="divide-y divide-border">
             {visible.map((s) => {
-              const { label, icon: Icon } = deviceLabel(s.userAgent)
+              const { label, icon: Icon } = deviceLabel(s.userAgent, tc('unknownDevice'))
               const isRevoking = pending && revokingId === s.id
               return (
                 <li key={s.id} className="flex items-center gap-3 py-3">

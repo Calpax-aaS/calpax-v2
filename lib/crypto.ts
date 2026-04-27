@@ -46,6 +46,16 @@ export function safeDecryptInt(encrypted: string | null | undefined, fallback: n
   }
 }
 
+export function safeDecryptIntOrNull(encrypted: string | null | undefined): number | null {
+  if (!encrypted) return null
+  try {
+    const parsed = parseInt(decrypt(encrypted), 10)
+    return isNaN(parsed) ? null : parsed
+  } catch {
+    return null
+  }
+}
+
 export function safeDecryptString(
   encrypted: string | null | undefined,
   fallback: string | null = null,

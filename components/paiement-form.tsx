@@ -22,6 +22,7 @@ type Props = { billetId: string; locale: string }
 
 export function PaiementForm({ billetId, locale }: Props) {
   const t = useTranslations('paiements')
+  const tc = useTranslations('common')
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modePaiement, setModePaiement] = useState<string>('')
@@ -89,7 +90,7 @@ export function PaiementForm({ billetId, locale }: Props) {
           {t('add')}
         </Button>
         <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(false)}>
-          Annuler
+          {tc('cancel')}
         </Button>
       </div>
     </form>

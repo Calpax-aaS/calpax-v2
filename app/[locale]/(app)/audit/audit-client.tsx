@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { fetchAuditLogs } from '@/lib/actions/audit'
+import { formatDateTimeShort } from '@/lib/format'
 
 const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'AUTH']
 const ACTIONS = [
@@ -40,6 +41,7 @@ type AuditLog = {
 
 export function AuditClient() {
   const t = useTranslations('audit')
+  const locale = useLocale()
   const [entityType, setEntityType] = useState('')
   const [action, setAction] = useState('')
   const [page, setPage] = useState(1)
@@ -62,10 +64,6 @@ export function AuditClient() {
     void load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, action, page])
-
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   function formatJson(value: unknown): string {
     if (value === null || value === undefined) return '—'
@@ -113,9 +111,7 @@ export function AuditClient() {
             ))}
           </select>
         </div>
-        <span className="text-sm text-muted-foreground">
-          {total} {total === 1 ? 'resultat' : 'resultats'}
-        </span>
+        <span className="text-sm text-muted-foreground">{t('results', { count: total })}</span>
       </div>
 
       {/* Table */}
@@ -136,7 +132,9 @@ export function AuditClient() {
           <TableBody>
             {logs.map((log) => (
               <TableRow key={String(log.id)}>
-                <TableCell className="text-xs">{formatDate(log.createdAt)}</TableCell>
+                <TableCell className="text-xs">
+                  {formatDateTimeShort(log.createdAt, locale)}
+                </TableCell>
                 <TableCell>
                   <Badge variant="outline">{log.entityType}</Badge>{' '}
                   <span className="text-xs text-muted-foreground">{log.entityId.slice(0, 8)}</span>
@@ -166,7 +164,7 @@ export function AuditClient() {
             disabled={page <= 1}
             onClick={() => setPage(page - 1)}
           >
-            Precedent
+            {t('prev')}
           </Button>
           <span className="text-sm py-2">
             {page} / {pageCount}
@@ -177,7 +175,7 @@ export function AuditClient() {
             disabled={page >= pageCount}
             onClick={() => setPage(page + 1)}
           >
-            Suivant
+            {t('next')}
           </Button>
         </div>
       )}

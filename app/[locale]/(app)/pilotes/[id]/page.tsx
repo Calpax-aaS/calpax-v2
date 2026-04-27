@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
-import { decrypt } from '@/lib/crypto'
+import { safeDecryptIntOrNull } from '@/lib/crypto'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,15 +22,7 @@ export default async function PiloteDetailPage({ params }: Props) {
     const pilote = await db.pilote.findUnique({ where: { id } })
     if (!pilote) notFound()
 
-    let poids: number | null = null
-    if (pilote.poidsEncrypted) {
-      try {
-        poids = Number(decrypt(pilote.poidsEncrypted))
-      } catch {
-        // Encrypted with a different key (e.g., seed ran with local key, prod has different key)
-        poids = null
-      }
-    }
+    const poids = safeDecryptIntOrNull(pilote.poidsEncrypted)
 
     return (
       <div className="space-y-6">

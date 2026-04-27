@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -111,12 +112,17 @@ export function PassagerTableEditor({ passagers, onChange }: Props) {
               <TableCell>
                 <Input
                   type="email"
+                  inputMode="email"
+                  autoComplete="email"
                   value={row.email}
                   onChange={(e) => updateRow(i, 'email', e.target.value)}
                 />
               </TableCell>
               <TableCell>
                 <Input
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
                   value={row.telephone}
                   onChange={(e) => updateRow(i, 'telephone', e.target.value)}
                 />
@@ -130,7 +136,7 @@ export function PassagerTableEditor({ passagers, onChange }: Props) {
                   aria-label={t('removeRow')}
                   title={t('removeRow')}
                 >
-                  X
+                  <Trash2 className="h-4 w-4" aria-hidden />
                 </Button>
               </TableCell>
             </TableRow>

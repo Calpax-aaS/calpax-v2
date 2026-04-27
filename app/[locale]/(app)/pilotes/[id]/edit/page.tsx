@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
-import { decrypt } from '@/lib/crypto'
+import { safeDecryptIntOrNull } from '@/lib/crypto'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PiloteEditForm } from './pilote-edit-form'
@@ -20,14 +20,7 @@ export default async function PiloteEditPage({ params }: Props) {
     const pilote = await db.pilote.findUnique({ where: { id } })
     if (!pilote) notFound()
 
-    let poids: number | null = null
-    if (pilote.poidsEncrypted) {
-      try {
-        poids = Number(decrypt(pilote.poidsEncrypted))
-      } catch {
-        poids = null
-      }
-    }
+    const poids = safeDecryptIntOrNull(pilote.poidsEncrypted)
 
     const dateExpirationStr = pilote.dateExpirationLicence
       ? pilote.dateExpirationLicence.toISOString().substring(0, 10)

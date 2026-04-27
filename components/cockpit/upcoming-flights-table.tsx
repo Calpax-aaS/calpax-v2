@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Chip } from '@/components/cockpit/chip'
 import { MonoValue } from '@/components/cockpit/mono-value'
+import { localeTag } from '@/lib/format'
 
 export type UpcomingFlight = {
   id: string
@@ -27,7 +28,7 @@ const STATUT_TONE: Record<string, Parameters<typeof Chip>[0]['tone']> = {
 
 function formatDate(dateStr: string, locale: string): string {
   const d = new Date(dateStr + 'T12:00:00Z')
-  return d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+  return d.toLocaleDateString(localeTag(locale), {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
