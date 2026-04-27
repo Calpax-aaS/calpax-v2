@@ -57,4 +57,31 @@ describe('lib/crypto', () => {
     const { encrypt } = await import('@/lib/crypto')
     expect(() => encrypt('x')).toThrow(/32 bytes/)
   })
+
+  describe('safeDecryptIntOrNull', () => {
+    it('returns null for nullish input', async () => {
+      const { safeDecryptIntOrNull } = await import('@/lib/crypto')
+      expect(safeDecryptIntOrNull(null)).toBeNull()
+      expect(safeDecryptIntOrNull(undefined)).toBeNull()
+      expect(safeDecryptIntOrNull('')).toBeNull()
+    })
+
+    it('decrypts a valid integer', async () => {
+      const { encrypt, safeDecryptIntOrNull } = await import('@/lib/crypto')
+      expect(safeDecryptIntOrNull(encrypt('85'))).toBe(85)
+    })
+
+    it('returns null on decrypt failure (tampered ciphertext)', async () => {
+      const { encrypt, safeDecryptIntOrNull } = await import('@/lib/crypto')
+      const ct = encrypt('85')
+      const buf = Buffer.from(ct, 'base64')
+      buf[buf.length - 1]! ^= 0xff
+      expect(safeDecryptIntOrNull(buf.toString('base64'))).toBeNull()
+    })
+
+    it('returns null when decrypted value is not a number', async () => {
+      const { encrypt, safeDecryptIntOrNull } = await import('@/lib/crypto')
+      expect(safeDecryptIntOrNull(encrypt('not-a-number'))).toBeNull()
+    })
+  })
 })

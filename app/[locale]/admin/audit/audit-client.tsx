@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useId } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -14,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { fetchAdminAuditLogs } from '@/lib/actions/admin'
+import { formatDateTimeShort } from '@/lib/format'
 
 const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'AUTH']
 const ACTIONS = [
@@ -61,6 +62,7 @@ export function AdminAuditClient({
 }) {
   const t = useTranslations('audit')
   const ta = useTranslations('admin.audit')
+  const locale = useLocale()
   const [exploitantId, setExploitantId] = useState('')
   const [entityType, setEntityType] = useState('')
   const [action, setAction] = useState('')
@@ -90,10 +92,6 @@ export function AdminAuditClient({
       cancelled = true
     }
   }, [exploitantId, entityType, action, page])
-
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   function formatJson(value: unknown): string {
     if (value === null || value === undefined) return '--'
@@ -202,7 +200,9 @@ export function AdminAuditClient({
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={String(log.id)}>
-                  <TableCell className="text-xs">{formatDate(log.createdAt)}</TableCell>
+                  <TableCell className="text-xs">
+                    {formatDateTimeShort(log.createdAt, locale)}
+                  </TableCell>
                   <TableCell className="text-xs">
                     {log.exploitantId ? (exploitantMap.get(log.exploitantId) ?? '--') : '--'}
                   </TableCell>

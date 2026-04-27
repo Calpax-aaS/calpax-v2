@@ -12,6 +12,8 @@
     "retry": "Réessayer",
     "backHome": "Retour à l'accueil",
     "dismiss": "Fermer",
+    "cancel": "Annuler",
+    "unknownDevice": "Appareil inconnu",
     "activate": "Activer",
     "deactivate": "Désactiver",
     "activateConfirm": "Réactiver cet élément ?",
@@ -628,6 +630,9 @@
   "audit": {
     "title": "Journal des modifications",
     "noEntries": "Aucune modification enregistrée",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "results": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
     "filters": {
       "entityType": "Type d'entité",
       "entityId": "ID entité",

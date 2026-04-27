@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Chip } from '@/components/cockpit/chip'
 import { MonoValue } from '@/components/cockpit/mono-value'
+import { localeTag } from '@/lib/format'
 
 export type FleetBallon = {
   id: string
@@ -28,7 +29,7 @@ const CAMO_TONE: Record<FleetBallon['camoStatus'], Parameters<typeof Chip>[0]['t
 
 function formatDateShort(dateStr: string, locale: string): string {
   const d = new Date(dateStr + 'T12:00:00Z')
-  return d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+  return d.toLocaleDateString(localeTag(locale), {
     day: '2-digit',
     month: 'short',
   })

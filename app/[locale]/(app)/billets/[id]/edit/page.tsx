@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { db } from '@/lib/db'
-import { decrypt, safeDecryptString } from '@/lib/crypto'
+import { safeDecryptIntOrNull, safeDecryptString } from '@/lib/crypto'
 import { BilletForm } from './billet-form'
 import type { PassagerRow } from '@/components/passager-table-editor'
 
@@ -23,23 +23,18 @@ export default async function BilletEditPage({ params }: Props) {
       billet = await db.billet.findUnique({ where: { id }, include: { passagers: true } })
       if (!billet) notFound()
 
-      passagers = billet.passagers.map((p) => ({
-        prenom: p.prenom,
-        nom: p.nom,
-        email: safeDecryptString(p.emailEncrypted) ?? '',
-        telephone: safeDecryptString(p.telephoneEncrypted) ?? '',
-        age: p.age != null ? String(p.age) : '',
-        poids: p.poidsEncrypted
-          ? (() => {
-              try {
-                return String(parseInt(decrypt(p.poidsEncrypted!), 10))
-              } catch {
-                return ''
-              }
-            })()
-          : '',
-        pmr: p.pmr,
-      }))
+      passagers = billet.passagers.map((p) => {
+        const poids = safeDecryptIntOrNull(p.poidsEncrypted)
+        return {
+          prenom: p.prenom,
+          nom: p.nom,
+          email: safeDecryptString(p.emailEncrypted) ?? '',
+          telephone: safeDecryptString(p.telephoneEncrypted) ?? '',
+          age: p.age != null ? String(p.age) : '',
+          poids: poids != null ? String(poids) : '',
+          pmr: p.pmr,
+        }
+      })
     }
 
     return (

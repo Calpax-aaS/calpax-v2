@@ -6,8 +6,18 @@ export function formatDateFr(date: Date): string {
   })
 }
 
-function localeTag(locale: string): 'fr-FR' | 'en-US' {
+export function localeTag(locale: string): 'fr-FR' | 'en-US' {
   return locale === 'fr' ? 'fr-FR' : 'en-US'
+}
+
+export function formatDateTimeFr(date: Date): string {
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 export function formatDateLong(date: Date, locale: string): string {

@@ -12,6 +12,8 @@
     "retry": "Try again",
     "backHome": "Back to home",
     "dismiss": "Dismiss",
+    "cancel": "Cancel",
+    "unknownDevice": "Unknown device",
     "activate": "Activate",
     "deactivate": "Deactivate",
     "activateConfirm": "Reactivate this item?",
@@ -628,6 +630,9 @@
   "audit": {
     "title": "Change log",
     "noEntries": "No changes recorded",
+    "prev": "Previous",
+    "next": "Next",
+    "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
     "filters": {
       "entityType": "Entity type",
       "entityId": "Entity ID",

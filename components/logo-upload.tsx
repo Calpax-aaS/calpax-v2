@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { uploadLogo } from '@/lib/actions/exploitant'
@@ -55,7 +56,8 @@ export function LogoUpload({ currentLogoUrl }: LogoUploadProps) {
           />
         </div>
         <Button type="submit" disabled={isPending} size="sm">
-          {isPending ? '...' : t('logoUploadButton')}
+          {isPending && <Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden />}
+          {t('logoUploadButton')}
         </Button>
       </form>
       {error && <p className="text-sm text-destructive">{error}</p>}

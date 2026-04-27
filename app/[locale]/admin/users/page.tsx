@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { basePrisma } from '@/lib/db/base'
+import { formatDateTimeFr } from '@/lib/format'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -34,7 +35,7 @@ export default async function AdminUsersPage() {
 
   function formatDate(date: Date | null): string {
     if (!date) return '--'
-    return new Date(date).toLocaleString('fr-FR')
+    return formatDateTimeFr(date)
   }
 
   return (
