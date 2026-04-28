@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
+import { logger } from '@/lib/logger'
 
 const ALGO = 'aes-256-gcm' as const
 const IV_LENGTH = 12
@@ -41,7 +42,11 @@ export function safeDecryptInt(encrypted: string | null | undefined, fallback: n
   try {
     const parsed = parseInt(decrypt(encrypted), 10)
     return isNaN(parsed) ? fallback : parsed
-  } catch {
+  } catch (err) {
+    logger.error(
+      { err: err instanceof Error ? err.message : String(err) },
+      'safeDecryptInt: failed',
+    )
     return fallback
   }
 }
@@ -53,7 +58,11 @@ export function safeDecryptString(
   if (!encrypted) return fallback
   try {
     return decrypt(encrypted)
-  } catch {
+  } catch (err) {
+    logger.error(
+      { err: err instanceof Error ? err.message : String(err) },
+      'safeDecryptString: failed',
+    )
     return fallback
   }
 }

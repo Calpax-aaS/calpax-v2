@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Chip } from '@/components/cockpit/chip'
 import { MonoValue } from '@/components/cockpit/mono-value'
+import { formatDateDayMonth, parseDateOnly } from '@/lib/format'
 
 export type FleetBallon = {
   id: string
@@ -24,14 +25,6 @@ const CAMO_TONE: Record<FleetBallon['camoStatus'], Parameters<typeof Chip>[0]['t
   SOON: 'warn',
   EXPIRED: 'danger',
   UNKNOWN: 'neutral',
-}
-
-function formatDateShort(dateStr: string, locale: string): string {
-  const d = new Date(dateStr + 'T12:00:00Z')
-  return d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-    day: '2-digit',
-    month: 'short',
-  })
 }
 
 /**
@@ -62,7 +55,7 @@ export function FleetRow({ ballons, locale }: Props) {
                 </Chip>
                 {b.nextFlight ? (
                   <span className="mono">
-                    {formatDateShort(b.nextFlight.date, locale)} ·{' '}
+                    {formatDateDayMonth(parseDateOnly(b.nextFlight.date), locale)} ·{' '}
                     {t(`fleet.creneau.${b.nextFlight.creneau}`)}
                   </span>
                 ) : (

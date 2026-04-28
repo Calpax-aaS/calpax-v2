@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Chip } from '@/components/cockpit/chip'
 import { MonoValue } from '@/components/cockpit/mono-value'
+import { formatDateWeekdayShort, parseDateOnly } from '@/lib/format'
 
 export type UpcomingFlight = {
   id: string
@@ -23,15 +24,6 @@ const STATUT_TONE: Record<string, Parameters<typeof Chip>[0]['tone']> = {
   TERMINE: 'ok',
   ARCHIVE: 'neutral',
   ANNULE: 'danger',
-}
-
-function formatDate(dateStr: string, locale: string): string {
-  const d = new Date(dateStr + 'T12:00:00Z')
-  return d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-  })
 }
 
 type Props = {
@@ -68,7 +60,7 @@ export function UpcomingFlightsTable({ flights, locale }: Props) {
               <tr key={f.id} className="transition-colors hover:bg-sky-50">
                 <td className="px-3 py-2">
                   <Link href={`/${locale}/vols/${f.id}`} className="block text-sky-900">
-                    {formatDate(f.date, locale)}
+                    {formatDateWeekdayShort(parseDateOnly(f.date), locale)}
                   </Link>
                 </td>
                 <td className="px-3 py-2">

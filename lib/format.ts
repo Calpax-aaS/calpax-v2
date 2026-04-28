@@ -36,3 +36,22 @@ export function formatDateTimeShort(date: Date, locale: string): string {
     minute: '2-digit',
   })
 }
+
+export function formatDateWeekdayShort(date: Date, locale: string): string {
+  return date.toLocaleDateString(localeTag(locale), {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+  })
+}
+
+export function formatDateDayMonth(date: Date, locale: string): string {
+  return date.toLocaleDateString(localeTag(locale), {
+    day: '2-digit',
+    month: 'short',
+  })
+}
+
+export function parseDateOnly(dateStr: string): Date {
+  return new Date(dateStr + 'T12:00:00Z')
+}
