@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -40,7 +41,7 @@ export function AdminNav({ locale }: { locale: string }) {
     <>
       <div className="flex items-center justify-between gap-2 px-2 py-3 mb-4 border-b">
         <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="Calpax" className="h-6 w-6" />
+          <Image src="/logo.svg" alt="Calpax" width={24} height={24} className="h-6 w-6" />
           <span className="text-sm font-bold">Super Admin</span>
         </div>
         <button

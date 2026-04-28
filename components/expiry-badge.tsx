@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { computeAlertSeverity } from '@/lib/regulatory/alerts'
+import { formatDateFr } from '@/lib/format'
 
 interface ExpiryBadgeProps {
   date: Date
@@ -22,15 +23,10 @@ export function ExpiryBadge({ date, type }: ExpiryBadgeProps) {
     label: severity,
     variant: 'outline' as const,
   }
-  const dateStr = date.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
 
   return (
     <Badge variant={variant}>
-      {label} — {dateStr}
+      {label} — {formatDateFr(date)}
     </Badge>
   )
 }

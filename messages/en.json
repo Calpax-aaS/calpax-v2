@@ -12,6 +12,8 @@
     "retry": "Try again",
     "backHome": "Back to home",
     "dismiss": "Dismiss",
+    "cancel": "Cancel",
+    "saving": "Saving…",
     "activate": "Activate",
     "deactivate": "Deactivate",
     "activateConfirm": "Reactivate this item?",

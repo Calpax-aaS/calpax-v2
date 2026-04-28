@@ -89,8 +89,7 @@ export const tenantExtension = Prisma.defineExtension({
             return null
           }
           if (tenantFieldInjected) {
-            const { [field]: _stripped, ...rest } = result
-            return rest
+            return Object.fromEntries(Object.entries(result).filter(([k]) => k !== field))
           }
           return result
         }

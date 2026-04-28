@@ -57,4 +57,40 @@ describe('lib/crypto', () => {
     const { encrypt } = await import('@/lib/crypto')
     expect(() => encrypt('x')).toThrow(/32 bytes/)
   })
+
+  it('safeDecryptInt logs and falls back when ciphertext is corrupt', async () => {
+    const errorSpy = vi.fn()
+    vi.doMock('@/lib/logger', () => ({ logger: { error: errorSpy } }))
+    const { safeDecryptInt } = await import('@/lib/crypto')
+
+    // Garbage ciphertext, should not throw, should log, should return fallback
+    expect(safeDecryptInt('not-a-real-ciphertext', 42)).toBe(42)
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ err: expect.any(String) }),
+      'safeDecryptInt: failed',
+    )
+  })
+
+  it('safeDecryptString logs and falls back when ciphertext is corrupt', async () => {
+    const errorSpy = vi.fn()
+    vi.doMock('@/lib/logger', () => ({ logger: { error: errorSpy } }))
+    const { safeDecryptString } = await import('@/lib/crypto')
+
+    expect(safeDecryptString('garbage', 'fallback')).toBe('fallback')
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ err: expect.any(String) }),
+      'safeDecryptString: failed',
+    )
+  })
+
+  it('safeDecrypt* return fallback for null/undefined without logging', async () => {
+    const errorSpy = vi.fn()
+    vi.doMock('@/lib/logger', () => ({ logger: { error: errorSpy } }))
+    const { safeDecryptInt, safeDecryptString } = await import('@/lib/crypto')
+
+    expect(safeDecryptInt(null, 7)).toBe(7)
+    expect(safeDecryptInt(undefined, 9)).toBe(9)
+    expect(safeDecryptString(null, 'x')).toBe('x')
+    expect(errorSpy).not.toHaveBeenCalled()
+  })
 })

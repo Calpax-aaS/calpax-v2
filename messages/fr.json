@@ -12,6 +12,8 @@
     "retry": "Réessayer",
     "backHome": "Retour à l'accueil",
     "dismiss": "Fermer",
+    "cancel": "Annuler",
+    "saving": "Enregistrement…",
     "activate": "Activer",
     "deactivate": "Désactiver",
     "activateConfirm": "Réactiver cet élément ?",

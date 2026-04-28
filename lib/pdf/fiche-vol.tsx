@@ -393,6 +393,7 @@ function Page1({ data }: { data: FicheVolData }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf Image has no alt prop; PDFs don't surface alt text */}
           {exploitant.logoUrl && <Image src={exploitant.logoUrl} style={styles.headerLogo} />}
           <View style={styles.headerLeft}>
             <Text style={styles.headerTitle}>{docTitle}</Text>

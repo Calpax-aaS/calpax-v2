@@ -18,6 +18,13 @@ const REDACT_FIELDS = new Set([
   'payeurPrenom',
   'payeurNom',
   'poidsEncrypted',
+  'emailEncrypted',
+  'telephoneEncrypted',
+  'destinataireNom',
+  'destinataireEmail',
+  'organisateurNom',
+  'organisateurEmail',
+  'organisateurTelephone',
 ])
 
 function redactSensitive(obj: Record<string, unknown>): Record<string, unknown> {
