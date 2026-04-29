@@ -36,3 +36,12 @@ export function formatDateTimeShort(date: Date, locale: string): string {
     minute: '2-digit',
   })
 }
+
+export function formatDateTimeFr(date: Date | null | undefined, fallback = '--'): string {
+  if (!date) return fallback
+  return new Date(date).toLocaleString('fr-FR')
+}
+
+export function formatEuros(euros: number): string {
+  return euros.toFixed(2) + ' EUR'
+}

@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { basePrisma } from '@/lib/db/base'
+import { formatDateTimeFr } from '@/lib/format'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -31,11 +32,6 @@ export default async function AdminUsersPage() {
     select: { userId: true, createdAt: true },
   })
   const lastLoginMap = new Map(latestSessions.map((s) => [s.userId, s.createdAt]))
-
-  function formatDate(date: Date | null): string {
-    if (!date) return '--'
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   return (
     <div className="space-y-6">
@@ -75,7 +71,7 @@ export default async function AdminUsersPage() {
                     </TableCell>
                     <TableCell>{user.exploitant.name}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {formatDate(lastLoginMap.get(user.id) ?? null)}
+                      {formatDateTimeFr(lastLoginMap.get(user.id) ?? null)}
                     </TableCell>
                     <TableCell>
                       {user.banned ? (

@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
+import { basePrisma } from '@/lib/db/base'
 
 export async function createTag(formData: FormData): Promise<{ error?: string }> {
   return requireAuth(async () => {
@@ -50,7 +51,6 @@ export async function addTagToBillet(billetId: string, tagId: string): Promise<{
     if (!(await assertBothInTenant(billetId, tagId))) {
       return { error: 'Billet ou tag introuvable' }
     }
-    const { basePrisma } = await import('@/lib/db/base')
     try {
       await basePrisma.billetTag.create({ data: { billetId, tagId } })
     } catch {
@@ -70,7 +70,6 @@ export async function removeTagFromBillet(
     if (!(await assertBothInTenant(billetId, tagId))) {
       return { error: 'Billet ou tag introuvable' }
     }
-    const { basePrisma } = await import('@/lib/db/base')
     await basePrisma.billetTag.delete({
       where: { billetId_tagId: { billetId, tagId } },
     })

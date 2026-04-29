@@ -38,17 +38,11 @@ async function nextSequence(exploitantId: string, year: number): Promise<number>
   return first.lastSeq
 }
 
-function extractBilletData(formData: FormData) {
-  const passagersJson = formData.get('passagers')
-  let passagers: unknown[] = []
-  if (typeof passagersJson === 'string') {
-    try {
-      passagers = JSON.parse(passagersJson)
-    } catch {
-      passagers = []
-    }
-  }
+type ExtractBilletResult =
+  | { ok: true; data: ReturnType<typeof buildBilletData> }
+  | { ok: false; error: string }
 
+function buildBilletData(formData: FormData, passagers: unknown[]) {
   return {
     typePlannif: formData.get('typePlannif'),
     dateVolDeb: formData.get('dateVolDeb') || undefined,
@@ -80,6 +74,19 @@ function extractBilletData(formData: FormData) {
   }
 }
 
+function extractBilletData(formData: FormData): ExtractBilletResult {
+  const passagersJson = formData.get('passagers')
+  let passagers: unknown[] = []
+  if (typeof passagersJson === 'string' && passagersJson.length > 0) {
+    try {
+      passagers = JSON.parse(passagersJson)
+    } catch {
+      return { ok: false, error: 'Liste des passagers invalide' }
+    }
+  }
+  return { ok: true, data: buildBilletData(formData, passagers) }
+}
+
 export async function createBillet(
   locale: string,
   formData: FormData,
@@ -88,8 +95,9 @@ export async function createBillet(
     requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
-    const raw = extractBilletData(formData)
-    const result = billetCreateSchema.safeParse(raw)
+    const extracted = extractBilletData(formData)
+    if (!extracted.ok) return { error: extracted.error }
+    const result = billetCreateSchema.safeParse(extracted.data)
     if (!result.success) {
       return { error: formatZodError(result.error) }
     }
@@ -130,8 +138,9 @@ export async function updateBillet(
     requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
-    const raw = extractBilletData(formData)
-    const result = billetCreateSchema.safeParse(raw)
+    const extracted = extractBilletData(formData)
+    if (!extracted.ok) return { error: extracted.error }
+    const result = billetCreateSchema.safeParse(extracted.data)
     if (!result.success) {
       return { error: formatZodError(result.error) }
     }
