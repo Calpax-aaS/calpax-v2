@@ -16,14 +16,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { EmptyState } from '@/components/empty-state'
+import { formatEuros } from '@/lib/format'
 import type { StatutBillet, StatutPaiement } from '@prisma/client'
 
 type Props = {
   params: Promise<{ locale: string }>
-}
-
-function formatEuros(euros: number): string {
-  return euros.toFixed(2) + ' EUR'
 }
 
 function statutVariant(statut: StatutBillet): 'outline' | 'default' | 'secondary' | 'destructive' {
@@ -107,7 +104,7 @@ export default async function BilletsPage({ params }: Props) {
                       {t('fields.payeurNom')}
                     </TableHead>
                     <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Passagers
+                      {t('sections.passagers')}
                     </TableHead>
                     <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
                       {t('fields.montantTtc')}

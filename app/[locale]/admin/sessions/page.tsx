@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { basePrisma } from '@/lib/db/base'
+import { formatDateTimeFr } from '@/lib/format'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -21,10 +22,6 @@ export default async function AdminSessionsPage() {
     },
     orderBy: { createdAt: 'desc' },
   })
-
-  function formatDate(date: Date): string {
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   function truncateUA(ua: string | null): string {
     if (!ua) return '--'
@@ -66,8 +63,8 @@ export default async function AdminSessionsPage() {
                     <TableCell className="text-xs max-w-48 truncate">
                       {truncateUA(session.userAgent)}
                     </TableCell>
-                    <TableCell className="text-xs">{formatDate(session.createdAt)}</TableCell>
-                    <TableCell className="text-xs">{formatDate(session.expiresAt)}</TableCell>
+                    <TableCell className="text-xs">{formatDateTimeFr(session.createdAt)}</TableCell>
+                    <TableCell className="text-xs">{formatDateTimeFr(session.expiresAt)}</TableCell>
                     <TableCell>
                       <RevokeSessionButton sessionId={session.id} />
                     </TableCell>

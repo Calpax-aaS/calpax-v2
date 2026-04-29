@@ -18,15 +18,11 @@ import {
 } from '@/components/ui/table'
 import { PaiementForm } from '@/components/paiement-form'
 import { cn } from '@/lib/utils'
-import { formatDateFr } from '@/lib/format'
+import { formatDateFr, formatEuros } from '@/lib/format'
 import type { StatutBillet, StatutPaiement } from '@prisma/client'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
-}
-
-function formatEuros(euros: number): string {
-  return euros.toFixed(2) + ' EUR'
 }
 
 function formatDate(date: Date | null | undefined): string {
@@ -137,7 +133,7 @@ export default async function BilletDetailPage({ params }: Props) {
         {/* Payeur card */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Payeur</CardTitle>
+            <CardTitle className="text-base">{tBillets('sections.payeur')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             <div>
@@ -183,7 +179,7 @@ export default async function BilletDetailPage({ params }: Props) {
         {/* Planification card */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Planification</CardTitle>
+            <CardTitle className="text-base">{tBillets('sections.planification')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
             <div>
@@ -310,7 +306,9 @@ export default async function BilletDetailPage({ params }: Props) {
         {/* Passagers card */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Passagers ({billet.passagers.length})</CardTitle>
+            <CardTitle className="text-base">
+              {tBillets('sections.passagers')} ({billet.passagers.length})
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {billet.passagers.length === 0 ? (
@@ -345,7 +343,7 @@ export default async function BilletDetailPage({ params }: Props) {
                         <TableCell>{p.nom}</TableCell>
                         <TableCell>{p.age ?? '—'}</TableCell>
                         <TableCell>{poids !== null ? `${poids} kg` : '—'}</TableCell>
-                        <TableCell>{p.pmr ? 'Oui' : 'Non'}</TableCell>
+                        <TableCell>{p.pmr ? tPassagers('pmrYes') : tPassagers('pmrNo')}</TableCell>
                       </TableRow>
                     )
                   })}

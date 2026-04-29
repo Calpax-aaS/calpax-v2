@@ -588,6 +588,8 @@
       "poids": "Weight (kg)",
       "pmr": "PRM"
     },
+    "pmrYes": "Yes",
+    "pmrNo": "No",
     "addRow": "Add passenger",
     "removeRow": "Remove passenger"
   },
