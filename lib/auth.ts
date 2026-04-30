@@ -5,6 +5,7 @@ import { admin } from 'better-auth/plugins/admin'
 import { twoFactor } from 'better-auth/plugins/two-factor'
 import { basePrisma } from '@/lib/db/base'
 import { authBeforeHook, authAfterHook } from '@/lib/auth/hooks'
+import { logger } from '@/lib/logger'
 import { Resend } from 'resend'
 
 const resendApiKey = process.env.RESEND_API_KEY
@@ -29,7 +30,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       if (!resend) {
-        console.warn('[auth] Resend not configured, reset password URL:', url)
+        logger.warn({ flow: 'reset-password', url }, '[auth] Resend not configured')
         return
       }
       await resend.emails.send({
@@ -45,7 +46,7 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       if (!resend) {
-        console.warn('[auth] Resend not configured, verification URL:', url)
+        logger.warn({ flow: 'email-verification', url }, '[auth] Resend not configured')
         return
       }
       await resend.emails.send({
@@ -79,7 +80,7 @@ export const auth = betterAuth({
     magicLink({
       sendMagicLink: async ({ email, url }) => {
         if (!resend) {
-          console.warn('[auth] Resend not configured, magic link URL:', url)
+          logger.warn({ flow: 'magic-link', url }, '[auth] Resend not configured')
           return
         }
         await resend.emails.send({

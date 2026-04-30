@@ -11,21 +11,11 @@ import { FlightCard } from '@/components/flight-card'
 import type { FlightCardData } from '@/components/flight-card'
 import { EmptyState } from '@/components/empty-state'
 import { buildVolWhereForRole } from '@/lib/vol/role-filter'
+import { toDateOnly, getMondayOfWeek } from '@/lib/format'
 
 type Props = {
   params: Promise<{ locale: string }>
   searchParams: Promise<{ week?: string }>
-}
-
-function getMondayOfWeek(dateStr: string): string {
-  const d = new Date(dateStr + 'T12:00:00Z')
-  const day = d.getUTCDay()
-  d.setUTCDate(d.getUTCDate() - ((day + 6) % 7)) // shift to Monday
-  return d.toISOString().slice(0, 10)
-}
-
-function toDateOnly(date: Date): string {
-  return date.toISOString().slice(0, 10)
 }
 
 function mapVolToCardData(vol: {

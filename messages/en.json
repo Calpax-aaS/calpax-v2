@@ -161,6 +161,7 @@
       "expires": "Expires",
       "actions": "Actions",
       "revoke": "Revoke",
+      "revokeConfirm": "Revoke this session? The user will be signed out immediately.",
       "noSessions": "No active sessions",
       "revoked": "Session revoked"
     },
@@ -628,6 +629,9 @@
   "audit": {
     "title": "Change log",
     "noEntries": "No changes recorded",
+    "results": "{count, plural, one {# result} other {# results}}",
+    "prev": "Previous",
+    "next": "Next",
     "filters": {
       "entityType": "Entity type",
       "entityId": "Entity ID",

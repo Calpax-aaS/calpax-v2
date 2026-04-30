@@ -1,5 +1,6 @@
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { basePrisma } from '@/lib/db/base'
+import { formatDateTimeShort } from '@/lib/format'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -13,6 +14,7 @@ import { RevokeSessionButton } from './revoke-button'
 
 export default async function AdminSessionsPage() {
   const t = await getTranslations('admin.sessions')
+  const locale = await getLocale()
 
   const sessions = await basePrisma.session.findMany({
     where: { expiresAt: { gt: new Date() } },
@@ -23,7 +25,7 @@ export default async function AdminSessionsPage() {
   })
 
   function formatDate(date: Date): string {
-    return new Date(date).toLocaleString('fr-FR')
+    return formatDateTimeShort(date, locale)
   }
 
   function truncateUA(ua: string | null): string {

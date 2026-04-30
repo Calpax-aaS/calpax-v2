@@ -11,6 +11,7 @@ import { getContext } from '@/lib/context'
 import { sendInvitationEmail } from '@/lib/email/invitation'
 import { logger } from '@/lib/logger'
 import { AuditAction } from '@prisma/client'
+import type { AdminAuditLogRow, AuditLogPage } from '@/lib/audit/types'
 
 export async function revokeSession(sessionId: string) {
   return requireAuth(async () => {
@@ -25,7 +26,7 @@ export async function fetchAdminAuditLogs(filters: {
   entityType?: string
   action?: string
   page?: number
-}) {
+}): Promise<AuditLogPage<AdminAuditLogRow>> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX')
 

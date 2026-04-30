@@ -8,6 +8,7 @@ import { ImpersonationBanner } from '@/components/impersonation-banner'
 import { CalpaxWordmark } from '@/components/brand/calpax-wordmark'
 import { runWithContext } from '@/lib/context'
 import { db } from '@/lib/db'
+import { logger } from '@/lib/logger'
 import { buildBallonAlerts, buildPiloteAlerts, sortAlerts } from '@/lib/regulatory/alerts'
 import {
   IMPERSONATION_COOKIE_NAME,
@@ -87,7 +88,10 @@ export default async function AppLayout({ children, params }: Props) {
       const today = new Date()
       const [exploitant, ticketsCount, alerts] = await Promise.all([
         db.exploitant.findFirst({ select: { name: true } }),
-        db.billet.count({ where: { statut: 'EN_ATTENTE' } }).catch(() => 0),
+        db.billet.count({ where: { statut: 'EN_ATTENTE' } }).catch((err: unknown) => {
+          logger.warn({ err, exploitantId }, 'layout: pending billets count failed')
+          return 0
+        }),
         showAlerts ? fetchCriticalAlerts(today) : Promise.resolve<Alert[]>([]),
       ])
       return {
