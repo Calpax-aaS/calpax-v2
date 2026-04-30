@@ -11,6 +11,7 @@ export function RevokeSessionButton({ sessionId }: { sessionId: string }) {
   const [revoked, setRevoked] = useState(false)
 
   async function handleRevoke() {
+    if (!window.confirm(t('revokeConfirm'))) return
     setLoading(true)
     try {
       await revokeSession(sessionId)

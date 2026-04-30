@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useTransition } from 'react'
+import { toast } from 'sonner'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { cancelVol, archivePve } from '@/lib/actions/vol'
@@ -17,38 +18,35 @@ type Props = {
 
 export function VolActions({ volId, locale, statut, canEdit = true }: Props) {
   const t = useTranslations('vols')
-  const [error, setError] = useState<string | null>(null)
+  const [pending, startTransition] = useTransition()
 
-  async function handleCancel() {
-    const confirmed = window.confirm(t('confirmCancel'))
-    if (!confirmed) return
-    const result = await cancelVol(volId, locale)
-    if (result?.error) {
-      setError(result.error)
-    }
+  function handleCancel() {
+    if (!window.confirm(t('confirmCancel'))) return
+    startTransition(async () => {
+      const result = await cancelVol(volId, locale)
+      if (result?.error) toast.error(result.error)
+    })
   }
 
-  async function handleConfirmer() {
-    const result = await confirmerVol(volId, locale)
-    if (result?.error) {
-      setError(result.error)
-    }
+  function handleConfirmer() {
+    startTransition(async () => {
+      const result = await confirmerVol(volId, locale)
+      if (result?.error) toast.error(result.error)
+    })
   }
 
-  async function handleArchive() {
-    const confirmed = window.confirm(t('confirmArchive'))
-    if (!confirmed) return
-    const result = await archivePve(volId, locale)
-    if (result?.error) {
-      setError(result.error)
-    }
+  function handleArchive() {
+    if (!window.confirm(t('confirmArchive'))) return
+    startTransition(async () => {
+      const result = await archivePve(volId, locale)
+      if (result?.error) toast.error(result.error)
+    })
   }
 
   const showFiche = statut === 'CONFIRME' || statut === 'TERMINE'
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      {error && <span className="text-destructive text-sm">{error}</span>}
       {showFiche && (
         <a
           href={`/api/vols/${volId}/fiche-vol`}
@@ -67,12 +65,12 @@ export function VolActions({ volId, locale, statut, canEdit = true }: Props) {
         </Link>
       )}
       {canEdit && statut === 'PLANIFIE' && (
-        <Button size="sm" onClick={handleConfirmer}>
+        <Button size="sm" disabled={pending} onClick={handleConfirmer}>
           {t('confirmer')}
         </Button>
       )}
       {canEdit && statut === 'TERMINE' && (
-        <Button size="sm" onClick={handleArchive}>
+        <Button size="sm" disabled={pending} onClick={handleArchive}>
           {t('archivePve')}
         </Button>
       )}
@@ -86,7 +84,7 @@ export function VolActions({ volId, locale, statut, canEdit = true }: Props) {
         </a>
       )}
       {canEdit && statut !== 'ARCHIVE' && statut !== 'ANNULE' && (
-        <Button variant="destructive" size="sm" onClick={handleCancel}>
+        <Button variant="destructive" size="sm" disabled={pending} onClick={handleCancel}>
           {t('cancel')}
         </Button>
       )}

@@ -34,6 +34,14 @@ const SEVERITY_ORDER: Record<AlertSeverity, number> = {
   OK: 3,
 }
 
+// Days-remaining thresholds for regulatory expiry alerts.
+// CRITICAL is the same for both certificates (≤ 30 days = act now).
+// WARNING window is wider for BFCL because pilot licence renewals require
+// scheduled medical/proficiency exams; CAMO can be renewed faster.
+const CRITICAL_DAYS = 30
+const CAMO_WARNING_DAYS = 60
+const BFCL_WARNING_DAYS = 90
+
 /**
  * Compute number of full days remaining until expiryDate (from today).
  * Returns 0 if expiry is today, negative if already expired.
@@ -58,9 +66,9 @@ export function computeAlertSeverity(
   const days = computeDaysRemaining(expiryDate, today)
 
   if (days <= 0) return 'EXPIRED'
-  if (days <= 30) return 'CRITICAL'
+  if (days <= CRITICAL_DAYS) return 'CRITICAL'
 
-  const warningThreshold = type === 'BFCL' ? 90 : 60
+  const warningThreshold = type === 'BFCL' ? BFCL_WARNING_DAYS : CAMO_WARNING_DAYS
   if (days <= warningThreshold) return 'WARNING'
 
   return 'OK'

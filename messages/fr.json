@@ -161,6 +161,7 @@
       "expires": "Expire",
       "actions": "Actions",
       "revoke": "Révoquer",
+      "revokeConfirm": "Révoquer cette session ? L'utilisateur sera immédiatement déconnecté.",
       "noSessions": "Aucune session active",
       "revoked": "Session révoquée"
     },
@@ -628,6 +629,9 @@
   "audit": {
     "title": "Journal des modifications",
     "noEntries": "Aucune modification enregistrée",
+    "results": "{count, plural, one {# résultat} other {# résultats}}",
+    "prev": "Précédent",
+    "next": "Suivant",
     "filters": {
       "entityType": "Type d'entité",
       "entityId": "ID entité",

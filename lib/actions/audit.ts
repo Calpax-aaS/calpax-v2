@@ -3,6 +3,7 @@
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
 import { db } from '@/lib/db'
+import type { AuditLogPage, AuditLogRow } from '@/lib/audit/types'
 
 type AuditFilters = {
   entityType?: string
@@ -10,7 +11,7 @@ type AuditFilters = {
   page?: number
 }
 
-export async function fetchAuditLogs(filters: AuditFilters) {
+export async function fetchAuditLogs(filters: AuditFilters): Promise<AuditLogPage<AuditLogRow>> {
   return requireAuth(async () => {
     // The tenant-scoped audit viewer is rendered from
     // `app/[locale]/(app)/audit/page.tsx` which gates by role, but we

@@ -5,14 +5,18 @@ const IV_LENGTH = 12
 const TAG_LENGTH = 16
 const KEY_LENGTH = 32
 
+let cachedKey: Buffer | null = null
+
 function getKey(): Buffer {
+  if (cachedKey) return cachedKey
   const hex = process.env.ENCRYPTION_KEY
   if (!hex) throw new Error('ENCRYPTION_KEY missing from environment')
   const key = Buffer.from(hex, 'hex')
   if (key.length !== KEY_LENGTH) {
     throw new Error(`ENCRYPTION_KEY must be 32 bytes (64 hex chars), got ${key.length} bytes`)
   }
-  return key
+  cachedKey = key
+  return cachedKey
 }
 
 export function encrypt(plaintext: string): string {

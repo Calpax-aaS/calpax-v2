@@ -1,5 +1,6 @@
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { basePrisma } from '@/lib/db/base'
+import { formatDateTimeShort } from '@/lib/format'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -14,6 +15,7 @@ import { UserBanButton } from './user-ban-button'
 
 export default async function AdminUsersPage() {
   const t = await getTranslations('admin.users')
+  const locale = await getLocale()
 
   const users = await basePrisma.user.findMany({
     include: {
@@ -34,7 +36,7 @@ export default async function AdminUsersPage() {
 
   function formatDate(date: Date | null): string {
     if (!date) return '--'
-    return new Date(date).toLocaleString('fr-FR')
+    return formatDateTimeShort(date, locale)
   }
 
   return (

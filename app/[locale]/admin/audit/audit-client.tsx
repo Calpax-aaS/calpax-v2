@@ -16,36 +16,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { fetchAdminAuditLogs } from '@/lib/actions/admin'
 import { formatDateTimeShort } from '@/lib/format'
-
-const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'Exploitant']
-const ACTIONS = [
-  'CREATE',
-  'UPDATE',
-  'DELETE',
-  'SIGN_IN',
-  'SIGN_IN_FAILED',
-  'SIGN_OUT',
-  'PASSWORD_RESET',
-  'PASSWORD_CHANGED',
-  'ACCOUNT_LOCKED',
-  'EXPORT_PII',
-  'ANONYMIZE_PII',
-  'IMPERSONATE_START',
-  'IMPERSONATE_STOP',
-]
-
-type AuditLog = {
-  id: bigint
-  exploitantId: string | null
-  impersonatedBy: string | null
-  entityType: string
-  entityId: string
-  action: string
-  field: string | null
-  beforeValue: unknown
-  afterValue: unknown
-  createdAt: Date
-}
+import {
+  ADMIN_AUDIT_ENTITY_TYPES,
+  ADMIN_AUDIT_ACTIONS,
+  type AdminAuditLogRow,
+} from '@/lib/audit/types'
 
 type Exploitant = {
   id: string
@@ -72,7 +47,7 @@ export function AdminAuditClient({
   const [entityType, setEntityType] = useState('')
   const [action, setAction] = useState('')
   const [page, setPage] = useState(1)
-  const [logs, setLogs] = useState<AuditLog[]>([])
+  const [logs, setLogs] = useState<AdminAuditLogRow[]>([])
   const [total, setTotal] = useState(0)
   const [pageCount, setPageCount] = useState(0)
 
@@ -89,7 +64,7 @@ export function AdminAuditClient({
       page,
     }).then((result) => {
       if (cancelled) return
-      setLogs(result.logs as unknown as AuditLog[])
+      setLogs(result.logs)
       setTotal(result.total)
       setPageCount(result.pageCount)
     })
@@ -107,7 +82,7 @@ export function AdminAuditClient({
   /** True for UPDATE rows where the audit-extension recorded a single field
    *  change (one row per modified field). For these we render the before /
    *  after columns as a colour-coded inline diff rather than raw JSON. */
-  function isFieldDiff(log: AuditLog): boolean {
+  function isFieldDiff(log: AdminAuditLogRow): boolean {
     return log.action === 'UPDATE' && log.field !== null
   }
 
@@ -162,7 +137,7 @@ export function AdminAuditClient({
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
             >
               <option value="">{t('filters.all')}</option>
-              {ENTITY_TYPES.map((et) => (
+              {ADMIN_AUDIT_ENTITY_TYPES.map((et) => (
                 <option key={et} value={et}>
                   {et}
                 </option>
@@ -183,7 +158,7 @@ export function AdminAuditClient({
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
             >
               <option value="">{t('filters.all')}</option>
-              {ACTIONS.map((a) => (
+              {ADMIN_AUDIT_ACTIONS.map((a) => (
                 <option key={a} value={a}>
                   {a}
                 </option>
