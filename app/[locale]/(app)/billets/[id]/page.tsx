@@ -18,54 +18,11 @@ import {
 } from '@/components/ui/table'
 import { PaiementForm } from '@/components/paiement-form'
 import { cn } from '@/lib/utils'
-import { formatDateFr } from '@/lib/format'
-import type { StatutBillet, StatutPaiement } from '@prisma/client'
+import { formatDateOrDash, formatEuros } from '@/lib/format'
+import { statutBilletVariant, statutPaiementVariant } from '@/lib/billet/status-variant'
 
 type Props = {
   params: Promise<{ locale: string; id: string }>
-}
-
-function formatEuros(euros: number): string {
-  return euros.toFixed(2) + ' EUR'
-}
-
-function formatDate(date: Date | null | undefined): string {
-  if (!date) return '—'
-  return formatDateFr(date)
-}
-
-function statutVariant(statut: StatutBillet): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'EN_ATTENTE':
-      return 'outline'
-    case 'PLANIFIE':
-      return 'default'
-    case 'VOLE':
-      return 'secondary'
-    case 'ANNULE':
-    case 'REMBOURSE':
-    case 'EXPIRE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
-}
-
-function statutPaiementVariant(
-  statut: StatutPaiement,
-): 'outline' | 'default' | 'secondary' | 'destructive' {
-  switch (statut) {
-    case 'EN_ATTENTE':
-      return 'outline'
-    case 'SOLDE':
-      return 'default'
-    case 'PARTIEL':
-      return 'secondary'
-    case 'REMBOURSE':
-      return 'destructive'
-    default:
-      return 'outline'
-  }
 }
 
 export default async function BilletDetailPage({ params }: Props) {
@@ -103,7 +60,7 @@ export default async function BilletDetailPage({ params }: Props) {
               {tBillets('backToList')}
             </Link>
             <h1 className="text-3xl font-bold tracking-tight">{billet.reference}</h1>
-            <Badge variant={statutVariant(billet.statut)}>
+            <Badge variant={statutBilletVariant(billet.statut)}>
               {tBillets(`statut.${billet.statut}`)}
             </Badge>
             <Badge variant={statutPaiementVariant(billet.statutPaiement)}>
@@ -203,7 +160,7 @@ export default async function BilletDetailPage({ params }: Props) {
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">
                   {tBillets('fields.dateVolDeb')}
                 </p>
-                <p className="font-medium">{formatDate(billet.dateVolDeb)}</p>
+                <p className="font-medium">{formatDateOrDash(billet.dateVolDeb)}</p>
               </div>
             )}
             {billet.dateVolFin && (
@@ -211,7 +168,7 @@ export default async function BilletDetailPage({ params }: Props) {
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">
                   {tBillets('fields.dateVolFin')}
                 </p>
-                <p className="font-medium">{formatDate(billet.dateVolFin)}</p>
+                <p className="font-medium">{formatDateOrDash(billet.dateVolFin)}</p>
               </div>
             )}
             {billet.dateValidite && (
@@ -219,7 +176,7 @@ export default async function BilletDetailPage({ params }: Props) {
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">
                   {tBillets('fields.dateValidite')}
                 </p>
-                <p className="font-medium">{formatDate(billet.dateValidite)}</p>
+                <p className="font-medium">{formatDateOrDash(billet.dateValidite)}</p>
               </div>
             )}
             {billet.lieuDecollage && (
@@ -277,7 +234,7 @@ export default async function BilletDetailPage({ params }: Props) {
                   <span className="text-xs uppercase tracking-wider text-muted-foreground">
                     {tBillets('bonCadeau.dateCadeau')}
                   </span>
-                  <p className="font-medium">{formatDate(billet.dateCadeau)}</p>
+                  <p className="font-medium">{formatDateOrDash(billet.dateCadeau)}</p>
                 </div>
               )}
               {billet.destinataireNom && (
@@ -384,7 +341,7 @@ export default async function BilletDetailPage({ params }: Props) {
                 <TableBody>
                   {billet.paiements.map((paiement) => (
                     <TableRow key={paiement.id} className="hover:bg-muted/50">
-                      <TableCell>{formatDate(paiement.datePaiement)}</TableCell>
+                      <TableCell>{formatDateOrDash(paiement.datePaiement)}</TableCell>
                       <TableCell>{tPaiements(`modes.${paiement.modePaiement}`)}</TableCell>
                       <TableCell className="font-medium">
                         {formatEuros(Number(paiement.montantTtc))}

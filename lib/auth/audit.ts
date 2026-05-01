@@ -1,5 +1,6 @@
 import { AuditAction, Prisma } from '@prisma/client'
 import { basePrisma } from '@/lib/db/base'
+import { logger } from '@/lib/logger'
 
 /**
  * Account lockout policy.
@@ -36,7 +37,7 @@ type AuthAuditInput = {
  * sign-ins have no known tenant, and SYSTEM-level events (lockout) may be
  * cross-tenant. For successful events we look up the user's tenant.
  *
- * Errors are swallowed with a console.warn - the auth flow must never fail
+ * Errors are swallowed (logged via pino) - the auth flow must never fail
  * because we couldn't write a log row.
  */
 export async function writeAuthAudit({
@@ -69,7 +70,7 @@ export async function writeAuthAudit({
       },
     })
   } catch (err) {
-    console.warn('[auth-audit] failed to write audit row', err)
+    logger.warn({ err }, '[auth-audit] failed to write audit row')
   }
 }
 
@@ -85,7 +86,7 @@ export async function countRecentFailedAttempts(email: string): Promise<number> 
       where: { createdAt: { lt: since } },
     })
   } catch (err) {
-    console.warn('[auth-audit] failed to prune old failed attempts', err)
+    logger.warn({ err }, '[auth-audit] failed to prune old failed attempts')
   }
 
   return basePrisma.failedLoginAttempt.count({
@@ -110,7 +111,7 @@ export async function recordFailedAttempt(params: {
       data: { email, ipAddress, userAgent },
     })
   } catch (err) {
-    console.warn('[auth-audit] failed to record attempt', err)
+    logger.warn({ err }, '[auth-audit] failed to record attempt')
   }
 
   const attempts = await countRecentFailedAttempts(email)
@@ -131,7 +132,7 @@ export async function recordFailedAttempt(params: {
       return { lockedUntil, attempts }
     }
   } catch (err) {
-    console.warn('[auth-audit] failed to apply lockout', err)
+    logger.warn({ err }, '[auth-audit] failed to apply lockout')
   }
   return { lockedUntil, attempts }
 }
@@ -144,7 +145,7 @@ export async function clearFailedAttempts(email: string): Promise<void> {
   try {
     await basePrisma.failedLoginAttempt.deleteMany({ where: { email } })
   } catch (err) {
-    console.warn('[auth-audit] failed to clear attempts', err)
+    logger.warn({ err }, '[auth-audit] failed to clear attempts')
   }
 }
 
@@ -166,7 +167,7 @@ export async function getActiveLock(email: string): Promise<Date | null> {
         data: { lockedUntil: null },
       })
     } catch (err) {
-      console.warn('[auth-audit] failed to clear stale lock', err)
+      logger.warn({ err }, '[auth-audit] failed to clear stale lock')
     }
     return null
   }

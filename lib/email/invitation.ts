@@ -1,6 +1,16 @@
 import { Resend } from 'resend'
 import { randomBytes } from 'node:crypto'
 import { basePrisma } from '@/lib/db/base'
+import { logger } from '@/lib/logger'
+
+function redactUrl(url: string): string {
+  try {
+    const u = new URL(url)
+    return `${u.origin}${u.pathname}`
+  } catch {
+    return '[unparseable-url]'
+  }
+}
 
 // Token expiry for invitation links: 24h (vs. 1h for standard password reset)
 const INVITATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000
@@ -161,7 +171,10 @@ export async function sendInvitationEmail(params: {
 
   const resendApiKey = process.env.RESEND_API_KEY
   if (!resendApiKey || resendApiKey === 'resend-key-not-configured') {
-    console.warn('[invitation] Resend not configured, invitation URL:', resetUrl)
+    logger.warn(
+      { url: redactUrl(resetUrl) },
+      '[invitation] Resend not configured, invitation URL skipped',
+    )
     return { sent: false, reason: 'resend-not-configured' }
   }
 
@@ -176,7 +189,7 @@ export async function sendInvitationEmail(params: {
     })
     return { sent: true }
   } catch (err) {
-    console.warn('[invitation] Failed to send invitation email', err)
+    logger.warn({ err }, '[invitation] Failed to send invitation email')
     return { sent: false, reason: 'error' }
   }
 }

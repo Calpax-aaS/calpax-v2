@@ -15,7 +15,9 @@
     "activate": "Activer",
     "deactivate": "Désactiver",
     "activateConfirm": "Réactiver cet élément ?",
-    "deactivateConfirm": "Désactiver cet élément ? Il ne sera plus sélectionnable pour les nouveaux vols."
+    "deactivateConfirm": "Désactiver cet élément ? Il ne sera plus sélectionnable pour les nouveaux vols.",
+    "confirm": "Confirmer",
+    "cancel": "Annuler"
   },
   "home": {
     "signedInAs": "Connecté en tant que {name} — Exploitant {exploitant}",
@@ -170,6 +172,8 @@
       "impersonatedBy": "Au nom de",
       "all": "Tous",
       "noEntries": "Aucune modification",
+      "noEntriesFiltered": "Aucune modification ne correspond à ces filtres.",
+      "resetFilters": "Réinitialiser les filtres",
       "prev": "Précédent",
       "next": "Suivant"
     },

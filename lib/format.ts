@@ -36,3 +36,11 @@ export function formatDateTimeShort(date: Date, locale: string): string {
     minute: '2-digit',
   })
 }
+
+export function formatEuros(euros: number): string {
+  return euros.toFixed(2) + ' EUR'
+}
+
+export function formatDateOrDash(date: Date | null | undefined): string {
+  return date ? formatDateFr(date) : '—'
+}

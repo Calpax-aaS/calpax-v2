@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
+import { StatutBillet, StatutVol } from '@prisma/client'
 import { db } from '@/lib/db'
 import { volCreateSchema, volPostFlightSchema } from '@/lib/schemas/vol'
 import { generateFicheVolBuffer } from '@/lib/pdf/generate'
@@ -78,7 +79,7 @@ export async function createVol(locale: string, formData: FormData): Promise<{ e
       db.ballon.findUniqueOrThrow({ where: { id: ballonId } }),
       db.pilote.findUniqueOrThrow({ where: { id: piloteId } }),
       db.vol.findMany({
-        where: { date, statut: { not: 'ANNULE' } },
+        where: { date, statut: { not: StatutVol.ANNULE } },
         select: { ballonId: true, piloteId: true, creneau: true },
       }),
     ])
@@ -124,7 +125,7 @@ export async function updateVol(
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
     const vol = await db.vol.findUniqueOrThrow({ where: { id: volId } })
-    if (vol.statut !== 'PLANIFIE' && vol.statut !== 'CONFIRME') {
+    if (vol.statut !== StatutVol.PLANIFIE && vol.statut !== StatutVol.CONFIRME) {
       return { error: 'Impossible de modifier un vol termine ou archive' }
     }
 
@@ -141,7 +142,7 @@ export async function updateVol(
       db.ballon.findUniqueOrThrow({ where: { id: ballonId } }),
       db.pilote.findUniqueOrThrow({ where: { id: piloteId } }),
       db.vol.findMany({
-        where: { date, statut: { not: 'ANNULE' }, id: { not: volId } },
+        where: { date, statut: { not: StatutVol.ANNULE }, id: { not: volId } },
         select: { ballonId: true, piloteId: true, creneau: true },
       }),
     ])
@@ -191,7 +192,7 @@ export async function savePostFlight(
       where: { id: volId },
       select: { statut: true, exploitantId: true },
     })
-    if (vol.statut === 'ARCHIVE' || vol.statut === 'ANNULE') {
+    if (vol.statut === StatutVol.ARCHIVE || vol.statut === StatutVol.ANNULE) {
       return { error: 'Ce vol ne peut pas être modifié' }
     }
 
@@ -213,7 +214,7 @@ export async function savePostFlight(
 
     await db.vol.update({
       where: { id: volId },
-      data: { ...result.data, statut: 'TERMINE' },
+      data: { ...result.data, statut: StatutVol.TERMINE },
     })
 
     redirect(`/${locale}/vols/${volId}`)
@@ -230,7 +231,7 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
       select: { statut: true, exploitantId: true },
     })
 
-    if (volCheck.statut !== 'TERMINE') {
+    if (volCheck.statut !== StatutVol.TERMINE) {
       return { error: 'Le vol doit être en statut TERMINÉ pour archiver le PVE' }
     }
 
@@ -242,7 +243,7 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
 
     await db.vol.update({
       where: { id: volId },
-      data: { statut: 'ARCHIVE', pvePdfUrl: pvePath, pveArchivedAt: now },
+      data: { statut: StatutVol.ARCHIVE, pvePdfUrl: pvePath, pveArchivedAt: now },
     })
 
     const passagersWithBillet = await db.passager.findMany({
@@ -252,7 +253,7 @@ export async function archivePve(volId: string, locale: string): Promise<{ error
     const billetIds = [...new Set(passagersWithBillet.map((p) => p.billetId))]
     await db.billet.updateMany({
       where: { id: { in: billetIds } },
-      data: { statut: 'VOLE' },
+      data: { statut: StatutBillet.VOLE },
     })
 
     redirect(`/${locale}/vols/${volId}`)
@@ -283,7 +284,7 @@ export async function cancelVol(
       },
     })
 
-    if (vol.statut === 'ARCHIVE') {
+    if (vol.statut === StatutVol.ARCHIVE) {
       return { error: "Impossible d'annuler un vol archive" }
     }
 
@@ -292,12 +293,12 @@ export async function cancelVol(
     await db.passager.updateMany({ where: { volId }, data: { volId: null } })
     await db.billet.updateMany({
       where: { id: { in: billetIds } },
-      data: { statut: 'EN_ATTENTE' },
+      data: { statut: StatutBillet.EN_ATTENTE },
     })
 
     await db.vol.update({
       where: { id: volId },
-      data: { statut: 'ANNULE', cancelReason: reason ?? null },
+      data: { statut: StatutVol.ANNULE, cancelReason: reason ?? null },
     })
 
     const payeurEmails = [

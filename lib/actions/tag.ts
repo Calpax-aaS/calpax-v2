@@ -1,23 +1,33 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { Prisma } from '@prisma/client'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
 
+function isUniqueConstraintError(err: unknown): boolean {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002'
+}
+
 export async function createTag(formData: FormData): Promise<{ error?: string }> {
   return requireAuth(async () => {
     requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
-    const nom = formData.get('nom') as string
-    const couleur = (formData.get('couleur') as string) || null
-    if (!nom?.trim()) return { error: 'Nom requis' }
+    const nomRaw = formData.get('nom')
+    const couleurRaw = formData.get('couleur')
+    const nom = typeof nomRaw === 'string' ? nomRaw.trim() : ''
+    if (!nom) return { error: 'Nom requis' }
+    const couleur = typeof couleurRaw === 'string' && couleurRaw ? couleurRaw : null
 
     try {
-      await db.tag.create({ data: { nom: nom.trim(), couleur, exploitantId: ctx.exploitantId } })
-    } catch {
-      return { error: 'Un tag avec ce nom existe déjà' }
+      await db.tag.create({ data: { nom, couleur, exploitantId: ctx.exploitantId } })
+    } catch (err) {
+      if (isUniqueConstraintError(err)) {
+        return { error: 'Un tag avec ce nom existe déjà' }
+      }
+      throw err
     }
     revalidatePath('/settings')
     return {}
@@ -53,8 +63,11 @@ export async function addTagToBillet(billetId: string, tagId: string): Promise<{
     const { basePrisma } = await import('@/lib/db/base')
     try {
       await basePrisma.billetTag.create({ data: { billetId, tagId } })
-    } catch {
-      return { error: 'Tag déjà assigné' }
+    } catch (err) {
+      if (isUniqueConstraintError(err)) {
+        return { error: 'Tag déjà assigné' }
+      }
+      throw err
     }
     revalidatePath(`/billets/${billetId}`)
     return {}

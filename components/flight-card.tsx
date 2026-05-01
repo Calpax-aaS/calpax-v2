@@ -57,10 +57,7 @@ const GONOGO_CHIP: Record<FlightCardWeather['goNogo'], Parameters<typeof Chip>[0
   MARGINAL: 'warn',
 }
 
-const CAPACITY_TONE: (c: number, m: number) => Parameters<typeof LoadBar>[0]['tone'] = (
-  count,
-  max,
-) => {
+function capacityTone(count: number, max: number): Parameters<typeof LoadBar>[0]['tone'] {
   if (max === 0) return 'ink'
   if (count > max) return 'danger'
   if (count / max >= 0.8) return 'warn'
@@ -114,7 +111,7 @@ export function FlightCard({ flight, locale, showActions = true, userRole }: Pro
           <LoadBar
             value={flight.passagerCount}
             max={flight.passagerMax}
-            tone={CAPACITY_TONE(flight.passagerCount, flight.passagerMax)}
+            tone={capacityTone(flight.passagerCount, flight.passagerMax)}
             showText
             ariaLabel={t('capacity')}
           />
