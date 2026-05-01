@@ -15,7 +15,9 @@
     "activate": "Activate",
     "deactivate": "Deactivate",
     "activateConfirm": "Reactivate this item?",
-    "deactivateConfirm": "Deactivate this item? It will no longer be available for new flights."
+    "deactivateConfirm": "Deactivate this item? It will no longer be available for new flights.",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   },
   "home": {
     "signedInAs": "Signed in as {name} — Operator {exploitant}",
@@ -170,6 +172,8 @@
       "impersonatedBy": "Impersonated by",
       "all": "All",
       "noEntries": "No changes",
+      "noEntriesFiltered": "No changes match these filters.",
+      "resetFilters": "Reset filters",
       "prev": "Previous",
       "next": "Next"
     },

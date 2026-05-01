@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { fetchAdminAuditLogs } from '@/lib/actions/admin'
 import { formatDateTimeShort } from '@/lib/format'
 
@@ -75,13 +76,17 @@ export function AdminAuditClient({
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [total, setTotal] = useState(0)
   const [pageCount, setPageCount] = useState(0)
+  const [loading, setLoading] = useState(true)
 
   const exploitantSelectId = useId()
   const entityTypeSelectId = useId()
   const actionSelectId = useId()
 
+  const filtersActive = exploitantId !== '' || entityType !== '' || action !== ''
+
   useEffect(() => {
     let cancelled = false
+    setLoading(true)
     fetchAdminAuditLogs({
       exploitantId: exploitantId || undefined,
       entityType: entityType || undefined,
@@ -92,11 +97,19 @@ export function AdminAuditClient({
       setLogs(result.logs as unknown as AuditLog[])
       setTotal(result.total)
       setPageCount(result.pageCount)
+      setLoading(false)
     })
     return () => {
       cancelled = true
     }
   }, [exploitantId, entityType, action, page])
+
+  function resetFilters() {
+    setExploitantId('')
+    setEntityType('')
+    setAction('')
+    setPage(1)
+  }
 
   function formatJson(value: unknown): string {
     if (value === null || value === undefined) return '—'
@@ -193,8 +206,23 @@ export function AdminAuditClient({
         </div>
 
         {/* Table */}
-        {logs.length === 0 ? (
-          <p className="text-muted-foreground">{ta('noEntries')}</p>
+        {loading ? (
+          <div className="space-y-2" aria-busy="true" aria-live="polite">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 w-full" />
+            ))}
+          </div>
+        ) : logs.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-12 text-center">
+            <p className="text-muted-foreground">
+              {filtersActive ? ta('noEntriesFiltered') : ta('noEntries')}
+            </p>
+            {filtersActive && (
+              <Button size="sm" variant="outline" onClick={resetFilters}>
+                {ta('resetFilters')}
+              </Button>
+            )}
+          </div>
         ) : (
           <Table>
             <TableHeader>

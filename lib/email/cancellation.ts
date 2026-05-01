@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { formatDateFr } from '@/lib/format'
+import { logger } from '@/lib/logger'
 
 function escapeHtml(str: string): string {
   return str
@@ -76,7 +77,7 @@ export async function sendCancellationEmails(params: SendCancellationParams): Pr
 }> {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
-    console.warn('[cancellation] Resend not configured — skipping emails')
+    logger.warn('[cancellation] Resend not configured — skipping emails')
     return { sent: 0, skipped: 0 }
   }
 

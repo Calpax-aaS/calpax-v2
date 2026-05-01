@@ -38,14 +38,20 @@ async function nextSequence(exploitantId: string, year: number): Promise<number>
   return first.lastSeq
 }
 
+class BilletFormParseError extends Error {}
+
 function extractBilletData(formData: FormData) {
   const passagersJson = formData.get('passagers')
   let passagers: unknown[] = []
-  if (typeof passagersJson === 'string') {
+  if (typeof passagersJson === 'string' && passagersJson.length > 0) {
     try {
-      passagers = JSON.parse(passagersJson)
-    } catch {
-      passagers = []
+      const parsed = JSON.parse(passagersJson)
+      if (!Array.isArray(parsed)) throw new BilletFormParseError('passagers must be an array')
+      passagers = parsed
+    } catch (err) {
+      throw err instanceof BilletFormParseError
+        ? err
+        : new BilletFormParseError('passagers JSON invalide')
     }
   }
 
@@ -88,7 +94,13 @@ export async function createBillet(
     requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
-    const raw = extractBilletData(formData)
+    let raw: ReturnType<typeof extractBilletData>
+    try {
+      raw = extractBilletData(formData)
+    } catch (err) {
+      if (err instanceof BilletFormParseError) return { error: err.message }
+      throw err
+    }
     const result = billetCreateSchema.safeParse(raw)
     if (!result.success) {
       return { error: formatZodError(result.error) }
@@ -130,7 +142,13 @@ export async function updateBillet(
     requireRole('ADMIN_CALPAX', 'GERANT')
     const ctx = getContext()
 
-    const raw = extractBilletData(formData)
+    let raw: ReturnType<typeof extractBilletData>
+    try {
+      raw = extractBilletData(formData)
+    } catch (err) {
+      if (err instanceof BilletFormParseError) return { error: err.message }
+      throw err
+    }
     const result = billetCreateSchema.safeParse(raw)
     if (!result.success) {
       return { error: formatZodError(result.error) }
