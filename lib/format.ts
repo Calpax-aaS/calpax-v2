@@ -36,3 +36,15 @@ export function formatDateTimeShort(date: Date, locale: string): string {
     minute: '2-digit',
   })
 }
+
+/**
+ * Render a value pulled from an audit-log JSON column for display in a table
+ * cell. Strings are returned verbatim; null/undefined become an em-dash;
+ * everything else (numbers, booleans, objects, arrays, `[REDACTED]` markers)
+ * is JSON-serialized so it stays inspectable but renders as a single line.
+ */
+export function formatAuditValue(value: unknown): string {
+  if (value === null || value === undefined) return '—'
+  if (typeof value === 'string') return value
+  return JSON.stringify(value)
+}

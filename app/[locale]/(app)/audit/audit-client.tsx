@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { fetchAuditLogs } from '@/lib/actions/audit'
+import { formatAuditValue, formatDateTimeShort } from '@/lib/format'
 
 const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'AUTH']
 const ACTIONS = [
@@ -40,6 +41,7 @@ type AuditLog = {
 
 export function AuditClient() {
   const t = useTranslations('audit')
+  const locale = useLocale()
   const [entityType, setEntityType] = useState('')
   const [action, setAction] = useState('')
   const [page, setPage] = useState(1)
@@ -62,16 +64,6 @@ export function AuditClient() {
     void load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, action, page])
-
-  function formatDate(date: Date) {
-    return new Date(date).toLocaleString('fr-FR')
-  }
-
-  function formatJson(value: unknown): string {
-    if (value === null || value === undefined) return '—'
-    if (typeof value === 'string') return value
-    return JSON.stringify(value)
-  }
 
   return (
     <div className="space-y-4">
@@ -136,7 +128,9 @@ export function AuditClient() {
           <TableBody>
             {logs.map((log) => (
               <TableRow key={String(log.id)}>
-                <TableCell className="text-xs">{formatDate(log.createdAt)}</TableCell>
+                <TableCell className="text-xs">
+                  {formatDateTimeShort(log.createdAt, locale)}
+                </TableCell>
                 <TableCell>
                   <Badge variant="outline">{log.entityType}</Badge>{' '}
                   <span className="text-xs text-muted-foreground">{log.entityId.slice(0, 8)}</span>
@@ -146,10 +140,10 @@ export function AuditClient() {
                 </TableCell>
                 <TableCell>{log.field ?? '—'}</TableCell>
                 <TableCell className="max-w-32 truncate text-xs">
-                  {formatJson(log.beforeValue)}
+                  {formatAuditValue(log.beforeValue)}
                 </TableCell>
                 <TableCell className="max-w-32 truncate text-xs">
-                  {formatJson(log.afterValue)}
+                  {formatAuditValue(log.afterValue)}
                 </TableCell>
               </TableRow>
             ))}

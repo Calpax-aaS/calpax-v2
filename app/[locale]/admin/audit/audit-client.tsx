@@ -15,7 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { fetchAdminAuditLogs } from '@/lib/actions/admin'
-import { formatDateTimeShort } from '@/lib/format'
+import { formatAuditValue, formatDateTimeShort } from '@/lib/format'
 
 const ENTITY_TYPES = ['Ballon', 'Pilote', 'Billet', 'Passager', 'Paiement', 'Vol', 'Exploitant']
 const ACTIONS = [
@@ -97,12 +97,6 @@ export function AdminAuditClient({
       cancelled = true
     }
   }, [exploitantId, entityType, action, page])
-
-  function formatJson(value: unknown): string {
-    if (value === null || value === undefined) return '—'
-    if (typeof value === 'string') return value
-    return JSON.stringify(value)
-  }
 
   /** True for UPDATE rows where the audit-extension recorded a single field
    *  change (one row per modified field). For these we render the before /
@@ -241,24 +235,24 @@ export function AdminAuditClient({
                     <TableCell colSpan={2} className="text-xs">
                       <div className="flex items-center gap-2 font-mono">
                         <span className="rounded bg-red-50 px-1.5 py-0.5 text-red-700 line-through">
-                          {formatJson(log.beforeValue)}
+                          {formatAuditValue(log.beforeValue)}
                         </span>
                         <ArrowRight
                           className="h-3 w-3 shrink-0 text-muted-foreground"
                           aria-hidden
                         />
                         <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-emerald-700">
-                          {formatJson(log.afterValue)}
+                          {formatAuditValue(log.afterValue)}
                         </span>
                       </div>
                     </TableCell>
                   ) : (
                     <>
                       <TableCell className="max-w-32 truncate text-xs">
-                        {formatJson(log.beforeValue)}
+                        {formatAuditValue(log.beforeValue)}
                       </TableCell>
                       <TableCell className="max-w-32 truncate text-xs">
-                        {formatJson(log.afterValue)}
+                        {formatAuditValue(log.afterValue)}
                       </TableCell>
                     </>
                   )}

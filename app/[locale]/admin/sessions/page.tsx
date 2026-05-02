@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { basePrisma } from '@/lib/db/base'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -9,10 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { formatDateTimeShort } from '@/lib/format'
 import { RevokeSessionButton } from './revoke-button'
 
 export default async function AdminSessionsPage() {
   const t = await getTranslations('admin.sessions')
+  const locale = await getLocale()
 
   const sessions = await basePrisma.session.findMany({
     where: { expiresAt: { gt: new Date() } },
@@ -21,10 +23,6 @@ export default async function AdminSessionsPage() {
     },
     orderBy: { createdAt: 'desc' },
   })
-
-  function formatDate(date: Date): string {
-    return new Date(date).toLocaleString('fr-FR')
-  }
 
   function truncateUA(ua: string | null): string {
     if (!ua) return '--'
@@ -66,8 +64,12 @@ export default async function AdminSessionsPage() {
                     <TableCell className="text-xs max-w-48 truncate">
                       {truncateUA(session.userAgent)}
                     </TableCell>
-                    <TableCell className="text-xs">{formatDate(session.createdAt)}</TableCell>
-                    <TableCell className="text-xs">{formatDate(session.expiresAt)}</TableCell>
+                    <TableCell className="text-xs">
+                      {formatDateTimeShort(session.createdAt, locale)}
+                    </TableCell>
+                    <TableCell className="text-xs">
+                      {formatDateTimeShort(session.expiresAt, locale)}
+                    </TableCell>
                     <TableCell>
                       <RevokeSessionButton sessionId={session.id} />
                     </TableCell>

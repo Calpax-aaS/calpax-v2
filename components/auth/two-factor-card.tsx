@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import QRCode from 'qrcode'
@@ -32,6 +32,16 @@ export function TwoFactorCard({ enabled }: Props) {
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Live-region announcement for backup-code copy success. Sonner toasts are
+  // visual-only on most setups, so screen reader users wouldn't otherwise
+  // learn that the codes landed in the clipboard.
+  const [copyAnnouncement, setCopyAnnouncement] = useState('')
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+    }
+  }, [])
 
   async function handleEnable(e: React.FormEvent) {
     e.preventDefault()
@@ -101,6 +111,10 @@ export function TwoFactorCard({ enabled }: Props) {
     const text = codes.join('\n')
     navigator.clipboard.writeText(text)
     toast.success(t('backupCodesCopied'))
+    // Re-set on each click so consecutive copies still announce.
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+    setCopyAnnouncement(t('backupCodesCopied'))
+    copyTimerRef.current = setTimeout(() => setCopyAnnouncement(''), 4000)
   }
 
   return (
@@ -176,6 +190,9 @@ export function TwoFactorCard({ enabled }: Props) {
               >
                 {t('copyBackupCodes')}
               </Button>
+              <div role="status" aria-live="polite" className="sr-only">
+                {copyAnnouncement}
+              </div>
             </div>
 
             <form onSubmit={handleVerify} className="space-y-3">
