@@ -1,10 +1,20 @@
 'use server'
 
+import { Prisma } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { requireRole } from '@/lib/auth/requireRole'
 import { getContext } from '@/lib/context'
 import { db } from '@/lib/db'
+import { logger } from '@/lib/logger'
+
+// Prisma unique-constraint violation — used to distinguish "duplicate" from
+// real failures so we don't show the user a misleading message.
+const UNIQUE_VIOLATION = 'P2002'
+
+function isUniqueViolation(err: unknown): boolean {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === UNIQUE_VIOLATION
+}
 
 export async function createTag(formData: FormData): Promise<{ error?: string }> {
   return requireAuth(async () => {
@@ -16,8 +26,12 @@ export async function createTag(formData: FormData): Promise<{ error?: string }>
 
     try {
       await db.tag.create({ data: { nom: nom.trim(), couleur, exploitantId: ctx.exploitantId } })
-    } catch {
-      return { error: 'Un tag avec ce nom existe déjà' }
+    } catch (err) {
+      if (isUniqueViolation(err)) {
+        return { error: 'Un tag avec ce nom existe déjà' }
+      }
+      logger.error({ err, exploitantId: ctx.exploitantId }, 'createTag: unexpected failure')
+      return { error: 'Erreur lors de la création du tag' }
     }
     revalidatePath('/settings')
     return {}
@@ -53,8 +67,12 @@ export async function addTagToBillet(billetId: string, tagId: string): Promise<{
     const { basePrisma } = await import('@/lib/db/base')
     try {
       await basePrisma.billetTag.create({ data: { billetId, tagId } })
-    } catch {
-      return { error: 'Tag déjà assigné' }
+    } catch (err) {
+      if (isUniqueViolation(err)) {
+        return { error: 'Tag déjà assigné' }
+      }
+      logger.error({ err, billetId, tagId }, 'addTagToBillet: unexpected failure')
+      return { error: "Erreur lors de l'ajout du tag" }
     }
     revalidatePath(`/billets/${billetId}`)
     return {}

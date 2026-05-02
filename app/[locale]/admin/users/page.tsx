@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { basePrisma } from '@/lib/db/base'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -10,10 +10,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { formatDateTimeShort } from '@/lib/format'
 import { UserBanButton } from './user-ban-button'
 
 export default async function AdminUsersPage() {
   const t = await getTranslations('admin.users')
+  const locale = await getLocale()
 
   const users = await basePrisma.user.findMany({
     include: {
@@ -32,9 +34,9 @@ export default async function AdminUsersPage() {
   })
   const lastLoginMap = new Map(latestSessions.map((s) => [s.userId, s.createdAt]))
 
-  function formatDate(date: Date | null): string {
+  function formatLastLogin(date: Date | null): string {
     if (!date) return '--'
-    return new Date(date).toLocaleString('fr-FR')
+    return formatDateTimeShort(date, locale)
   }
 
   return (
@@ -75,7 +77,7 @@ export default async function AdminUsersPage() {
                     </TableCell>
                     <TableCell>{user.exploitant.name}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {formatDate(lastLoginMap.get(user.id) ?? null)}
+                      {formatLastLogin(lastLoginMap.get(user.id) ?? null)}
                     </TableCell>
                     <TableCell>
                       {user.banned ? (

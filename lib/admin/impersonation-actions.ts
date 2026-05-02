@@ -47,9 +47,13 @@ export async function startImpersonation(
   const targetName = `${target.name} (${target.frDecNumber})`
   const cookieValue = signImpersonationCookie(adminUserId, targetExploitantId, targetName)
   const store = await cookies()
+  // `secure: true` always — the impersonation cookie carries the privilege
+  // claim used by `requireAuth`, so HTTP transit is unacceptable even on
+  // localhost. Better Auth dev sessions cope; only impersonation tooling has
+  // to be exercised over HTTPS in development.
   store.set(IMPERSONATION_COOKIE_NAME, cookieValue, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'lax',
     path: '/',
     maxAge: IMPERSONATION_TTL_MS / 1000,
